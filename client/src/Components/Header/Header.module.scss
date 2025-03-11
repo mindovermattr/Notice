@@ -1,0 +1,26 @@
+.header {
+  background-color: $background-100;
+  padding: 24px 20px;
+  display: flex;
+  justify-content: space-between;
+  &__title {
+    font-size: 48px;
+    font-weight: 700;
+    color: #fff;
+  }
+  &__profile {
+    background-color: $primary-alpha-10;
+    border-radius: 24px;
+    border: 1px solid $primary-alpha-20;
+    color: $primary-600;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    padding: 12px;
+
+    cursor: pointer;
+  }
+}

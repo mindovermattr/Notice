@@ -1,0 +1,6 @@
+.board {
+  display: flex;
+  &__sidebar {
+    flex-basis: 400px;
+  }
+}
