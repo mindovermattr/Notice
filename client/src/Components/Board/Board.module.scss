@@ -1,6 +1,50 @@
 .board {
   display: flex;
-  &__sidebar {
-    flex-basis: 400px;
+
+  background-color: $background-100;
+  color: white;
+
+  min-height: calc(100vh - 107.5px);
+
+  &__side {
+    flex-basis: 72px;
   }
+  &__tasks {
+    &-wrapper {
+      margin: 32px;
+      flex-grow: 1;
+    }
+  }
+  &__tab {
+    display: flex;
+    gap: 24px;
+    border: 1px solid $base-100;
+    padding: 32px;
+  }
+}
+
+.tab {
+  &__option {
+    display: flex;
+    gap: 12px;
+    padding: 10px 12px;
+    align-items: center;
+    &--selected {
+      background-color: rgb(15, 18, 25);
+      background-color: $base-0;
+      border: 1px solid $base-100;
+      border-radius: 6px;
+      & .tab__text {
+        color: $base-600;
+      }
+    }
+  }
+  &__text {
+    color: $base-400;
+  }
+}
+
+.border {
+  border: 1px solid $base-100;
+  border-top: none;
 }
