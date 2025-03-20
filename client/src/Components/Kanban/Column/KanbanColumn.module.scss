@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  flex-grow: 1;
   margin: 24px;
   &__header {
     display: flex;
@@ -16,17 +17,32 @@
   &__info {
     display: flex;
     gap: 8px;
-    align-items: baseline;
+    align-items: center;
   }
   &__color {
     width: 14px;
     height: 14px;
-    background-color: $cyan-500;
-    border: 1px solid $cyan-600;
+
     border-radius: 2px;
+    &--cyan {
+      background-color: $cyan-500;
+      border: 1px solid $cyan-600;
+    }
+    &--yellow {
+      background-color: $yellow-500;
+      border: 1px solid $yellow-600;
+    }
+    &--indigo {
+      background-color: $indigo-500;
+      border: 1px solid $indigo-600;
+    }
+    &--green {
+      background-color: $green-500;
+      border: 1px solid $green-600;
+    }
   }
   &__title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     color: $base-500;
   }

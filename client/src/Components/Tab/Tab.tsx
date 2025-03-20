@@ -5,6 +5,7 @@ import styles from "./Tab.module.scss";
 type TTab = HTMLProps<HTMLElement>;
 
 const Tab = ({ className, ...props }: TTab) => {
+  
   return (
     <header className={`${styles.tab} ${className}`} {...props}>
       <button className={styles.tab__option}>
