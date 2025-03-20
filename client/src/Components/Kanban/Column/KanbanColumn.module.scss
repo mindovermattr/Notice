@@ -1,0 +1,48 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 24px;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+
+    background-color: $base-0;
+    border: 1px solid $base-100;
+
+    padding: 12px 16px;
+    border-radius: 6px;
+  }
+  &__info {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  &__color {
+    width: 14px;
+    height: 14px;
+    background-color: $cyan-500;
+    border: 1px solid $cyan-600;
+    border-radius: 2px;
+  }
+  &__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $base-500;
+  }
+  &__counter {
+    padding: 4px 8px;
+    font-size: 12px;
+    text-align: center;
+    background-color: $base-0;
+    border: 1px solid $base-100;
+    color: $base-500;
+
+    font-weight: 700;
+  }
+  &__tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

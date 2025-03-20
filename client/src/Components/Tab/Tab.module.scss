@@ -1,0 +1,21 @@
+.tab {
+  &__option {
+    display: flex;
+    gap: 12px;
+    padding: 10px 12px;
+    align-items: center;
+    &--selected {
+      background-color: rgb(15, 18, 25);
+      background-color: $base-0;
+      border: 1px solid $base-100;
+      border-radius: 6px;
+      & .tab__text {
+        color: $base-600;
+      }
+    }
+  }
+  &__text {
+    color: $base-400;
+    font-weight: 700;
+  }
+}

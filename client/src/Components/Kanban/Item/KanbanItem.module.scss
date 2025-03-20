@@ -1,0 +1,32 @@
+.task {
+  padding: 16px;
+  background-color: $base-0;
+  border: 1px solid $base-100;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+  }
+  &__avatar {
+    width: 20px;
+    height: 20px;
+    background-color: $cyan-500;
+    border-radius: 32px;
+  }
+  &__text {
+    color: $base-300;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  &__title {
+    margin-top: 10px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  &__footer {
+    color: $base-400;
+    font-weight: 700;
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+  }
+}
