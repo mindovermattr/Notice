@@ -33,7 +33,7 @@ export const KanbanColumn = ({ columnColor, title }: TKanbanColumn) => {
             <Image
               width={24}
               height={3}
-              src={"icons/more.svg"}
+              src={"/icons/more.svg"}
               alt="more icon"
             />
           </button>
