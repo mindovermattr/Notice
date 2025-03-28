@@ -1,19 +1,29 @@
 import Image from "next/image";
+import Link from "next/link";
+import { useSelectedLayoutSegment } from "next/navigation";
 import { HTMLProps } from "react";
 import styles from "./Tab.module.scss";
-
 type TTab = HTMLProps<HTMLElement>;
 
 const Tab = ({ className, ...props }: TTab) => {
+  const selectedSegment = useSelectedLayoutSegment();
 
   return (
     <header className={`${styles.tab} ${className}`} {...props}>
-      <button className={styles.tab__option}>
+      <Link
+        href={"/Dashboard/Tasklist"}
+        className={`${styles.tab__option} ${
+          selectedSegment === "Tasklist" ? styles["tab__option--selected"] : ""
+        }`}
+      >
         <Image width={24} height={24} src="/icons/list.svg" alt="board-icon" />
         <p className={styles.tab__text}>Task List</p>
-      </button>
-      <button
-        className={`${styles.tab__option} ${styles["tab__option--selected"]}`}
+      </Link>
+      <Link
+        href={"/Dashboard/Kanban"}
+        className={`${styles.tab__option} ${
+          selectedSegment === "Kanban" ? styles["tab__option--selected"] : ""
+        }`}
       >
         <Image
           width={24}
@@ -22,16 +32,11 @@ const Tab = ({ className, ...props }: TTab) => {
           alt="board-icon"
         />
         <p className={styles.tab__text}>Boards</p>
-      </button>
-      <button className={styles.tab__option}>
-        <Image
-          width={24}
-          height={24}
-          src="/icons/gantt.svg"
-          alt="board-icon"
-        />
+      </Link>
+      <Link href={"#"} className={styles.tab__option}>
+        <Image width={24} height={24} src="/icons/gantt.svg" alt="board-icon" />
         <p className={styles.tab__text}>Gantt</p>
-      </button>
+      </Link>
     </header>
   );
 };

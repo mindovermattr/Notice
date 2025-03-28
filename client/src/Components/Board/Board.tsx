@@ -1,3 +1,4 @@
+"use client";
 import Sidebar from "../Sidebar/Sidebar";
 import Tab from "../Tab/Tab";
 import styles from "./Board.module.scss";
