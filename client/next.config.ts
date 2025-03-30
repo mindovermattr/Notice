@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   sassOptions: {
     includePaths: ["./src/assets"],
-    prependData: `@import "vars.scss";`,
+    prependData: `@use "vars.scss" as *;`,
   },
   /* config options here */
 };

@@ -1,0 +1,33 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 320px;
+  padding: 32px;
+}
+
+.profile {
+  display: flex;
+  gap: 12px;
+
+  background-color: $base-0;
+  border: 1px solid $base-100;
+  padding: 8px;
+  &__image {
+    width: 32px;
+    background-color: #fff;
+  }
+  &__information {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  &__name {
+    font-size: 16px;
+    font-weight: 700;
+    color: $base-600;
+  }
+  &__email {
+    font-weight: 700;
+    color: $base-300;
+  }
+}

@@ -1,6 +1,29 @@
 .board {
   display: flex;
-  &__sidebar {
-    flex-basis: 400px;
+
+  background-color: $background-100;
+  color: white;
+
+  min-height: calc(100vh - 92.5px);
+
+  &__side {
+    flex-basis: 72px;
   }
+  &__tasks {
+    &-wrapper {
+      margin: 32px 32px 0 32px;
+      flex-grow: 1;
+    }
+  }
+  &__tab {
+    display: flex;
+    gap: 24px;
+    border: 1px solid $base-100;
+    padding: 12px;
+  }
+}
+
+.border {
+  border: 1px solid $base-100;
+  border-top: none;
 }

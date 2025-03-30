@@ -3,8 +3,11 @@
   padding: 24px 20px;
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
+
+  border-bottom: 1px solid $base-100;
   &__title {
-    font-size: 48px;
+    font-size: 24px;
     font-weight: 700;
     color: #fff;
   }
@@ -14,12 +17,12 @@
     border: 1px solid $primary-alpha-20;
     color: $primary-600;
 
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 700;
 
     display: flex;
     align-items: center;
-    padding: 12px;
+    padding: 12px 10px;
 
     cursor: pointer;
   }
