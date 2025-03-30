@@ -16,6 +16,20 @@ type TKanbanColumn = HTMLProps<HTMLDivElement> & {
 };
 
 export const KanbanColumn = ({ columnColor, title }: TKanbanColumn) => {
+  function dragoverHandler(ev: DragEvent) {
+    ev.preventDefault();
+    if (ev.dataTransfer) {
+    }
+  }
+  function dropHandler(ev: DragEvent) {
+    ev.preventDefault();
+    if (ev.dataTransfer) {
+      const data = ev.dataTransfer.getData("text/plain");
+
+      console.log(data);
+    }
+  }
+
   return (
     <section className={styles.column}>
       <header className={styles.column__header}>
@@ -40,10 +54,15 @@ export const KanbanColumn = ({ columnColor, title }: TKanbanColumn) => {
         </div>
       </header>
 
-      <div className={styles.column__tasks}>
-        <KanbanItem />
-        <KanbanItem />
-        <KanbanItem />
+      <div
+        // onDragEnter={() => console.log(title)}
+        onDrop={(event) => dropHandler(event)}
+        onDragOver={(event) => dragoverHandler(event)}
+        className={`${styles.column__tasks} ${styles["column__tasks--selected"]}`}
+      >
+        <KanbanItem title="title 1" onDragEnter={() => ""} />
+        <KanbanItem title="title 2" onDragEnter={() => ""} />
+        <KanbanItem title="title 3" onDragEnter={() => ""} />
       </div>
     </section>
   );

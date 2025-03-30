@@ -1,3 +1,4 @@
+"use client";
 import { KanbanColumn } from "./Column/KanbanColumn";
 import styles from "./Kanban.module.scss";
 

@@ -30,4 +30,29 @@
     gap: 8px;
     font-size: 12px;
   }
+
+  &--dragged {
+  }
+}
+
+.dropzone {
+  height: 100px;
+
+  font-size: 18px;
+  font-weight: 700;
+  color: $base-400;
+
+  border: 3px dashed $base-100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+
+  &--active {
+    transition: all 0.3s;
+    transform: scale(1.1);
+    font-size: 24px;
+  }
 }
