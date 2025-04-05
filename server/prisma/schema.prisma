@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -20,26 +15,51 @@ model User {
   name  String
   lastname String
 
-  projects Project[] @relation("project_author")
+  project_author_id Project[] @relation("project_author")
 
-  Project Project[]
+  project  Project[]
+
+  tasks Task[]
 }
 
 model Project {
   id Int @default(autoincrement()) @id
   name String
 
-  //tasks Task[]
+
   author User @relation("project_author",fields: [author_id], references: [id])
   author_id Int
   
+  tasks Task[] 
   users User[]
 
 }
 
 model Task {
-  asd Int @id
+  id Int @default(autoincrement()) @id
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [project_id], references: [id])
+  project_id Int
+
+  title String 
+  description String
+  users User[]
+  due_date DateTime 
+  priority Boolean @default(false)
+
+}
+
+
+model SubTask {
+  id Int @default(autoincrement()) @id
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String 
+  description String
+  due_date DateTime 
 }
