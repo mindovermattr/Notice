@@ -1,0 +1,24 @@
+.item {
+  border: 1px solid $base-100;
+  &__header {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  &__button {
+    color: $base-300;
+    padding: 8px 12px;
+    border-radius: 32px;
+    border: 1px solid $base-100;
+    background-color: $base-0;
+  }
+  &__title {
+    font-weight: 700;
+    font-size: 18px;
+  }
+  &__counter {
+    color: $base-300;
+    font-weight: 700;
+  }
+}
