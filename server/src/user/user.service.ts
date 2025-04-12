@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -15,9 +16,10 @@ export class UserService {
     if (user)
       throw new HttpException('User already exist', HttpStatus.BAD_REQUEST);
 
+    const hashPassword = await bcrypt.hash(createUserDto.password, 12);
     const data = {
       email: createUserDto.email,
-      password: createUserDto.password,
+      password: hashPassword,
       name: createUserDto.name,
       lastname: createUserDto.lastname,
     };
