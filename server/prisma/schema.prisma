@@ -19,6 +19,8 @@ model User {
   project  Project[]
   
   tasks Task[]
+
+  role ProjectUserRoles[]
 }
 
 model Project {
@@ -31,7 +33,29 @@ model Project {
   tasks Task[] 
   users User[]
 
+  user_roles ProjectUserRoles[]
 }
+model Roles{
+  id Int @default(autoincrement()) @id
+  role_name String @unique
+
+  project_user ProjectUserRoles[]
+}
+
+model ProjectUserRoles{
+  id Int @default(autoincrement()) @id
+  
+  user User @relation(fields: [user_id], references: [id],onDelete: Cascade)
+  user_id Int
+
+  project Project @relation(fields: [project_id], references: [id],onDelete: Cascade)
+  project_id Int
+
+  role_name Roles @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id Int
+}
+
+
 
 model Task {
   id Int @default(autoincrement()) @id
@@ -48,6 +72,8 @@ model Task {
   due_date DateTime 
   priority Boolean @default(false)
 
+  subtasks SubTask[]
+
 }
 
 
@@ -60,4 +86,7 @@ model SubTask {
   title String 
   description String
   due_date DateTime 
+
+  task Task @relation(fields: [task_id], references: [id])
+  task_id Int
 }

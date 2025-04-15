@@ -1,4 +1,5 @@
-import { User } from '@prisma/client';
+import { User } from "@prisma/client";
+import { Role } from "src/enums/roles";
 
 export class UserEntity implements User {
   id: number;
@@ -6,4 +7,6 @@ export class UserEntity implements User {
   password: string;
   name: string;
   lastname: string;
+
+  role: Role;
 }
