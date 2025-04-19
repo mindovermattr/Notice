@@ -7,26 +7,44 @@ import { UpdateTaskDto } from "./dto/update-task.dto";
 export class TaskService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createTaskDto: CreateTaskDto, projectId: number) {
-    const project = await this.prismaService.task.findFirst({
+  async create(
+    createTaskDto: CreateTaskDto,
+    projectId: number,
+    listId: number,
+  ) {
+    const task = await this.prismaService.task.findFirst({
       where: {
         project_id: projectId,
       },
     });
 
-    if (!project)
+    if (!task)
       throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
 
     const data = await this.prismaService.task.create({
       data: {
+        task_list: {
+          connect: {
+            id: listId,
+          },
+        },
+        project: {
+          connect: {
+            id: projectId,
+          },
+        },
         description: createTaskDto.description,
         due_date: createTaskDto.dueDate,
         title: createTaskDto.title,
-        project_id: projectId,
         priority: false,
       },
       include: {
         subtasks: true,
+      },
+      omit: {
+        createdAt: true,
+        updatedAt: true,
+        project_id: false,
       },
     });
     return data;

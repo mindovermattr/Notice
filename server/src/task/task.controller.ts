@@ -13,7 +13,7 @@ import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 import { TaskService } from "./task.service";
 
-@Controller("project/:projectId/tasks")
+@Controller("project/:projectId/tasklist/:listId/tasks")
 @UseGuards(JwtAuthGuard)
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
@@ -22,8 +22,9 @@ export class TaskController {
   create(
     @Body() createTaskDto: CreateTaskDto,
     @Param("projectId") projectId: string,
+    @Param("listId") listId : string,
   ) {
-    return this.taskService.create(createTaskDto, +projectId);
+    return this.taskService.create(createTaskDto, +projectId, +listId);
   }
 
   @Get()

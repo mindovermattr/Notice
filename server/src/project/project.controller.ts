@@ -12,6 +12,7 @@ import {
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 import { Roles } from "src/decorators/roles";
 import { Role } from "src/enums/roles";
+import { RolesGuard } from "src/guards/role.guards";
 import { CreateProjectDto } from "./dto/create-project.dto";
 import { UpdateProjectDto } from "./dto/update-project.dto";
 import { ProjectService } from "./project.service";
@@ -27,22 +28,31 @@ export class ProjectController {
     return this.projectService.create(createProjectDto, +req.user.id);
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Get("all")
+  getAll() {
+    return this.projectService.getAll();
+  }
+
+  @Get(":projId")
+  findOne(@Param("projId") id: string) {
     return this.projectService.findOne(+id);
   }
 
-  @Patch(":id")
+  @Patch(":projId")
   @Roles(Role.USER)
-  update(@Param("id") id: string, @Body() updateProjectDto: UpdateProjectDto) {
+  update(
+    @Param("projId") id: string,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
     return this.projectService.update(+id, updateProjectDto);
   }
 
   //@Patch(":id")
 
-  @Delete(":id")
+  @Delete(":projId")
   @Roles(Role.ADMIN)
-  remove(@Param("id") id: string) {
+  @UseGuards(RolesGuard)
+  remove(@Param("projId") id: string) {
     return this.projectService.remove(+id);
   }
 }

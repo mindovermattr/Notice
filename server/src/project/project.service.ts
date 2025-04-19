@@ -32,6 +32,16 @@ export class ProjectService {
     return data;
   }
 
+  async getAll() {
+    const data = await this.prismaService.project.findMany({
+      include: {
+        user_roles: true,
+      },
+    });
+
+    return data;
+  }
+
   async findAllByUserId(id: number) {
     const data = await this.prismaService.project.findMany({
       where: {
@@ -67,6 +77,15 @@ export class ProjectService {
   }
 
   async remove(id: number) {
+    const proj = await this.prismaService.project.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!proj)
+      throw new HttpException("Project does not exist", HttpStatus.BAD_REQUEST);
+
     const data = await this.prismaService.project.delete({
       where: {
         id,
@@ -75,9 +94,9 @@ export class ProjectService {
     return data;
   }
 
-  async addUser(userId: number, id: number) {
+  async addUser(id: number, email: string) {
     const user = await this.prismaService.user.findFirst({
-      where: { id: userId },
+      where: { email },
       include: {
         role: {
           where: {
@@ -95,17 +114,20 @@ export class ProjectService {
         where: { id },
         data: {
           users: {
-            connect: { id: userId },
+            connect: { id: user.id },
           },
         },
       });
+
       const existingRole = await prisma.projectUserRoles.findFirst({
         where: {
-          user_id: userId,
+          user_id: user.id,
           project_id: id,
         },
       });
+
       let role = null;
+
       if (existingRole) {
         role = await prisma.projectUserRoles.update({
           where: { id: existingRole.id },
@@ -116,7 +138,7 @@ export class ProjectService {
       } else {
         role = await prisma.projectUserRoles.create({
           data: {
-            user: { connect: { id: userId } },
+            user: { connect: { id: user.id } },
             project: { connect: { id: proj.id } },
             role_name: { connect: { id: Role.USER } },
           },
@@ -126,6 +148,28 @@ export class ProjectService {
       return [proj, role];
     });
 
+    return data;
+  }
+
+  async removeUser(id: number, userId: number) {
+    const user = await this.prismaService.projectUserRoles.findFirst({
+      where: {
+        project_id: id,
+        user_id: userId,
+      },
+    });
+
+    if (!user)
+      throw new HttpException(
+        "User doesn't exist in project",
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const data = await this.prismaService.projectUserRoles.delete({
+      where: {
+        id: user.id,
+      },
+    });
     return data;
   }
 }

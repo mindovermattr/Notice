@@ -55,6 +55,22 @@ model ProjectUserRoles{
   role_id Int
 }
 
+model ListTasks {
+  id Int @default(autoincrement()) @id
+  title String
+  tasks Task[]
+
+  history ListHistory @relation("ListToHistory", fields: [history_id], references: [id], onDelete: Cascade)
+  history_id Int @unique
+}
+
+model ListHistory{
+  id Int @default(autoincrement()) @id
+  history String[]
+  list ListTasks? @relation("ListToHistory")
+ 
+}
+
 
 
 model Task {
@@ -63,7 +79,7 @@ model Task {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  project Project @relation(fields: [project_id], references: [id])
+  project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
   project_id Int
 
   title String 
@@ -71,6 +87,9 @@ model Task {
   users User[]
   due_date DateTime 
   priority Boolean @default(false)
+
+  task_list ListTasks @relation(fields: [task_list_id], references: [id])
+  task_list_id Int
 
   subtasks SubTask[]
 
@@ -86,7 +105,9 @@ model SubTask {
   title String 
   description String
   due_date DateTime 
+  priority Boolean @default(false)
 
   task Task @relation(fields: [task_id], references: [id])
   task_id Int
 }
+
