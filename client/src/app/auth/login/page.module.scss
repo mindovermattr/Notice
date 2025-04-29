@@ -1,0 +1,46 @@
+.form {
+  display: flex;
+  color: white;
+  padding: 18px;
+
+  background-color: hsl(240 10% 3.9%);
+  border: 1px solid $base-300;
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 280px;
+  }
+  &__input {
+    width: 280px;
+    padding: 8px 12px;
+
+    border: 1px solid $base-400;
+  }
+  &__button {
+    color: $primary-50;
+    background-color: $primary-600;
+
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px;
+
+    align-self: stretch;
+  }
+
+  &__error {
+    font-size: 12px;
+  }
+}

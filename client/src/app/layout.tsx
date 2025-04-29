@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../assets/global.scss";
+import StoreProvider from "./StoreProvider";
 
 const geistMono = Inter({
   variable: "--font-inter",
@@ -19,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${geistMono.variable}`}>{children}</body>
+      <body className={`${geistMono.variable}`}>
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   );
 }
