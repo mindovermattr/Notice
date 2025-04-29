@@ -72,7 +72,6 @@ model ListHistory{
 }
 
 
-
 model Task {
   id Int @default(autoincrement()) @id
 
@@ -84,13 +83,13 @@ model Task {
 
   title String 
   description String
-  users User[]
   due_date DateTime 
   priority Boolean @default(false)
 
   task_list ListTasks @relation(fields: [task_list_id], references: [id])
   task_list_id Int
 
+  users User[]
   subtasks SubTask[]
 
 }

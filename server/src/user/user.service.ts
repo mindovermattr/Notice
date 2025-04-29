@@ -23,9 +23,14 @@ export class UserService {
       name: createUserDto.name,
       lastname: createUserDto.lastname,
     };
-    return await this.prismaService.user.create({
+
+    const createdUser = await this.prismaService.user.create({
       data,
+      omit: {
+        password: true,
+      },
     });
+    return createdUser;
   }
 
   async findOne(email: string) {

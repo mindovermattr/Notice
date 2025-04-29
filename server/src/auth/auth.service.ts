@@ -3,6 +3,8 @@ import { JwtService } from "@nestjs/jwt";
 import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "src/prisma.service";
+import { CreateUserDto } from "src/user/dto/create-user.dto";
+// import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { UserService } from "src/user/user.service";
 
 @Injectable()
@@ -15,19 +17,23 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.userService.findOne(email);
+    if (!user) throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch)
-      throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+      throw new HttpException("Password incorrect", HttpStatus.BAD_REQUEST);
 
     return user;
   }
 
   async login(reqUser: User) {
-    
     const user = await this.prismaService.user.findFirst({
       where: {
         id: reqUser.id,
+      },
+      omit: {
+        password: true,
       },
     });
 
@@ -35,5 +41,12 @@ export class AuthService {
       user,
       token: this.jwtService.sign({ id: user.id, email: user.email }),
     };
+  }
+
+  async registration(createUserDto: CreateUserDto) {
+    const user = await this.userService.create(createUserDto);
+    const token = this.jwtService.sign({ id: user.id, email: user.email });
+
+    return { user, token };
   }
 }
