@@ -1,7 +1,6 @@
 .form {
-  display: flex;
   color: white;
-  padding: 18px;
+  padding: 18px 48px;
 
   background-color: hsl(240 10% 3.9%);
   border: 1px solid $base-300;
@@ -21,14 +20,9 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    max-width: 280px;
+    max-width: 320px;
   }
-  &__input {
-    width: 280px;
-    padding: 8px 12px;
 
-    border: 1px solid $base-400;
-  }
   &__button {
     color: $primary-50;
     background-color: $primary-600;
@@ -40,7 +34,22 @@
     align-self: stretch;
   }
 
-  &__error {
-    font-size: 12px;
+  &__registration {
+    text-align: center;
+    color: $base-400;
+  }
+  &__link {
+    text-decoration: underline;
+  }
+}
+
+.surname {
+  display: flex;
+  gap: 8px;
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 180px;
   }
 }

@@ -2,8 +2,9 @@ import { TLoginSchema, TRegistrationSchema } from "@/@schemes/auth.schema";
 import {
   login as loginApi,
   registration as registrationApi,
+  TRespAuth,
 } from "@/api/auth.api";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
 export const loginThunk = createAsyncThunk(
@@ -48,6 +49,10 @@ const userSlice = createSlice({
       state.token = null;
       state.user = null;
     },
+    login: (state, action: PayloadAction<TRespAuth>) => {
+      state.token = action.payload.token;
+      state.user = action.payload.user;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -62,7 +67,9 @@ const userSlice = createSlice({
           statusCode: number;
         };
         if (Array.isArray(error.message)) state.error = error.message;
-        else state.error.push(error.message);
+        else if (!state.error.includes(error.message)) {
+          state.error.push(error.message);
+        }
       })
       .addCase(registrationThunk.fulfilled, (state, action) => {
         state.token = action.payload.token;
@@ -75,11 +82,13 @@ const userSlice = createSlice({
           statusCode: number;
         };
         if (Array.isArray(error.message)) state.error = error.message;
-        else state.error.push(error.message);
+        else if (!state.error.includes(error.message)) {
+          state.error.push(error.message);
+        }
       });
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { logout, login } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -1,4 +1,4 @@
-import { getToken } from "@/utils/token.utils";
+import { getUser } from "@/utils/user.utils";
 import axios from "axios";
 
 const apiUrl = "http://localhost:3001/api";
@@ -12,7 +12,7 @@ export const protectedInstance = axios.create({
 });
 
 protectedInstance.interceptors.request.use((config) => {
-  const token = getToken();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  const user = getUser();
+  if (user) config.headers.Authorization = `Bearer ${user.token}`;
   return config;
 });

@@ -1,10 +1,14 @@
 "use client";
 import { loginSchema, TLoginSchema } from "@/@schemes/auth.schema";
+import Input from "@/Components/Input/Input";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loginThunk } from "@/store/slices/user.slice";
+import { setUser } from "@/utils/user.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import styles from "./page.module.scss";
+import styles from "../page.module.scss";
 
 export default function LoginPage() {
   const {
@@ -16,40 +20,49 @@ export default function LoginPage() {
   });
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
+  const router = useRouter();
 
   const submitHandler = async (data: TLoginSchema) => {
-    const resp = await dispatch(loginThunk(data));
-    console.log(user, resp);
+    try {
+      const resp = await dispatch(loginThunk(data)).unwrap();
+      setUser(resp);
+      router.push("/Dashboard/Kanban");
+    } catch (error) {
+      return;
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(submitHandler)} className={styles.form}>
       <legend className={styles.form__title}>Вход</legend>
       <fieldset className={styles.form__fields}>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
+        <Input
           {...register("email")}
-          className={styles.form__input}
+          label="Почта"
+          id="email"
+          placeholder="Почта"
           type="email"
-          placeholder="example@mail.ru"
+          error={errors.email?.message}
         />
-        {errors.email && (
-          <p className={`${styles.form__error} `}>{errors.email.message}</p>
-        )}
-        <label htmlFor="password">Пароль</label>
-        <input
-          id="password"
+        <Input
           {...register("password")}
-          className={styles.form__input}
-          type="password"
+          label="Пароль"
+          id="password"
           placeholder="Пароль"
+          type="password"
+          error={errors.password?.message}
         />
-        {errors.password && (
-          <p className={styles.form__error}>{errors.password.message}</p>
-        )}
       </fieldset>
       <button className={styles.form__button}>Войти</button>
+      <div>
+        <p className={styles.form__registration}>У вас еще нет аккаунта?</p>
+        <p className={styles.form__registration}>
+          <Link className={styles.form__link} href="registration">
+            Зарегистрироваться?
+          </Link>
+        </p>
+      </div>
+      {!!user.error.length && user.error.map((el) => <p>{el}</p>)}
     </form>
   );
 }

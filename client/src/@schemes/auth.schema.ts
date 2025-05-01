@@ -28,8 +28,9 @@ export const registrationSchema = loginSchema
       .string()
       .min(5, "Подтверждение пароля должно состоять минимум из 5 символов"),
   })
-  .refine((obj) => obj.password !== obj.confirmPassword, {
+  .refine((obj) => obj.password === obj.confirmPassword, {
     message: "Пароли должны совпадать",
+    path: ["confirmPassword"],
   });
 
 export type TLoginSchema = z.infer<typeof loginSchema>;
