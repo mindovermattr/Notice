@@ -10,7 +10,7 @@ const Board = ({
 }>) => {
   return (
     <section className={styles.board}>
-      <aside className={`${styles.aside} ${styles.border}`}>sidebar</aside>
+      {/* <aside className={`${styles.aside} ${styles.border}`}>sidebar</aside> */}
       <Sidebar className={styles.border} />
       <div className={`${styles["board__tasks-wrapper"]} ${styles.border}`}>
         <Tab className={styles.board__tab} />

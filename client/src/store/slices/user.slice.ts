@@ -49,7 +49,7 @@ const userSlice = createSlice({
       state.token = null;
       state.user = null;
     },
-    login: (state, action: PayloadAction<TRespAuth>) => {
+    setUser: (state, action: PayloadAction<TRespAuth>) => {
       state.token = action.payload.token;
       state.user = action.payload.user;
     },
@@ -89,6 +89,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, login } = userSlice.actions;
+export const { logout, setUser } = userSlice.actions;
 
 export default userSlice.reducer;

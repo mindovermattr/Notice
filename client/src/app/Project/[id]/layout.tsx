@@ -1,7 +1,7 @@
 "use client";
 import Board from "@/Components/Board/Board";
 import Header from "@/Components/Header/Header";
-import { login } from "@/store/slices/user.slice";
+import { setUser } from "@/store/slices/user.slice";
 import { getUser } from "@/utils/user.utils";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
@@ -9,14 +9,19 @@ import { useDispatch } from "react-redux";
 
 const Layout = ({
   children,
+  params,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode,
+  params : {
+    id:string
+  }
 }>) => {
+  console.log(params);
   const dispatch = useDispatch();
   useEffect(() => {
     const user = getUser();
     if (!user) redirect("/auth/login");
-    dispatch(login(user));
+    dispatch(setUser(user));
   }, []);
   return (
     <>

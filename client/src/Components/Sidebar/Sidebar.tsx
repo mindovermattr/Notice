@@ -1,5 +1,6 @@
 import { useAppSelector } from "@/store/hooks";
 import { ComponentProps } from "react";
+import Button from "../Button/Button";
 import styles from "./Sidebar.module.scss";
 
 type ISidebar = ComponentProps<"aside">;
@@ -16,6 +17,12 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
           >{`${user.user?.name} ${user.user?.lastname}`}</h3>
           <p className={styles.profile__email}>{user.user?.email}</p>
         </div>
+      </div>
+      <ul>
+        <li>proj1</li>
+      </ul>
+      <div>
+        <Button>Создать новый проект</Button>
       </div>
     </aside>
   );
