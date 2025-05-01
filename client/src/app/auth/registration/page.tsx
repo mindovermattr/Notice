@@ -3,6 +3,7 @@ import {
   registrationSchema,
   TRegistrationSchema,
 } from "@/@schemes/auth.schema";
+import Button from "@/Components/Button/Button";
 import Input from "@/Components/Input/Input";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { registrationThunk } from "@/store/slices/user.slice";
@@ -84,7 +85,7 @@ export default function LoginPage() {
           error={errors.confirmPassword?.message}
         />
       </fieldset>
-      <button className={styles.form__button}>Зарегистрироваться</button>
+      <Button className={styles.form__button}>Зарегистрироваться</Button>
       <div>
         <p className={styles.form__registration}>У вас уже есть аккаунт?</p>
         <p className={styles.form__registration}>

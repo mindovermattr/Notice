@@ -1,0 +1,16 @@
+.button {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px;
+  &--contained {
+    color: $primary-50;
+    background-color: $primary-600;
+  }
+  &--outlined {
+    color: $primary-50;
+    border: 1px solid $primary-600;
+  }
+  &--text {
+    color: $primary-50;
+  }
+}

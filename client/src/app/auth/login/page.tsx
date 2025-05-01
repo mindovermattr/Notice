@@ -1,5 +1,6 @@
 "use client";
 import { loginSchema, TLoginSchema } from "@/@schemes/auth.schema";
+import Button from "@/Components/Button/Button";
 import Input from "@/Components/Input/Input";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loginThunk } from "@/store/slices/user.slice";
@@ -53,7 +54,7 @@ export default function LoginPage() {
           error={errors.password?.message}
         />
       </fieldset>
-      <button className={styles.form__button}>Войти</button>
+      <Button className={styles.form__button}>Войти</Button>
       <div>
         <p className={styles.form__registration}>У вас еще нет аккаунта?</p>
         <p className={styles.form__registration}>
