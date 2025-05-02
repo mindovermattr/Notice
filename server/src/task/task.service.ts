@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { EStatus } from "src/enums/status";
 import { PrismaService } from "src/prisma.service";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
@@ -33,6 +34,7 @@ export class TaskService {
             id: projectId,
           },
         },
+        status: EStatus.TODO,
         description: createTaskDto.description,
         due_date: createTaskDto.dueDate,
         title: createTaskDto.title,

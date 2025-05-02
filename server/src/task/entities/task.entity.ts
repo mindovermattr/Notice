@@ -10,4 +10,5 @@ export class Task implements TaskScheme {
   project_id: number;
   title: string;
   updatedAt: Date;
+  status: string;
 }

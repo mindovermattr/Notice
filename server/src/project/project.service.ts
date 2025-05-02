@@ -47,9 +47,6 @@ export class ProjectService {
           },
         },
       },
-      include: {
-        user_roles: true,
-      },
     });
 
     if (!data)
@@ -114,7 +111,14 @@ export class ProjectService {
     if (!data)
       throw new HttpException("Проект не найден", HttpStatus.NOT_FOUND);
 
-    return data;
+    const returnData = {
+      id: data.id,
+      name: data.name,
+      author_id: data.author_id,
+      user: data.users,
+      role: data.user_roles[0].role_name.role_name,
+    };
+    return returnData;
   }
 
   async update(id: number, updateProjectDto: UpdateProjectDto) {

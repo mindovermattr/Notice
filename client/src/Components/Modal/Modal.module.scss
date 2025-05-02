@@ -1,0 +1,27 @@
+.modal {
+  position: relative;
+  padding: 48px;
+
+  &-wrapper {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    top: 0;
+    color: white;
+
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  &__close {
+    top: 0;
+    right: 0;
+  }
+  &__button {
+    width: 24px;
+    height: 24px;
+  }
+}
