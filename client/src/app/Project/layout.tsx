@@ -11,12 +11,11 @@ const Layout = ({
   children,
   params,
 }: Readonly<{
-  children: React.ReactNode,
-  params : {
-    id:string
-  }
+  children: React.ReactNode;
+  params: {
+    id: string;
+  };
 }>) => {
-  console.log(params);
   const dispatch = useDispatch();
   useEffect(() => {
     const user = getUser();

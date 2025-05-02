@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { User } from "@prisma/client";
 import { Role } from "src/enums/roles";
 import { PrismaService } from "src/prisma.service";
 import { CreateProjectDto } from "./dto/create-project.dto";
@@ -8,15 +9,20 @@ import { UpdateProjectDto } from "./dto/update-project.dto";
 export class ProjectService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createProjectDto: CreateProjectDto, authorId: number) {
+  async create(createProjectDto: CreateProjectDto, user: User) {
     const data = await this.prismaService.project.create({
       data: {
         name: createProjectDto.name,
-        author_id: authorId,
+        author_id: user.id,
         user_roles: {
           create: {
             role_id: Role.ADMIN,
-            user_id: authorId,
+            user_id: user.id,
+          },
+        },
+        users: {
+          connect: {
+            id: user.id,
           },
         },
       },
@@ -32,12 +38,25 @@ export class ProjectService {
     return data;
   }
 
-  async getAll() {
+  async getAll(user: User) {
     const data = await this.prismaService.project.findMany({
+      where: {
+        users: {
+          every: {
+            id: user.id,
+          },
+        },
+      },
       include: {
         user_roles: true,
       },
     });
+
+    if (!data)
+      throw new HttpException(
+        "У этого пользователя нет проектов",
+        HttpStatus.NOT_FOUND,
+      );
 
     return data;
   }
@@ -57,12 +76,44 @@ export class ProjectService {
     return data;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, user: User) {
     const data = await this.prismaService.project.findFirst({
       where: {
         id,
+        users: {
+          some: {
+            id: {
+              equals: +user.id,
+            },
+          },
+        },
+      },
+      include: {
+        users: {
+          omit: {
+            password: true,
+          },
+        },
+        user_roles: {
+          where: {
+            user_id: +user.id,
+          },
+          include: {
+            role_name: true,
+          },
+          omit: {
+            id: true,
+            project_id: true,
+            user_id: true,
+            role_id: true,
+          },
+        },
       },
     });
+
+    if (!data)
+      throw new HttpException("Проект не найден", HttpStatus.NOT_FOUND);
+
     return data;
   }
 

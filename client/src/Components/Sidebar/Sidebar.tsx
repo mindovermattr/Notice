@@ -18,11 +18,14 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
           <p className={styles.profile__email}>{user.user?.email}</p>
         </div>
       </div>
-      <ul>
-        <li>proj1</li>
-      </ul>
-      <div>
-        <Button>Создать новый проект</Button>
+      <div className={styles.list}>
+        <h3 className={styles.list__title}>Ваши проекты:</h3>
+        <ul>
+          <li>proj1</li>
+        </ul>
+      </div>
+      <div className={styles["sidebar__button-wrapper"]}>
+        <Button className={styles.sidebar__button}>Создать новый проект</Button>
       </div>
     </aside>
   );

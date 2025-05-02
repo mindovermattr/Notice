@@ -25,17 +25,17 @@ export class ProjectController {
   @Post()
   @Roles(Role.USER, Role.ADMIN)
   create(@Body() createProjectDto: CreateProjectDto, @Req() req) {
-    return this.projectService.create(createProjectDto, +req.user.id);
+    return this.projectService.create(createProjectDto, req.user);
   }
 
   @Get("all")
-  getAll() {
-    return this.projectService.getAll();
+  getAll(@Req() req) {
+    return this.projectService.getAll(req.user);
   }
 
   @Get(":projId")
-  findOne(@Param("projId") id: string) {
-    return this.projectService.findOne(+id);
+  findOne(@Param("projId") id: string, @Req() req) {
+    return this.projectService.findOne(+id, req.user);
   }
 
   @Patch(":projId")

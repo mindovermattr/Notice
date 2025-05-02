@@ -3,6 +3,17 @@
   flex-direction: column;
   flex-basis: 320px;
   padding: 32px;
+  gap: 12px;
+
+  &__button {
+    width: 100%;
+    &-wrapper {
+      flex-grow: 1;
+      display: flex;
+      justify-items: flex-end;
+      align-items: end;
+    }
+  }
 }
 
 .profile {
@@ -29,5 +40,19 @@
   &__email {
     font-weight: 700;
     color: $base-300;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  padding: 8px;
+  &__title {
+    color: $base-700;
+    font-weight: 700;
+    font-size: 18px;
+    border-bottom: 1px solid $base-300;
   }
 }

@@ -11,7 +11,7 @@ const Tab = ({ className, ...props }: TTab) => {
   return (
     <header className={`${styles.tab} ${className}`} {...props}>
       <Link
-        href={"/Dashboard/Tasklist"}
+        href={"Tasklist"}
         className={`${styles.tab__option} ${
           selectedSegment === "Tasklist" ? styles["tab__option--selected"] : ""
         }`}
@@ -20,7 +20,7 @@ const Tab = ({ className, ...props }: TTab) => {
         <p className={styles.tab__text}>Task List</p>
       </Link>
       <Link
-        href={"/Dashboard/Kanban"}
+        href={"Kanban"}
         className={`${styles.tab__option} ${
           selectedSegment === "Kanban" ? styles["tab__option--selected"] : ""
         }`}
@@ -33,7 +33,7 @@ const Tab = ({ className, ...props }: TTab) => {
         />
         <p className={styles.tab__text}>Boards</p>
       </Link>
-      <Link href={"#"} className={styles.tab__option}>
+      <Link href={"Gantt"} className={styles.tab__option}>
         <Image width={24} height={24} src="/icons/gantt.svg" alt="board-icon" />
         <p className={styles.tab__text}>Gantt</p>
       </Link>

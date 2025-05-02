@@ -1,11 +1,20 @@
+"use client";
+import { useRouter } from "next/navigation";
+import { use, useEffect } from "react";
+
 const page = ({
   params,
 }: {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }) => {
-  return <div>page</div>;
+  const router = useRouter();
+  const { id } = use(params);
+  useEffect(() => {
+    router.push(`${id}/Dashboard/Kanban`);
+  }, []);
+  return <div>page </div>;
 };
 
 export default page;
