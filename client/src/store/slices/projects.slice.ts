@@ -1,15 +1,27 @@
-import { TLoginSchema } from "@/@schemes/auth.schema";
 import { TProject } from "@/@types/TProject";
+import { createProject, getAllProjects } from "@/api/project.api";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { AxiosError } from "axios";
 
 export const getProjectsThunk = createAsyncThunk(
   "projects/getAll",
-  async (loginPayload: TLoginSchema, { rejectWithValue }) => {
-    // const response = await loginApi(loginPayload);
-    // if (response instanceof AxiosError) {
-    //   return rejectWithValue(response.response!.data);
-    // }
-    // return response.data;
+  async (_, { rejectWithValue }) => {
+    const response = await getAllProjects();
+    if (response instanceof AxiosError) {
+      return rejectWithValue(response.response!.data);
+    }
+    return response.data;
+  }
+);
+
+export const createProjectThunk = createAsyncThunk(
+  "projects/create",
+  async ({ name }: { name: string }, { rejectWithValue }) => {
+    const response = await createProject({ name });
+    if (response instanceof AxiosError) {
+      return rejectWithValue(response.response!.data);
+    }
+    return response.data;
   }
 );
 
@@ -29,20 +41,33 @@ const projectsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(createProjectThunk.fulfilled, (state, action) => {
+        state.projects.push(action.payload);
+        state.error = [];
+      })
+      .addCase(createProjectThunk.rejected, (state, action) => {
+        const error = action.payload as {
+          message: string | string[];
+          statusCode: number;
+        };
+        if (Array.isArray(error.message)) state.error = error.message;
+        else if (!state.error.includes(error.message)) {
+          state.error.push(error.message);
+        }
+      })
       .addCase(getProjectsThunk.fulfilled, (state, action) => {
-        // state.token = action.payload.token;
-        // state.user = action.payload.user;
-        // state.error = [];
+        state.projects = action.payload;
+        state.error = [];
       })
       .addCase(getProjectsThunk.rejected, (state, action) => {
-        // const error = action.payload as {
-        //   message: string | string[];
-        //   statusCode: number;
-        // };
-        // if (Array.isArray(error.message)) state.error = error.message;
-        // else if (!state.error.includes(error.message)) {
-        //   state.error.push(error.message);
-        // }
+        const error = action.payload as {
+          message: string | string[];
+          statusCode: number;
+        };
+        if (Array.isArray(error.message)) state.error = error.message;
+        else if (!state.error.includes(error.message)) {
+          state.error.push(error.message);
+        }
       });
   },
 });

@@ -56,3 +56,19 @@
     border-bottom: 1px solid $base-300;
   }
 }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

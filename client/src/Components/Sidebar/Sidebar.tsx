@@ -1,6 +1,7 @@
 import { useAppSelector } from "@/store/hooks";
 import { ComponentProps, useState } from "react";
 import Button from "../Button/Button";
+import Input from "../Input/Input";
 import Modal from "../Modal/Modal";
 import styles from "./Sidebar.module.scss";
 
@@ -14,6 +15,8 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
   const onClose = () => {
     setIsOpen(false);
   };
+
+  
 
   return (
     <aside className={`${styles.sidebar} ${className}`} {...props}>
@@ -43,7 +46,14 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
         </Button>
       </div>
       <Modal isOpen={isOpen} onClose={onClose}>
-        <h3>ewqqweqweqw</h3>
+        <form className={styles.form}>
+          <fieldset className={styles.form__fieldset}>
+            <div className={styles.form__field}>
+              <Input label="Имя проекта" placeholder="Имя" />
+            </div>
+          </fieldset>
+          <Button>Создать проект</Button>
+        </form>
       </Modal>
     </aside>
   );

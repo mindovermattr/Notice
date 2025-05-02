@@ -1,6 +1,7 @@
 .modal {
   position: relative;
   padding: 48px;
+  background-color: $base-0;
 
   &-wrapper {
     width: 100vw;
@@ -17,8 +18,9 @@
     background-color: rgba(0, 0, 0, 0.5);
   }
   &__close {
-    top: 0;
-    right: 0;
+    position: absolute;
+    top: 12px;
+    right: 12px;
   }
   &__button {
     width: 24px;

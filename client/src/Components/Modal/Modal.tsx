@@ -1,4 +1,5 @@
-import { ComponentPropsWithoutRef } from "react";
+"use client";
+import { ComponentPropsWithoutRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import styles from "./Modal.module.scss";
 
@@ -8,8 +9,6 @@ type TModalProps = {
   closeOnOverlayClick?: boolean;
 } & ComponentPropsWithoutRef<"div">;
 
-const portalElement = document.getElementById("portal");
-
 const Modal = ({
   children,
   isOpen,
@@ -17,14 +16,14 @@ const Modal = ({
   onClose,
   ...props
 }: TModalProps) => {
-  //   useEffect(() => {
-  //     if (isOpen) document.body.style.overflow = "hidden";
-  //     else document.body.style.overflow = "";
+  useEffect(() => {
+    if (isOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
 
-  //     return () => {
-  //       document.body.style.overflow = "";
-  //     };
-  //   }, [isOpen]);
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (closeOnOverlayClick && e.target === e.currentTarget) {
@@ -36,7 +35,7 @@ const Modal = ({
     <>
       {isOpen && (
         <div className={styles["modal-wrapper"]} onClick={handleOverlayClick}>
-          <div className={styles.modal}>
+          <div className={styles.modal} {...props}>
             <button onClick={onClose} className={styles.modal__close}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -54,12 +53,6 @@ const Modal = ({
               </svg>
             </button>
             {children}
-            <div>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ipsa
-              deleniti placeat quisquam nisi non in incidunt corporis pariatur
-              voluptate quia illum eius, sunt suscipit expedita qui quas quod
-              facere mollitia?
-            </div>
           </div>
         </div>
       )}
