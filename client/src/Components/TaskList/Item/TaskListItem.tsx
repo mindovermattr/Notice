@@ -8,6 +8,7 @@ const TaskListItem = () => {
         <h3 className={styles.item__title}>Space Tasks 1</h3>
         <p className={styles.item__counter}> 12 Tasks</p>
       </div>
+      <div>asd</div>
     </section>
   );
 };

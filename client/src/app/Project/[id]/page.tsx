@@ -12,7 +12,7 @@ const page = ({
   const router = useRouter();
   const { id } = use(params);
   useEffect(() => {
-    router.push(`${id}/Dashboard/Kanban`);
+    router.push(`${id}/Dashboard/Tasklist`);
   }, []);
   return <div>й</div>;
 };

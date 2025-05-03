@@ -13,25 +13,23 @@ export class TaskService {
     projectId: number,
     listId: number,
   ) {
-    const task = await this.prismaService.task.findFirst({
+    const list = await this.prismaService.listTasks.findFirst({
       where: {
-        project_id: projectId,
+        id: listId,
       },
     });
 
-    if (!task)
-      throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
+    if (!list)
+      throw new HttpException(
+        "Списка задач не существует",
+        HttpStatus.BAD_REQUEST,
+      );
 
     const data = await this.prismaService.task.create({
       data: {
         task_list: {
           connect: {
             id: listId,
-          },
-        },
-        project: {
-          connect: {
-            id: projectId,
           },
         },
         status: EStatus.TODO,
@@ -46,16 +44,21 @@ export class TaskService {
       omit: {
         createdAt: true,
         updatedAt: true,
-        project_id: false,
       },
     });
+
+    if (!data)
+      throw new HttpException(
+        "Ошибка при создании задачи",
+        HttpStatus.BAD_REQUEST,
+      );
     return data;
   }
 
-  async findAll(projectId: number) {
-    const project = await this.prismaService.task.findFirst({
+  async findAll(projectId: number, listId: number) {
+    const project = await this.prismaService.project.findFirst({
       where: {
-        project_id: projectId,
+        id: projectId,
       },
     });
 
@@ -64,7 +67,7 @@ export class TaskService {
 
     const data = await this.prismaService.task.findMany({
       where: {
-        project_id: projectId,
+        task_list_id: listId,
       },
       include: {
         subtasks: true,
@@ -73,10 +76,10 @@ export class TaskService {
     return data;
   }
 
-  async findOne(projectId: number, id: number) {
-    const project = await this.prismaService.task.findFirst({
+  async findOne(projectId: number, id: number, listId: number) {
+    const project = await this.prismaService.project.findFirst({
       where: {
-        project_id: projectId,
+        id: projectId,
       },
     });
 
@@ -85,7 +88,7 @@ export class TaskService {
 
     const data = await this.prismaService.task.findFirst({
       where: {
-        project_id: projectId,
+        task_list_id: listId,
         id,
       },
       include: {
@@ -96,44 +99,40 @@ export class TaskService {
   }
 
   async update(projectId: number, id: number, updateTaskDto: UpdateTaskDto) {
-    const project = await this.prismaService.task.findFirst({
-      where: {
-        project_id: projectId,
-      },
-    });
-
-    if (!project)
-      throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
-
-    const data = await this.prismaService.task.update({
-      data: { ...updateTaskDto },
-      where: {
-        project_id: projectId,
-        id,
-      },
-      include: {
-        subtasks: true,
-      },
-    });
-    return data;
+    // const project = await this.prismaService.task.findFirst({
+    //   where: {
+    //     project_id: projectId,
+    //   },
+    // });
+    // if (!project)
+    //   throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
+    // const data = await this.prismaService.task.update({
+    //   data: { ...updateTaskDto },
+    //   where: {
+    //     project_id: projectId,
+    //     id,
+    //   },
+    //   include: {
+    //     subtasks: true,
+    //   },
+    // });
+    // return data;
   }
 
   async remove(projectId: number, id: number) {
-    const project = await this.prismaService.task.findFirst({
-      where: {
-        project_id: projectId,
-      },
-    });
-
-    if (!project)
-      throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
-
-    const data = await this.prismaService.task.delete({
-      where: {
-        project_id: projectId,
-        id,
-      },
-    });
-    return data;
+    // const project = await this.prismaService.task.findFirst({
+    //   where: {
+    //     project_id: projectId,
+    //   },
+    // });
+    // if (!project)
+    //   throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
+    // const data = await this.prismaService.task.delete({
+    //   where: {
+    //     project_id: projectId,
+    //     id,
+    //   },
+    // });
+    // return data;
   }
 }

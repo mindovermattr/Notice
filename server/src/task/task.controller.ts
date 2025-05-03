@@ -22,19 +22,26 @@ export class TaskController {
   create(
     @Body() createTaskDto: CreateTaskDto,
     @Param("projectId") projectId: string,
-    @Param("listId") listId : string,
+    @Param("listId") listId: string,
   ) {
     return this.taskService.create(createTaskDto, +projectId, +listId);
   }
 
   @Get()
-  findAll(@Param("projectId") projectId: string) {
-    return this.taskService.findAll(+projectId);
+  findAll(
+    @Param("projectId") projectId: string,
+    @Param("listId") listId: string,
+  ) {
+    return this.taskService.findAll(+projectId, +listId);
   }
 
   @Get(":id")
-  findOne(@Param("projectId") projectId: string, @Param("id") id: string) {
-    return this.taskService.findOne(+projectId, +id);
+  findOne(
+    @Param("projectId") projectId: string,
+    @Param("id") id: string,
+    @Param("listId") listId: string,
+  ) {
+    return this.taskService.findOne(+projectId, +id, +listId);
   }
 
   @Patch(":id")

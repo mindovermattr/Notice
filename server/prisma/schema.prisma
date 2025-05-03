@@ -30,7 +30,7 @@ model Project {
   author User @relation("project_author",fields: [author_id], references: [id])
   author_id Int
   
-  tasks Task[] 
+  listTasks ListTasks[] 
   users User[]
 
   user_roles ProjectUserRoles[]
@@ -62,6 +62,9 @@ model ListTasks {
 
   history ListHistory @relation("ListToHistory", fields: [history_id], references: [id], onDelete: Cascade)
   history_id Int @unique
+
+   project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  project_id Int
 }
 
 model ListHistory{
@@ -77,9 +80,6 @@ model Task {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
-  project_id Int
 
   title String 
   description String

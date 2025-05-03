@@ -7,7 +7,6 @@ export class Task implements TaskScheme {
   due_date: Date;
   id: number;
   priority: boolean;
-  project_id: number;
   title: string;
   updatedAt: Date;
   status: string;

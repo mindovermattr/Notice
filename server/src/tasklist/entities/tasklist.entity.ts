@@ -4,4 +4,5 @@ export class Tasklist implements ListTasks {
   history_id: number;
   id: number;
   title: string;
+  project_id: number;
 }

@@ -6,7 +6,7 @@ import { CreateTasklistDto } from "./dto/create-tasklist.dto";
 export class TasklistService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createTasklistDto: CreateTasklistDto) {
+  async create(createTasklistDto: CreateTasklistDto, projId: number) {
     const data = await this.prismaService.listTasks.create({
       data: {
         title: createTasklistDto.title,
@@ -15,6 +15,11 @@ export class TasklistService {
             history: [
               `Карточка была создана ${new Date().toLocaleDateString()}`,
             ],
+          },
+        },
+        project: {
+          connect: {
+            id: projId,
           },
         },
       },
@@ -26,10 +31,8 @@ export class TasklistService {
   async findAllById(id: number) {
     const data = await this.prismaService.listTasks.findMany({
       where: {
-        tasks: {
-          every: {
-            project_id: id,
-          },
+        project: {
+          id,
         },
       },
       include: {
