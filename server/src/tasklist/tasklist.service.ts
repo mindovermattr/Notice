@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
 import { CreateTasklistDto } from "./dto/create-tasklist.dto";
 
@@ -40,6 +40,10 @@ export class TasklistService {
         history: true,
       },
     });
+
+    if (!data)
+      throw new HttpException("Проект не найден", HttpStatus.NOT_FOUND);
+
     return data;
   }
 

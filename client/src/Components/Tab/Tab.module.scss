@@ -3,6 +3,7 @@
   justify-content: space-between;
   &__links {
     display: flex;
+    gap: 12px;
   }
   &__option {
     display: flex;
@@ -12,7 +13,7 @@
     &--selected {
       background-color: rgb(15, 18, 25);
       background-color: $base-0;
-      border: 1px solid $base-100;
+      outline: 1px solid $base-100;
       border-radius: 6px;
       & .tab__text {
         color: $base-600;
@@ -23,4 +24,10 @@
     color: $base-400;
     font-weight: 700;
   }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }

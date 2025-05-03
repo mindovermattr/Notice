@@ -63,6 +63,10 @@ export const KanbanColumn = ({ columnColor, title }: TKanbanColumn) => {
         <KanbanItem title="title 1" onDragEnter={() => ""} />
         <KanbanItem title="title 2" onDragEnter={() => ""} />
         <KanbanItem title="title 3" onDragEnter={() => ""} />
+        <KanbanItem title="title 3" onDragEnter={() => ""} />
+        <KanbanItem title="title 3" onDragEnter={() => ""} />
+        <KanbanItem title="title 3" onDragEnter={() => ""} />
+        <KanbanItem title="title 3" onDragEnter={() => ""} />
       </div>
     </section>
   );

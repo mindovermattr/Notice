@@ -19,7 +19,7 @@ export class TasklistController {
     return this.tasklistService.create(createTasklistDto, +id);
   }
 
-  @Get("")
+  @Get()
   findAll(@Param("projId") id: string) {
     return this.tasklistService.findAllById(+id);
   }

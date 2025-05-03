@@ -27,7 +27,7 @@ export default function LoginPage() {
     try {
       const resp = await dispatch(loginThunk(data)).unwrap();
       setUser(resp);
-      router.push("/Dashboard/Kanban");
+      router.push("/Project");
     } catch (error) {
       return;
     }
