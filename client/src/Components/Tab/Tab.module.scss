@@ -1,4 +1,9 @@
 .tab {
+  display: flex;
+  justify-content: space-between;
+  &__links {
+    display: flex;
+  }
   &__option {
     display: flex;
     gap: 12px;
