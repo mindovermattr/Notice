@@ -55,7 +55,7 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
       <div className={styles["list-wrapper"]}>
         <h3 className={styles.list__title}>Ваши проекты:</h3>
         <ul className={styles.list}>
-          {projects.projects.map((el) => (
+          {projects.projects.map((el, idx) => (
             <li key={el.id}>
               <Link
                 className={`${styles.list__link} ${
@@ -63,9 +63,9 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
                     ? styles["list__link--selected"]
                     : ""
                 }`}
-                href={`/Project/${el.id}/Dashboard/Kanban`}
+                href={`/Project/${el.id}/Dashboard/Tasklist`}
               >
-                {el.name}
+                {`${idx + 1}. ${el.name}`}
               </Link>
             </li>
           ))}
