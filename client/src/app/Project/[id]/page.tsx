@@ -14,7 +14,7 @@ const page = ({
   useEffect(() => {
     router.push(`${id}/Dashboard/Kanban`);
   }, []);
-  return <div>page </div>;
+  return <div>й</div>;
 };
 
 export default page;

@@ -47,13 +47,38 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-
   padding: 8px;
+  &-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   &__title {
     color: $base-700;
     font-weight: 700;
     font-size: 18px;
     border-bottom: 1px solid $base-300;
+  }
+
+  &__link {
+    display: block;
+
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+
+    padding: 4px;
+    border: 1px solid $primary-600;
+    border-radius: 4px;
+
+    transition: all 0.5s;
+    &:hover {
+      background: $primary-600;
+    }
+    &--selected {
+      background: $primary-600;
+    }
   }
 }
 

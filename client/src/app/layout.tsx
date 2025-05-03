@@ -22,7 +22,6 @@ export default function RootLayout({
     <html lang="ru">
       <body className={`${geistMono.variable}`}>
         <StoreProvider>{children}</StoreProvider>
-        {/* <div id="portal"></div> */}
       </body>
     </html>
   );

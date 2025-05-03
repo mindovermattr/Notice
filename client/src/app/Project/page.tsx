@@ -1,11 +1,5 @@
-const page = ({
-  params,
-}: {
-  params: {
-    id: string;
-  };
-}) => {
-  return <div>page </div>;
+const page = () => {
+  return <div>Выберите проект </div>;
 };
 
 export default page;

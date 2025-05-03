@@ -6,13 +6,12 @@ const Board = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
+ 
 }>) => {
   return (
     <section className={styles.board}>
-      {/* <aside className={`${styles.aside} ${styles.border}`}>sidebar</aside> */}
-      <Sidebar className={styles.border} />
+      <Sidebar  className={styles.border} />
       <div className={`${styles["board__tasks-wrapper"]} ${styles.border}`}>
-       
         {children}
       </div>
     </section>

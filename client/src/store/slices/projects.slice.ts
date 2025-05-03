@@ -1,6 +1,6 @@
 import { TProject } from "@/@types/TProject";
 import { createProject, getAllProjects } from "@/api/project.api";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
 export const getProjectsThunk = createAsyncThunk(
@@ -16,7 +16,7 @@ export const getProjectsThunk = createAsyncThunk(
 
 export const createProjectThunk = createAsyncThunk(
   "projects/create",
-  async ({ name }: { name: string }, { rejectWithValue }) => {
+  async (name: string, { rejectWithValue }) => {
     const response = await createProject({ name });
     if (response instanceof AxiosError) {
       return rejectWithValue(response.response!.data);
@@ -27,18 +27,28 @@ export const createProjectThunk = createAsyncThunk(
 
 type TInitialState = {
   projects: TProject[];
+  selectedProject: TProject | null;
   error: string[];
 };
 
 const initialState: TInitialState = {
   projects: [],
+  selectedProject: null,
   error: [],
 };
 
 const projectsSlice = createSlice({
   name: "projects",
   initialState,
-  reducers: {},
+  reducers: {
+    selectProject: (state, action: PayloadAction<{ id: number }>) => {
+      const selectedProject = state.projects.find(
+        (el) => el.id === action.payload.id
+      );
+      if (!selectedProject) return;
+      state.selectedProject = selectedProject;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createProjectThunk.fulfilled, (state, action) => {
@@ -72,6 +82,6 @@ const projectsSlice = createSlice({
   },
 });
 
-export const {} = projectsSlice.actions;
+export const { selectProject } = projectsSlice.actions;
 
 export default projectsSlice.reducer;

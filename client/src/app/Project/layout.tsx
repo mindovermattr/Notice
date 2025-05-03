@@ -4,7 +4,7 @@ import Header from "@/Components/Header/Header";
 import { setUser } from "@/store/slices/user.slice";
 import { getUser } from "@/utils/user.utils";
 import { redirect } from "next/navigation";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 const Layout = ({
@@ -12,9 +12,9 @@ const Layout = ({
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }>) => {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -22,10 +22,11 @@ const Layout = ({
     if (!user) redirect("/auth/login");
     dispatch(setUser(user));
   }, []);
+
   return (
     <>
       <Header />
-      <Board>{children}</Board>
+      <Board >{children}</Board>
     </>
   );
 };

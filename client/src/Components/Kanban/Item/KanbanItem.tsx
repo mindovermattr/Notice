@@ -48,7 +48,6 @@ const KanbanItem = ({ onDragEnter, title, ...props }: TKanbanItemProps) => {
   return (
     <div
       draggable
-      // todo
       onDrop={onDragEnd}
       onDragStart={(e) => onDragStart(e)}
       onDragLeave={(e) => onDragLeave(e)}
