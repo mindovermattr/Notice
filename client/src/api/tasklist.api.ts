@@ -1,9 +1,13 @@
+import { TTasklist } from "@/@types/TTasklist";
 import { AxiosError } from "axios";
 import { protectedInstance } from "./instance";
 
 export const getTaskLists = async (projectId: number) => {
   try {
-    const resp = await protectedInstance(``);
+    const resp = await protectedInstance.get<TTasklist[]>(
+      `project/${projectId}/tasklist`
+    );
+    return resp;
   } catch (error: unknown) {
     return error as AxiosError<{
       message: string | string[];
@@ -12,12 +16,15 @@ export const getTaskLists = async (projectId: number) => {
   }
 };
 
-export const createTaskLists = async (projectId: number, title: string) => {
+export const createTaskList = async (projectId: number, title: string) => {
   try {
-    const resp = await protectedInstance.post(`project/${projectId}/tasklist`, {
-      title,
-    });
-    
+    const resp = await protectedInstance.post<TTasklist>(
+      `project/${projectId}/tasklist`,
+      {
+        title,
+      }
+    );
+    return resp;
   } catch (error: unknown) {
     return error as AxiosError<{
       message: string | string[];

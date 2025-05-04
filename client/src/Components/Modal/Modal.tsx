@@ -31,33 +31,38 @@ const Modal = ({
     }
   };
 
-  return createPortal(
-    <>
-      {isOpen && (
-        <div className={styles["modal-wrapper"]} onClick={handleOverlayClick}>
-          <div className={styles.modal} {...props}>
-            <button onClick={onClose} className={styles.modal__close}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className={styles.modal__button}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            {children}
+  const isMounted = typeof window === "object";
+
+  return (
+    isMounted &&
+    createPortal(
+      <>
+        {isOpen && (
+          <div className={styles["modal-wrapper"]} onClick={handleOverlayClick}>
+            <div className={styles.modal} {...props}>
+              <button onClick={onClose} className={styles.modal__close}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={styles.modal__button}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              {children}
+            </div>
           </div>
-        </div>
-      )}
-    </>,
-    document.body
+        )}
+      </>,
+      document.body
+    )
   );
 };
 

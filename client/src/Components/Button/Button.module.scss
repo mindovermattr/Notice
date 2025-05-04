@@ -15,8 +15,9 @@
     }
   }
   &--outlined {
+    border-radius: 4px;
     color: $primary-50;
-    border: 1px solid $primary-600;
+    border: 1px solid $base-100;
   }
   &--text {
     color: $primary-50;

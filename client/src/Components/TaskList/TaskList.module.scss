@@ -1,3 +1,78 @@
-.tasklist{
-    padding: 24px;
+.item {
+  border: 1px solid $base-100;
+  background-color: $base-0;
+  margin: 24px;
+  &__header {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid $base-100;
+  }
+  &__button {
+    color: $base-300;
+    padding: 8px 12px;
+    border-radius: 32px;
+    border: 1px solid $base-100;
+    background-color: $base-0;
+  }
+  &__title {
+    font-weight: 700;
+    font-size: 18px;
+  }
+  &__counter {
+    color: $base-300;
+    font-weight: 700;
+  }
+  &__add {
+    margin-top: 24px;
+    width: 100%;
+    padding: 12px 0;
+  }
+}
+
+.list {
+  border: 1px solid $base-100;
+  font-weight: 700;
+  color: $base-600;
+  &-wrapper {
+    margin: 24px;
+  }
+  &__header {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 25px;
+    padding: 15px;
+    justify-items: center;
+  }
+  &__title {
+    grid-column: span 4;
+    justify-self: start;
+  }
+  &__date {
+    grid-column: span 3;
+  }
+  &__assignee {
+    grid-column: span 2;
+  }
+}
+
+.task {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 25px;
+  justify-items: center;
+  border: 1px solid $base-100;
+  padding: 15px;
+
+  &__title {
+    grid-column: span 4;
+    justify-self: start;
+  }
+  &__date {
+    grid-column: span 3;
+  }
+  &__assignee {
+    grid-column: span 2;
+  }
 }

@@ -1,25 +1,21 @@
-.item {
+
+
+.task {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 25px;
+  justify-items: center;
   border: 1px solid $base-100;
-  &__header {
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    border-bottom: 1px solid $base-100;
-  }
-  &__button {
-    color: $base-300;
-    padding: 8px 12px;
-    border-radius: 32px;
-    border: 1px solid $base-100;
-    background-color: $base-0;
-  }
+  padding: 15px;
+
   &__title {
-    font-weight: 700;
-    font-size: 18px;
+    grid-column: span 4;
+    justify-self: start;
   }
-  &__counter {
-    color: $base-300;
-    font-weight: 700;
+  &__date {
+    grid-column: span 3;
+  }
+  &__assignee {
+    grid-column: span 2;
   }
 }

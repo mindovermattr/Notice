@@ -23,6 +23,9 @@ export class TasklistService {
           },
         },
       },
+      include: {
+        history: true,
+      },
     });
 
     return data;

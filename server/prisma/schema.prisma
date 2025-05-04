@@ -63,7 +63,7 @@ model ListTasks {
   history ListHistory @relation("ListToHistory", fields: [history_id], references: [id], onDelete: Cascade)
   history_id Int @unique
 
-   project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
   project_id Int
 }
 

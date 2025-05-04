@@ -1,15 +1,20 @@
+import FlagIcon from "@/Components/Icons/FlagIcon";
 import styles from "./TaskListItem.module.scss";
 
 const TaskListItem = () => {
   return (
-    <section className={styles.item}>
-      <div className={styles.item__header}>
-        <button className={styles.item__button}>&#8593;</button>
-        <h3 className={styles.item__title}>Space Tasks 1</h3>
-        <p className={styles.item__counter}> 12 Tasks</p>
+    <div className={styles.body}>
+      <div className={`${styles.task}`}>
+        <input type="checkbox" readOnly={true} />
+        <h4 className={styles.task__title}>Task title</h4>
+        <p>qwe</p>
+        <p className={styles.task__assignee}>asd</p>
+        <p className={styles.task__date}>12.02.2025; 12:00</p>
+        <button>
+          <FlagIcon />
+        </button>
       </div>
-      <div>asd</div>
-    </section>
+    </div>
   );
 };
 

@@ -1,13 +1,11 @@
 import { ETaskStatus } from "./Enums/ETaskStatus";
 
 export type TTask = {
-  id: string;
+  id: number;
   title: string;
   description: string;
+  due_date: string;
+  priority: boolean;
   status: ETaskStatus;
-  taskName: "space task";
-  subtasks: [];
-  attachments: 6;
-  imgUrl: "";
-  expiredAt: "12-12-2025";
+  subtasks: []; //todo
 };
