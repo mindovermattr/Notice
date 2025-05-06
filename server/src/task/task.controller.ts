@@ -18,18 +18,7 @@ import { TaskService } from "./task.service";
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
-  @Post("tasklist/:listId/tasks")
-  create(
-    @Body() createTaskDto: CreateTaskDto,
-    @Param("listId") listId: string,
-  ) {
-    return this.taskService.create(createTaskDto, +listId);
-  }
-
-  @Get("tasklist/:listId/tasks")
-  findAll(@Param("listId") listId: string) {
-    return this.taskService.findAll(+listId);
-  }
+ 
 
   @Get("tasks/:id")
   findOne(@Param("id") id: string) {
