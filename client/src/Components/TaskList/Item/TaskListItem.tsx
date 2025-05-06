@@ -7,7 +7,6 @@ type TTaskListItemProps = TTask;
 
 const TaskListItem = ({ title, priority, due_date }: TTaskListItemProps) => {
   const formattedDate = formatDate(due_date);
-
   return (
     <div className={styles.body}>
       <div className={`${styles.task}`}>

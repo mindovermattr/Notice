@@ -32,3 +32,17 @@ export const createTaskList = async (projectId: number, title: string) => {
     }>;
   }
 };
+
+export const deleteTaskList = async (listId: number) => {
+  try {
+    const resp = await protectedInstance.delete<TTasklist>(
+      `tasklist/${listId}`
+    );
+    return resp;
+  } catch (error: unknown) {
+    return error as AxiosError<{
+      message: string | string[];
+      statusCode: number;
+    }>;
+  }
+};

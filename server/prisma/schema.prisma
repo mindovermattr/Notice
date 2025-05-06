@@ -86,7 +86,7 @@ model Task {
   due_date DateTime 
   priority Boolean @default(false)
 
-  task_list ListTasks @relation(fields: [task_list_id], references: [id])
+  task_list ListTasks @relation(fields: [task_list_id], references: [id], onDelete: Cascade)
   task_list_id Int
 
   assign_user User? @relation(fields: [assign_id], references: [id], onDelete: Cascade)
@@ -108,7 +108,7 @@ model SubTask {
   due_date DateTime 
   priority Boolean @default(false)
 
-  task Task @relation(fields: [task_id], references: [id])
+  task Task @relation(fields: [task_id], references: [id], onDelete: Cascade)
   task_id Int
 }
 

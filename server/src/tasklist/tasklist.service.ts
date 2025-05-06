@@ -67,7 +67,16 @@ export class TasklistService {
   //   return `This action updates a #${id} tasklist`;
   // }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} tasklist`;
-  // }
+  async remove(id: number) {
+    const data = await this.prismaService.listTasks.delete({
+      where: {
+        id,
+      },
+    });
+
+    if (!data)
+      throw new HttpException("Список не найден", HttpStatus.NOT_FOUND);
+
+    return data;
+  }
 }

@@ -8,11 +8,7 @@ import { UpdateTaskDto } from "./dto/update-task.dto";
 export class TaskService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(
-    createTaskDto: CreateTaskDto,
-    projectId: number,
-    listId: number,
-  ) {
+  async create(createTaskDto: CreateTaskDto, listId: number) {
     const list = await this.prismaService.listTasks.findFirst({
       where: {
         id: listId,
@@ -55,16 +51,7 @@ export class TaskService {
     return data;
   }
 
-  async findAll(projectId: number, listId: number) {
-    const project = await this.prismaService.project.findFirst({
-      where: {
-        id: projectId,
-      },
-    });
-
-    if (!project)
-      throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
-
+  async findAll(listId: number) {
     const data = await this.prismaService.task.findMany({
       where: {
         task_list_id: listId,
@@ -73,22 +60,16 @@ export class TaskService {
         subtasks: true,
       },
     });
+
+    if (!data)
+      throw new HttpException("Список не найден", HttpStatus.BAD_REQUEST);
+
     return data;
   }
 
-  async findOne(projectId: number, id: number, listId: number) {
-    const project = await this.prismaService.project.findFirst({
-      where: {
-        id: projectId,
-      },
-    });
-
-    if (!project)
-      throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
-
+  async findOne(id: number) {
     const data = await this.prismaService.task.findFirst({
       where: {
-        task_list_id: listId,
         id,
       },
       include: {
@@ -98,7 +79,7 @@ export class TaskService {
     return data;
   }
 
-  async update(projectId: number, id: number, updateTaskDto: UpdateTaskDto) {
+  async update(id: number, updateTaskDto: UpdateTaskDto) {
     // const project = await this.prismaService.task.findFirst({
     //   where: {
     //     project_id: projectId,
