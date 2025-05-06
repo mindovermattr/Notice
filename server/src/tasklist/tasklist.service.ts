@@ -24,6 +24,11 @@ export class TasklistService {
         },
       },
       include: {
+        tasks: {
+          include: {
+            assign_user: true,
+          },
+        },
         history: true,
       },
     });
@@ -39,7 +44,11 @@ export class TasklistService {
         },
       },
       include: {
-        tasks: true,
+        tasks: {
+          include: {
+            assign_user: true,
+          },
+        },
         history: true,
       },
     });

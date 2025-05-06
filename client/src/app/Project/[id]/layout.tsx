@@ -1,6 +1,7 @@
 "use client";
 import { useAppDispatch } from "@/store/hooks";
 import { getProjectsThunk, selectProject } from "@/store/slices/projects.slice";
+import { getTasklistsThunk } from "@/store/slices/tasklists.slice";
 import { ReactNode, use, useEffect } from "react";
 
 const layout = ({
@@ -17,9 +18,11 @@ const layout = ({
     const getProject = async () => {
       await dispatch(getProjectsThunk());
       dispatch(selectProject({ id: +id }));
+      await dispatch(getTasklistsThunk({ id: +id }));
     };
     getProject();
   }, []);
+
   return <>{children}</>;
 };
 

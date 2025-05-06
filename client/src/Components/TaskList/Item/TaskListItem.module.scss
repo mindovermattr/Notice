@@ -1,5 +1,3 @@
-
-
 .task {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -11,6 +9,7 @@
   &__title {
     grid-column: span 4;
     justify-self: start;
+    text-transform: capitalize;
   }
   &__date {
     grid-column: span 3;

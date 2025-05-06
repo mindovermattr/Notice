@@ -89,7 +89,8 @@ model Task {
   task_list ListTasks @relation(fields: [task_list_id], references: [id])
   task_list_id Int
 
-  users User[]
+  assign_user User? @relation(fields: [assign_id], references: [id], onDelete: Cascade)
+  assign_id Int?
   subtasks SubTask[]
 
   status  String

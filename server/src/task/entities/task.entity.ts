@@ -10,4 +10,6 @@ export class Task implements TaskScheme {
   title: string;
   updatedAt: Date;
   status: string;
+  assign_id: number;
+  
 }

@@ -1,4 +1,5 @@
 import { TLoginSchema, TRegistrationSchema } from "@/@schemes/auth.schema";
+import { ERoles } from "@/@types/Enums/ERoles";
 import {
   login as loginApi,
   registration as registrationApi,
@@ -32,12 +33,14 @@ export const registrationThunk = createAsyncThunk(
 type TInitialState = {
   user: TUser | null;
   token: string | null;
+  role: ERoles | null;
   error: string[];
 };
 
 const initialState: TInitialState = {
   user: null,
   token: null,
+  role: null,
   error: [],
 };
 
@@ -53,6 +56,7 @@ const userSlice = createSlice({
       state.token = action.payload.token;
       state.user = action.payload.user;
     },
+    setRole: (state, action) => {},
   },
   extraReducers: (builder) => {
     builder

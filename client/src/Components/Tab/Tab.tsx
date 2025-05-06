@@ -1,7 +1,9 @@
+import { useAppDispatch } from "@/store/hooks";
+import { createTasklistThunk } from "@/store/slices/tasklists.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
+import { useParams, useSelectedLayoutSegment } from "next/navigation";
 import { HTMLProps, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -20,6 +22,8 @@ const schema = z
 
 const Tab = ({ className, ...props }: TTab) => {
   const selectedSegment = useSelectedLayoutSegment();
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -36,7 +40,7 @@ const Tab = ({ className, ...props }: TTab) => {
   });
 
   const submitHandler = async (data: z.infer<typeof schema>) => {
-    //await dispatch(createProjectThunk(data.title));
+    await dispatch(createTasklistThunk({ id: +id, title: data.title }));
     setIsOpen(false);
   };
 
