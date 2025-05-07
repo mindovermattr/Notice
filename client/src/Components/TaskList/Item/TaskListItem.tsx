@@ -16,6 +16,8 @@ const TaskListItem = ({
   title,
   priority,
   due_date,
+  assign_user,
+  subtasks,
 }: TTaskListItemProps) => {
   const formattedDate = formatDate(due_date);
   const dispatch = useAppDispatch();
@@ -26,17 +28,17 @@ const TaskListItem = ({
   };
 
   return (
-    <div className={styles.body}>
-      <div className={`${styles.task}`}>
-        <input type="checkbox" readOnly={true} disabled />
-        <h4 className={styles.task__title}>{title}</h4>
-        <p>qwe</p>
-        <p className={styles.task__assignee}>{}</p>
-        <p className={styles.task__date}>{formattedDate}</p>
-        <button onClick={togglePriority}>
-          <FlagIcon selected={priority} />
-        </button>
-      </div>
+    <div className={`${styles.task}`}>
+      <input type="checkbox" readOnly={true} disabled />
+      <h4 className={styles.task__title}>{title}</h4>
+      <p>{subtasks.length}</p>
+      <p className={styles.task__assignee}>
+        {assign_user ? assign_user.name : "-"}
+      </p>
+      <p className={styles.task__date}>{formattedDate}</p>
+      <button onClick={togglePriority}>
+        <FlagIcon selected={priority} />
+      </button>
     </div>
   );
 };

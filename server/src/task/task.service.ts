@@ -28,6 +28,11 @@ export class TaskService {
             id: listId,
           },
         },
+        assign_user: {
+          connect: {
+            id: createTaskDto.userId,
+          },
+        },
         status: EStatus.TODO,
         description: createTaskDto.description,
         due_date: createTaskDto.dueDate,
@@ -63,7 +68,6 @@ export class TaskService {
       omit: {
         task_list_id: true,
       },
-      
     });
 
     if (!data)

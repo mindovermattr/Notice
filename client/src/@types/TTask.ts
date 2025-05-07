@@ -8,4 +8,5 @@ export type TTask = {
   priority: boolean;
   status: ETaskStatus;
   subtasks: []; //todo
+  assign_user?: TUser;
 };

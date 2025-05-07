@@ -1,5 +1,4 @@
 import { TTask } from "@/@types/TTask";
-import { TTasklist } from "@/@types/TTasklist";
 import { AxiosError } from "axios";
 import { protectedInstance } from "./instance";
 
@@ -8,7 +7,7 @@ export const createTask = async (
   task: { title: string; description: string; dueDate: string }
 ) => {
   try {
-    const resp = await protectedInstance.post<TTasklist>(
+    const resp = await protectedInstance.post<TTask>(
       `/tasklist/${listId}/tasks`,
       task
     );
@@ -22,10 +21,7 @@ export const createTask = async (
 };
 export const patchTask = async (taskId: number, task: Partial<TTask>) => {
   try {
-    const resp = await protectedInstance.patch<TTasklist>(
-      `/tasks/${taskId}`,
-      task
-    );
+    const resp = await protectedInstance.patch<TTask>(`/tasks/${taskId}`, task);
     return resp;
   } catch (error: unknown) {
     return error as AxiosError<{

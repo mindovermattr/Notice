@@ -2,6 +2,7 @@ import { Transform, Type } from "class-transformer";
 import {
   IsBoolean,
   IsDate,
+  IsNumber,
   IsString,
   MinDate,
   MinLength,
@@ -26,4 +27,7 @@ export class CreateTaskDto {
   @IsString()
   @Transform(({ value }) => value.trim())
   title: string;
+
+  @IsNumber()
+  userId: number;
 }

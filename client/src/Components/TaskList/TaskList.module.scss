@@ -37,6 +37,16 @@
   color: $base-600;
   &-wrapper {
     margin: 24px;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+    &--active {
+      grid-template-rows: 1fr;
+    }
+    & > * {
+      min-height: 0;
+      overflow: hidden;
+    }
   }
   &__header {
     display: grid;
@@ -45,26 +55,6 @@
     padding: 15px;
     justify-items: center;
   }
-  &__title {
-    grid-column: span 4;
-    justify-self: start;
-  }
-  &__date {
-    grid-column: span 3;
-  }
-  &__assignee {
-    grid-column: span 2;
-  }
-}
-
-.task {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 25px;
-  justify-items: center;
-  border: 1px solid $base-100;
-  padding: 15px;
-
   &__title {
     grid-column: span 4;
     justify-self: start;
@@ -88,7 +78,12 @@
     padding: 4px 8px;
     border-radius: 4px;
   }
-  &__item {
-    border: 1px solid red;
+
+  &__description {
+    border: 1px solid $base-300;
+    padding: 4px 8px;
+    resize: none;
+    height: 100px;
+    width: 400px;
   }
 }

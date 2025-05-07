@@ -4,10 +4,12 @@ import styles from "./Input.module.scss";
 type TInputProps = {
   label?: string;
   error?: string | undefined;
+  as?: "input" | "textarea";
 } & HTMLProps<HTMLInputElement>;
 
 const Input = forwardRef<HTMLInputElement, TInputProps>(
-  ({ id, label, error, className, ...props }, ref) => {
+  ({ id, label, error, className, as = "input", ...props }, ref) => {
+    const Component = as;
     return (
       <>
         {label && (
@@ -18,7 +20,7 @@ const Input = forwardRef<HTMLInputElement, TInputProps>(
             {label}
           </label>
         )}
-        <input
+        <Component
           ref={ref}
           id={id}
           className={`${styles.input} ${className}`}

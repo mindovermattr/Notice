@@ -47,6 +47,7 @@ export class TasklistService {
         tasks: {
           include: {
             assign_user: true,
+            subtasks: true,
           },
           orderBy: {
             id: "asc",
