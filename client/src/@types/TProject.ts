@@ -4,9 +4,9 @@ export type TProject = {
   id: number;
   name: string;
   author_id: number;
+  users: TUser[];
 };
 
 export type TProjectApi = TProject & {
-  user: TUser[];
   role: ERoles;
 };

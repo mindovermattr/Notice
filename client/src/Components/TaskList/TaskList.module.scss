@@ -76,3 +76,19 @@
     grid-column: span 2;
   }
 }
+
+.form {
+  &__fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  &__select {
+    border: 1px solid $base-300;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  &__item {
+    border: 1px solid red;
+  }
+}

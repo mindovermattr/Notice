@@ -58,7 +58,12 @@ export class TaskService {
       },
       include: {
         subtasks: true,
+        assign_user: true,
       },
+      omit: {
+        task_list_id: true,
+      },
+      
     });
 
     if (!data)
@@ -80,24 +85,27 @@ export class TaskService {
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {
-    // const project = await this.prismaService.task.findFirst({
-    //   where: {
-    //     project_id: projectId,
-    //   },
-    // });
-    // if (!project)
-    //   throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
-    // const data = await this.prismaService.task.update({
-    //   data: { ...updateTaskDto },
-    //   where: {
-    //     project_id: projectId,
-    //     id,
-    //   },
-    //   include: {
-    //     subtasks: true,
-    //   },
-    // });
-    // return data;
+    const task = await this.prismaService.task.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!task)
+      throw new HttpException(
+        "Такой задачи не существует",
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const data = await this.prismaService.task.update({
+      data: { ...updateTaskDto },
+      where: {
+        id,
+      },
+      include: {
+        subtasks: true,
+      },
+    });
+    return data;
   }
 
   async remove(projectId: number, id: number) {

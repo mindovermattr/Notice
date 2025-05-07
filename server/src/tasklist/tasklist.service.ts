@@ -48,6 +48,9 @@ export class TasklistService {
           include: {
             assign_user: true,
           },
+          orderBy: {
+            id: "asc",
+          },
         },
         history: true,
       },

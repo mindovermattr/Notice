@@ -18,8 +18,6 @@ import { TaskService } from "./task.service";
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
- 
-
   @Get("tasks/:id")
   findOne(@Param("id") id: string) {
     return this.taskService.findOne(+id);

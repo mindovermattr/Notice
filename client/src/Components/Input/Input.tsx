@@ -2,7 +2,7 @@ import { forwardRef, HTMLProps } from "react";
 import styles from "./Input.module.scss";
 
 type TInputProps = {
-  label: string;
+  label?: string;
   error?: string | undefined;
 } & HTMLProps<HTMLInputElement>;
 
@@ -10,12 +10,14 @@ const Input = forwardRef<HTMLInputElement, TInputProps>(
   ({ id, label, error, className, ...props }, ref) => {
     return (
       <>
-        <label
-          className={`${styles.label} ${error ? styles["label--error"] : ""}`}
-          htmlFor={id}
-        >
-          {label}
-        </label>
+        {label && (
+          <label
+            className={`${styles.label} ${error ? styles["label--error"] : ""}`}
+            htmlFor={id}
+          >
+            {label}
+          </label>
+        )}
         <input
           ref={ref}
           id={id}

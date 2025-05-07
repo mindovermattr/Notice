@@ -4,7 +4,7 @@ import {
   deleteTaskList,
   getTaskLists,
 } from "@/api/tasklist.api";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
 export const getTasklistsThunk = createAsyncThunk(
@@ -57,7 +57,22 @@ const initialState: TInitialState = {
 const tasklistSlice = createSlice({
   name: "tasklists",
   initialState,
-  reducers: {},
+  reducers: {
+    patchPriority: (
+      state,
+      action: PayloadAction<{ id: number; listId: number; priority: boolean }>
+    ) => {
+      const listIndex = state.tasklists.findIndex(
+        (el) => el.id === action.payload.listId
+      );
+      const taskIndex = state.tasklists[listIndex].tasks.findIndex(
+        (el) => el.id === action.payload.id
+      );
+
+      state.tasklists[listIndex].tasks[taskIndex].priority =
+        action.payload.priority;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getTasklistsThunk.fulfilled, (state, action) => {
@@ -108,6 +123,6 @@ const tasklistSlice = createSlice({
   },
 });
 
-export const {} = tasklistSlice.actions;
+export const { patchPriority } = tasklistSlice.actions;
 
 export default tasklistSlice.reducer;

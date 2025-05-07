@@ -48,13 +48,12 @@ export class ProjectService {
         },
       },
       include: {
-        user_roles: {
-          include: {
-            role_name: true,
+        users: {
+          omit: {
+            password: true,
           },
         },
       },
-      
     });
 
     if (!data)
@@ -62,8 +61,6 @@ export class ProjectService {
         "У этого пользователя нет проектов",
         HttpStatus.NOT_FOUND,
       );
-
-     
 
     return data;
   }

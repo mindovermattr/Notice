@@ -14,7 +14,7 @@ const page = ({
   useEffect(() => {
     router.push(`${id}/Dashboard/Tasklist`);
   }, []);
-  return <div>й</div>;
+  return <div></div>;
 };
 
 export default page;
