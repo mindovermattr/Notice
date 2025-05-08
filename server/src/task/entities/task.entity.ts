@@ -11,5 +11,5 @@ export class Task implements TaskScheme {
   updatedAt: Date;
   status: string;
   assign_id: number;
-  
+  isCompleted: boolean;
 }

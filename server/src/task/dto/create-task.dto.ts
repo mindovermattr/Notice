@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsDate,
   IsNumber,
+  IsOptional,
   IsString,
   MinDate,
   MinLength,
@@ -30,4 +31,8 @@ export class CreateTaskDto {
 
   @IsNumber()
   userId: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isCompleted?: boolean;
 }

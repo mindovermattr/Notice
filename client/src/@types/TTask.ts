@@ -9,4 +9,5 @@ export type TTask = {
   status: ETaskStatus;
   subtasks: []; //todo
   assign_user?: TUser;
+  isCompleted: boolean;
 };

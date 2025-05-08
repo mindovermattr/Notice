@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Создаем схему валидации с Zod
 const dateSchema = z
   .string()
   .regex(/^\d{2}.\d{2}.\d{4}$/, {
@@ -10,24 +9,55 @@ const dateSchema = z
     (value) => {
       const [day, month, year] = value.split(".").map(Number);
 
-      // Проверяем корректность даты
       if (month < 1 || month > 12) return false;
 
       const date = new Date(year, month - 1, day);
-      return (
+      const isValidDate =
         date.getFullYear() === year &&
         date.getMonth() === month - 1 &&
-        date.getDate() === day
-      );
+        date.getDate() === day;
+
+      if (!isValidDate) return false;
+
+      const today = new Date();
+
+      return date >= today;
     },
     {
-      message: "Некорректная дата",
+      message: "Дата должна быть корректной и не раньше завтрашнего дня",
     }
   );
 
-export const taskSchema = z.object({
-  title: z.string().nonempty(),
-  description: z.string().min(8, "Минимум 8 символов"),
-  dueDate: dateSchema,
-  userId: z.string().transform((value) => +value),
-});
+const timeSchema = z
+  .string()
+  .regex(/^\d{2}:\d{2}/, {
+    message: "Время должно быть в формате ЧЧ:ММ",
+  })
+  .refine(
+    (val) => {
+      const [hours, minutes] = val.split(":").map(Number);
+      return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
+    },
+    {
+      message: "Некорректное время: часы должны быть 00-23, минуты 00-59",
+    }
+  );
+
+export const taskSchema = z
+  .object({
+    title: z.string().nonempty("Название не должно быть пустым"),
+    description: z.string().min(8, "Минимум 8 символов"),
+    dateTime: dateSchema,
+    time: timeSchema,
+    userId: z.string().transform((value) => +value),
+  })
+  .transform((data) => {
+    const [day, month, year] = data.dateTime.split(".").map(Number);
+    const [hours, minutes] = data.time.split(":").map(Number);
+    const fullDate = new Date(year, month - 1, day, hours, minutes);
+
+    return {
+      ...data,
+      fullDate,
+    };
+  });

@@ -85,6 +85,7 @@ model Task {
   description String
   due_date DateTime 
   priority Boolean @default(false)
+  isCompleted Boolean @default(false)
 
   task_list ListTasks @relation(fields: [task_list_id], references: [id], onDelete: Cascade)
   task_list_id Int

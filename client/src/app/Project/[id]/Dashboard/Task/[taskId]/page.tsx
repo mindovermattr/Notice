@@ -1,5 +1,9 @@
-const page = ({ taskId }: { taskId: Promise<string> }) => {
-  console.log(taskId);
+"use client";
+import { use } from "react";
+
+const page = ({ params }) => {
+  const p = use(params);
+  console.log(p);
   return <div>page</div>;
 };
 

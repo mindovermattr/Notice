@@ -18,7 +18,7 @@ type TTaskListProps = {
 
 const TaskList = ({ list }: TTaskListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const {
     register,
     handleSubmit,
@@ -47,7 +47,13 @@ const TaskList = ({ list }: TTaskListProps) => {
             onClick={() => setIsOpen((prev) => !prev)}
             className={styles.item__button}
           >
-            &#8593;
+            <span
+              className={`${styles.item__icon} ${
+                isOpen ? styles["item__icon--selected"] : null
+              }`}
+            >
+              &#8593;
+            </span>
           </button>
           <h3 className={styles.item__title}>{list.title}</h3>
           <p className={styles.item__counter}>
@@ -56,7 +62,7 @@ const TaskList = ({ list }: TTaskListProps) => {
         </div>
         <div
           className={`${styles["list-wrapper"]} ${
-            isOpen && styles["list-wrapper--active"]
+            isOpen ? styles["list-wrapper--active"] : null
           }`}
         >
           <article className={`${styles.item__list} ${styles.list}`}>
@@ -92,12 +98,17 @@ const TaskList = ({ list }: TTaskListProps) => {
               error={errors.title?.message}
             />
             <Input
-              {...register("dueDate")}
+              {...register("dateTime")}
               label="Дата"
               placeholder="ДД.ММ.ГГГГ"
-              error={errors.dueDate?.message}
+              error={errors.dateTime?.message}
             />
-            <Input label="Время" placeholder="ЧЧ:ММ" />
+            <Input
+              {...register("time")}
+              label="Время"
+              placeholder="ЧЧ:ММ"
+              error={errors.time?.message}
+            />
             <Input
               {...register("description")}
               className={styles.form__description}

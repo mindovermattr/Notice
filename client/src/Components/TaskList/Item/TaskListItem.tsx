@@ -4,6 +4,7 @@ import FlagIcon from "@/Components/Icons/FlagIcon";
 import { useAppDispatch } from "@/store/hooks";
 import { patchPriority } from "@/store/slices/tasklists.slice";
 import { formatDate } from "@/utils/date.utils";
+import Link from "next/link";
 import styles from "./TaskListItem.module.scss";
 
 type TTaskListItemProps = TTask & {
@@ -18,6 +19,7 @@ const TaskListItem = ({
   due_date,
   assign_user,
   subtasks,
+  isCompleted,
 }: TTaskListItemProps) => {
   const formattedDate = formatDate(due_date);
   const dispatch = useAppDispatch();
@@ -29,8 +31,10 @@ const TaskListItem = ({
 
   return (
     <div className={`${styles.task}`}>
-      <input type="checkbox" readOnly={true} disabled />
-      <h4 className={styles.task__title}>{title}</h4>
+      <input type="checkbox" checked={isCompleted} disabled />
+      <Link href={`Task/${id}`} className={styles.task__title}>
+        {title}
+      </Link>
       <p>{subtasks.length}</p>
       <p className={styles.task__assignee}>
         {assign_user ? assign_user.name : "-"}
