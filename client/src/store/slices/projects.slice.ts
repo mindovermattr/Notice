@@ -1,3 +1,4 @@
+import { TApiError } from "@/@types/TApi";
 import { TProject } from "@/@types/TProject";
 import { createProject, getAllProjects } from "@/api/project.api";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -37,6 +38,17 @@ const initialState: TInitialState = {
   error: [],
 };
 
+const handleRejected = (
+  state: TInitialState,
+  action: PayloadAction<TApiError>
+) => {
+  const error = action.payload;
+  if (Array.isArray(error.message)) state.error = error.message;
+  else if (!state.error.includes(error.message)) {
+    state.error.push(error.message);
+  }
+};
+
 const projectsSlice = createSlice({
   name: "projects",
   initialState,
@@ -55,30 +67,14 @@ const projectsSlice = createSlice({
         state.projects.push(action.payload);
         state.error = [];
       })
-      .addCase(createProjectThunk.rejected, (state, action) => {
-        const error = action.payload as {
-          message: string | string[];
-          statusCode: number;
-        };
-        if (Array.isArray(error.message)) state.error = error.message;
-        else if (!state.error.includes(error.message)) {
-          state.error.push(error.message);
-        }
-      })
       .addCase(getProjectsThunk.fulfilled, (state, action) => {
         state.projects = action.payload;
         state.error = [];
       })
-      .addCase(getProjectsThunk.rejected, (state, action) => {
-        const error = action.payload as {
-          message: string | string[];
-          statusCode: number;
-        };
-        if (Array.isArray(error.message)) state.error = error.message;
-        else if (!state.error.includes(error.message)) {
-          state.error.push(error.message);
-        }
-      });
+      .addMatcher(
+        (action) => action.type.endsWith("/rejected"),
+        handleRejected
+      );
   },
 });
 

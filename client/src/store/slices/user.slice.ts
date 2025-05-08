@@ -1,5 +1,6 @@
 import { TLoginSchema, TRegistrationSchema } from "@/@schemes/auth.schema";
 import { ERoles } from "@/@types/Enums/ERoles";
+import { TApiError } from "@/@types/TApi";
 import {
   login as loginApi,
   registration as registrationApi,
@@ -44,6 +45,17 @@ const initialState: TInitialState = {
   error: [],
 };
 
+const handleRejected = (
+  state: TInitialState,
+  action: PayloadAction<TApiError>
+) => {
+  const error = action.payload;
+  if (Array.isArray(error.message)) state.error = error.message;
+  else if (!state.error.includes(error.message)) {
+    state.error.push(error.message);
+  }
+};
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -65,31 +77,15 @@ const userSlice = createSlice({
         state.user = action.payload.user;
         state.error = [];
       })
-      .addCase(loginThunk.rejected, (state, action) => {
-        const error = action.payload as {
-          message: string | string[];
-          statusCode: number;
-        };
-        if (Array.isArray(error.message)) state.error = error.message;
-        else if (!state.error.includes(error.message)) {
-          state.error.push(error.message);
-        }
-      })
       .addCase(registrationThunk.fulfilled, (state, action) => {
         state.token = action.payload.token;
         state.user = action.payload.user;
         state.error = [];
       })
-      .addCase(registrationThunk.rejected, (state, action) => {
-        const error = action.payload as {
-          message: string | string[];
-          statusCode: number;
-        };
-        if (Array.isArray(error.message)) state.error = error.message;
-        else if (!state.error.includes(error.message)) {
-          state.error.push(error.message);
-        }
-      });
+      .addMatcher(
+        (action) => action.type.endsWith("/rejected"),
+        handleRejected
+      );
   },
 });
 

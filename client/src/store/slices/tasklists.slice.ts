@@ -1,3 +1,4 @@
+import { TApiError } from "@/@types/TApi";
 import { TTasklist } from "@/@types/TTasklist";
 import {
   createTaskList,
@@ -54,6 +55,17 @@ const initialState: TInitialState = {
   error: [],
 };
 
+const handleRejected = (
+  state: TInitialState,
+  action: PayloadAction<TApiError>
+) => {
+  const error = action.payload;
+  if (Array.isArray(error.message)) state.error = error.message;
+  else if (!state.error.includes(error.message)) {
+    state.error.push(error.message);
+  }
+};
+
 const tasklistSlice = createSlice({
   name: "tasklists",
   initialState,
@@ -79,29 +91,9 @@ const tasklistSlice = createSlice({
         state.tasklists = action.payload;
         state.error = [];
       })
-      .addCase(getTasklistsThunk.rejected, (state, action) => {
-        const error = action.payload as {
-          message: string | string[];
-          statusCode: number;
-        };
-        if (Array.isArray(error.message)) state.error = error.message;
-        else if (!state.error.includes(error.message)) {
-          state.error.push(error.message);
-        }
-      })
       .addCase(createTasklistThunk.fulfilled, (state, action) => {
         state.tasklists.push(action.payload);
         state.error = [];
-      })
-      .addCase(createTasklistThunk.rejected, (state, action) => {
-        const error = action.payload as {
-          message: string | string[];
-          statusCode: number;
-        };
-        if (Array.isArray(error.message)) state.error = error.message;
-        else if (!state.error.includes(error.message)) {
-          state.error.push(error.message);
-        }
       })
       .addCase(deleteTasklistThunk.fulfilled, (state, action) => {
         const index = state.tasklists.findIndex(
@@ -110,16 +102,10 @@ const tasklistSlice = createSlice({
         state.tasklists.splice(index, 1);
         state.error = [];
       })
-      .addCase(deleteTasklistThunk.rejected, (state, action) => {
-        const error = action.payload as {
-          message: string | string[];
-          statusCode: number;
-        };
-        if (Array.isArray(error.message)) state.error = error.message;
-        else if (!state.error.includes(error.message)) {
-          state.error.push(error.message);
-        }
-      });
+      .addMatcher(
+        (action) => action.type.endsWith("/rejected"),
+        handleRejected
+      );
   },
 });
 

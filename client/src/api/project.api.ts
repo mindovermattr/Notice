@@ -1,5 +1,5 @@
+import { TApiError } from "@/@types/TApi";
 import { TProject, TProjectApi } from "@/@types/TProject";
-import { AxiosError } from "axios";
 import { protectedInstance } from "./instance";
 
 export const getAllProjects = async () => {
@@ -8,10 +8,7 @@ export const getAllProjects = async () => {
 
     return resp;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };
 
@@ -21,10 +18,7 @@ export const createProject = async ({ name }: { name: string }) => {
 
     return resp;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };
 
@@ -34,9 +28,6 @@ export const getProjectById = async ({ id }: { id: number }) => {
 
     return resp;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };

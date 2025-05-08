@@ -1,5 +1,5 @@
 import { TLoginSchema, TRegistrationSchema } from "@/@schemes/auth.schema";
-import { AxiosError } from "axios";
+import { TApiError } from "@/@types/TApi";
 import { instance } from "./instance";
 
 export type TRespAuth = {
@@ -25,10 +25,7 @@ export const registration = async ({
 
     return response;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };
 
@@ -40,9 +37,6 @@ export const login = async ({ email, password }: TLoginSchema) => {
     });
     return response;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };

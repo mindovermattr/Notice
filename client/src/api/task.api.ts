@@ -1,5 +1,5 @@
+import { TApiError } from "@/@types/TApi";
 import { TTask } from "@/@types/TTask";
-import { AxiosError } from "axios";
 import { protectedInstance } from "./instance";
 
 export const createTask = async (
@@ -13,10 +13,7 @@ export const createTask = async (
     );
     return resp;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };
 export const patchTask = async (taskId: number, task: Partial<TTask>) => {
@@ -24,10 +21,7 @@ export const patchTask = async (taskId: number, task: Partial<TTask>) => {
     const resp = await protectedInstance.patch<TTask>(`/tasks/${taskId}`, task);
     return resp;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };
 
