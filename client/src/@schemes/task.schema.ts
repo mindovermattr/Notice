@@ -54,10 +54,10 @@ export const taskSchema = z
   .transform((data) => {
     const [day, month, year] = data.dateTime.split(".").map(Number);
     const [hours, minutes] = data.time.split(":").map(Number);
-    const fullDate = new Date(year, month - 1, day, hours, minutes);
+    const dueDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
 
     return {
       ...data,
-      fullDate,
+      dueDate,
     };
   });

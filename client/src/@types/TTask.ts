@@ -1,4 +1,5 @@
 import { ETaskStatus } from "./Enums/ETaskStatus";
+import { TTasklist } from "./TTasklist";
 
 export type TTask = {
   id: number;
@@ -11,3 +12,5 @@ export type TTask = {
   assign_user?: TUser;
   isCompleted: boolean;
 };
+
+export type TTaskGetApi = TTask & { task_list: TTasklist; assign_user: TUser };

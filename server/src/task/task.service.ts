@@ -83,6 +83,8 @@ export class TaskService {
       },
       include: {
         subtasks: true,
+        task_list: true,
+        assign_user: true,
       },
     });
     return data;

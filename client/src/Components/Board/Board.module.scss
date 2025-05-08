@@ -10,11 +10,15 @@
     &-wrapper {
       margin: 32px 32px 0 32px;
       flex-grow: 1;
+      border-radius: 12px;
     }
   }
 }
 
 .border {
   border: 1px solid $base-100;
-  border-top: none;
+
+  &--sidebar {
+    border-top: none;
+  }
 }

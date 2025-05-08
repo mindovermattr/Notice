@@ -1,9 +1,13 @@
 "use client";
 import { taskSchema } from "@/@schemes/task.schema";
 import { TTasklist } from "@/@types/TTasklist";
+import { createTask } from "@/api/task.api";
 import Button from "@/Components/Button/Button";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getTasklistsThunk } from "@/store/slices/tasklists.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
+import clsx from "clsx";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,8 +21,12 @@ type TTaskListProps = {
 };
 
 const TaskList = ({ list }: TTaskListProps) => {
+  const dispatch = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
+  const projects = useAppSelector((state) => state.projects);
+  const { id } = useParams<{ id: string }>();
+
   const {
     register,
     handleSubmit,
@@ -28,16 +36,10 @@ const TaskList = ({ list }: TTaskListProps) => {
   });
 
   const submitHandler = async (data: z.infer<typeof taskSchema>) => {
-    console.log(data);
-    // try {
-    //   const resp = await dispatch(loginThunk(data)).unwrap();
-    //   setUser(resp);
-    //   router.push("/Project");
-    // } catch (error) {
-    //   return;
-    // }
+    await createTask(list.id, data);
+    await dispatch(getTasklistsThunk({ id: +id }));
+    setIsModalOpen(false);
   };
-  const projects = useAppSelector((state) => state.projects);
 
   return (
     <>
@@ -48,9 +50,9 @@ const TaskList = ({ list }: TTaskListProps) => {
             className={styles.item__button}
           >
             <span
-              className={`${styles.item__icon} ${
-                isOpen ? styles["item__icon--selected"] : null
-              }`}
+              className={clsx(styles.item__icon, {
+                [styles["item__icon--selected"]]: isOpen,
+              })}
             >
               &#8593;
             </span>
@@ -61,13 +63,13 @@ const TaskList = ({ list }: TTaskListProps) => {
           </p>
         </div>
         <div
-          className={`${styles["list-wrapper"]} ${
-            isOpen ? styles["list-wrapper--active"] : null
-          }`}
+          className={clsx(styles["list-wrapper"], {
+            [styles["list-wrapper--active"]]: isOpen,
+          })}
         >
           <article className={`${styles.item__list} ${styles.list}`}>
             <div className={styles.list__header}>
-              <button>&#8593;</button>
+              <p>Статус</p>
               <p className={styles.list__title}>Название задачи</p>
               <p>Подзадачи</p>
               <p className={styles.list__assignee}>Назначен</p>

@@ -1,6 +1,6 @@
 import { TTask } from "@/@types/TTask";
 import { patchTask } from "@/api/task.api";
-import FlagIcon from "@/Components/Icons/FlagIcon";
+import FlagIcon from "@/Components/Icons/FlagIcon/FlagIcon";
 import { useAppDispatch } from "@/store/hooks";
 import { patchPriority } from "@/store/slices/tasklists.slice";
 import { formatDate } from "@/utils/date.utils";
