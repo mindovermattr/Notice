@@ -7,7 +7,8 @@ const options = {
   timeZone: "UTC",
 } as const;
 
-export const formatDate = (date: Date | string) => {
+export const formatDate = (date: Date | string | undefined) => {
+  if (date === undefined) return "Неправильная дата";
   if (date instanceof Date) {
     return date.toLocaleString("ru-RU", options);
   }

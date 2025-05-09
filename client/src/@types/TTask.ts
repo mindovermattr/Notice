@@ -13,4 +13,8 @@ export type TTask = {
   isCompleted: boolean;
 };
 
-export type TTaskGetApi = TTask & { task_list: TTasklist; assign_user: TUser };
+export type TTaskGetApi = TTask & {
+  task_list: TTasklist;
+  assign_user: TUser;
+  createdAt: string;
+};

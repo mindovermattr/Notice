@@ -99,6 +99,10 @@ button:active {
   outline: none;
 }
 
+input::placeholder {
+  font-family: inherit;
+}
+
 button::-moz-focus-inner {
   padding: 0;
   border: 0;

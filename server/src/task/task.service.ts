@@ -85,6 +85,7 @@ export class TaskService {
         subtasks: true,
         task_list: true,
         assign_user: true,
+        comments: true,
       },
     });
     return data;

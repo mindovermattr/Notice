@@ -94,7 +94,20 @@ model Task {
   assign_id Int?
   subtasks SubTask[]
 
+  comments Comments[]
+
   status  String
+}
+
+model Comments{
+ id Int @default(autoincrement()) @id
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+
+ task Task @relation(fields: [task_id], references: [id], onDelete: Cascade)
+ task_id Int
+
+ comment String
 }
 
 
@@ -105,9 +118,6 @@ model SubTask {
   updatedAt DateTime @updatedAt
 
   title String 
-  description String
-  due_date DateTime 
-  priority Boolean @default(false)
 
   task Task @relation(fields: [task_id], references: [id], onDelete: Cascade)
   task_id Int

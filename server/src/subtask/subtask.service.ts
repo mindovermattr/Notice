@@ -1,26 +1,44 @@
-import { Injectable } from '@nestjs/common';
-import { CreateSubtaskDto } from './dto/create-subtask.dto';
-import { UpdateSubtaskDto } from './dto/update-subtask.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "src/prisma.service";
+import { CreateSubtaskDto } from "./dto/create-subtask.dto";
+import { UpdateSubtaskDto } from "./dto/update-subtask.dto";
 
 @Injectable()
 export class SubtaskService {
-  create(createSubtaskDto: CreateSubtaskDto) {
-    return 'This action adds a new subtask';
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(taskId: number, createSubtaskDto: CreateSubtaskDto) {
+    const data = await this.prismaService.subTask.create({
+      data: {
+        title: createSubtaskDto.title,
+        task: {
+          connect: {
+            id: taskId,
+          },
+        },
+      },
+    });
+    return data;
   }
 
-  findAll() {
+  async findAll() {
     return `This action returns all subtask`;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return `This action returns a #${id} subtask`;
   }
 
-  update(id: number, updateSubtaskDto: UpdateSubtaskDto) {
+  async update(id: number, updateSubtaskDto: UpdateSubtaskDto) {
     return `This action updates a #${id} subtask`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} subtask`;
+  async remove(id: number) {
+    const data = this.prismaService.subTask.delete({
+      where: {
+        id: id,
+      },
+    });
+    return data;
   }
 }

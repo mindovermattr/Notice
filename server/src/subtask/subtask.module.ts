@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
-import { SubtaskService } from './subtask.service';
-import { SubtaskController } from './subtask.controller';
+import { Module } from "@nestjs/common";
+import { PrismaService } from "src/prisma.service";
+import { SubtaskController } from "./subtask.controller";
+import { SubtaskService } from "./subtask.service";
 
 @Module({
   controllers: [SubtaskController],
-  providers: [SubtaskService],
+  providers: [SubtaskService, PrismaService],
 })
 export class SubtaskModule {}

@@ -7,6 +7,7 @@ import { TaskModule } from './task/task.module';
 import { UserModule } from './user/user.module';
 import { SubtaskModule } from './subtask/subtask.module';
 import { TasklistModule } from './tasklist/tasklist.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { TasklistModule } from './tasklist/tasklist.module';
     ProjectModule,
     SubtaskModule,
     TasklistModule,
+    CommentsModule,
   ],
   providers: [PrismaService],
 })

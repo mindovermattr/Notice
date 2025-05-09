@@ -1,6 +1,10 @@
 .input {
   padding: 8px 12px;
   border: 1px solid $base-400;
+
+  &:disabled {
+    background-color: $base-0;
+  }
 }
 
 .error {
