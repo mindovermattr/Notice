@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
@@ -28,11 +29,17 @@ export class TaskController {
   }
 
   @Post("tasks/:taskId/comments")
-  create(
+  createComment(
     @Param("taskId") taskId: string,
     @Body() createCommentDto: CreateCommentDto,
+    @Req() req,
   ) {
-    return this.commentService.create(+taskId, createCommentDto);
+    return this.commentService.create(+taskId, createCommentDto, req.user);
+  }
+
+  @Get("tasks/:taskId/comments")
+  findAllComments(@Param("taskId") taskId: string) {
+    return this.commentService.findAll(+taskId);
   }
 
   @Patch("tasks/:id")

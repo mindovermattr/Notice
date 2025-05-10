@@ -1,4 +1,5 @@
 import { TApiError } from "@/@types/TApi";
+import { TCommentFindAll } from "@/@types/TComments";
 import { TTask, TTaskGetApi } from "@/@types/TTask";
 import { protectedInstance } from "./instance";
 
@@ -33,17 +34,13 @@ export const getTask = async (taskId: number) => {
     return error as TApiError;
   }
 };
-
-// export const deleteTaskList = async (listId: number) => {
-//   try {
-//     const resp = await protectedInstance.delete<TTasklist>(
-//       `tasklist/${listId}`
-//     );
-//     return resp;
-//   } catch (error: unknown) {
-//     return error as AxiosError<{
-//       message: string | string[];
-//       statusCode: number;
-//     }>;
-//   }
-// };
+export const getTaskComments = async (taskId: number) => {
+  try {
+    const resp = await protectedInstance.get<TCommentFindAll[]>(
+      `/tasks/${taskId}/comments`
+    );
+    return resp;
+  } catch (error: unknown) {
+    return error as TApiError;
+  }
+};

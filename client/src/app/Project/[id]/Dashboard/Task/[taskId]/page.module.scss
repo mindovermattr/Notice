@@ -14,7 +14,7 @@
 .body {
   display: flex;
   &__form {
-    flex-basis: 570px;
+    flex-basis: 850px;
   }
   &__info {
     flex-grow: 1;
@@ -87,6 +87,7 @@
     text-transform: uppercase;
     font-weight: 700;
     font-size: 14px;
-    color: $base-300; 
+    color: $base-300;
   }
 }
+

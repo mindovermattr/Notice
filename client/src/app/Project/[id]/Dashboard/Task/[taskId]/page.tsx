@@ -1,8 +1,12 @@
 "use client";
+import { TCommentFindAll } from "@/@types/TComments";
 import { TTaskGetApi } from "@/@types/TTask";
-import { getTask } from "@/api/task.api";
+import { instance } from "@/api/instance";
+import { getTask, getTaskComments } from "@/api/task.api";
 import Button from "@/Components/Button/Button";
+import Comments from "@/Components/Comments/Comments";
 import Input from "@/Components/Input/Input";
+import { useAppSelector } from "@/store/hooks";
 import { formatDate } from "@/utils/date.utils";
 import axios from "axios";
 import Image from "next/image";
@@ -16,14 +20,31 @@ const Page = ({
   params: Promise<{ id: string; taskId: string }>;
 }) => {
   const { id, taskId } = use(params);
+  const userStore = useAppSelector((state) => state.user);
   const [task, setTask] = useState<TTaskGetApi | null>(null);
+  const [comments, setComments] = useState<TCommentFindAll[]>([]);
   const [isRedacting, setIsRedacting] = useState(true);
 
   useEffect(() => {
     const fetchTask = async (taskId: number) => {
-      const resp = await getTask(taskId);
-      if (axios.isAxiosError(resp)) return;
-      setTask(resp.data);
+      const task = await getTask(taskId);
+      if (axios.isAxiosError(task)) return;
+      setTask(task.data);
+      const comments = await getTaskComments(taskId);
+      if (axios.isAxiosError(comments)) return;
+      setComments(comments.data);
+      // const r = await instance.get("/yandex-disk/file/Горы.jpg", {
+      //   responseType: "blob",
+      // });
+      // const url = window.URL.createObjectURL(new Blob([r.data]));
+      // const a = document.createElement("a");
+      // a.href = url;
+      // a.download = "image.jpg";
+      // document.body.appendChild(a);
+      // a.click();
+      // window.URL.revokeObjectURL(url);
+      // document.body.removeChild(a);
+      // console.log(r);
     };
     fetchTask(+taskId);
   }, []);
@@ -86,13 +107,11 @@ const Page = ({
               <p>{formatDate(task?.due_date)}</p>
             </li>
             <li className={styles.date__item}>
-              <p className={styles.date__title}>Назначен на выполнение:</p>
+              <p className={styles.date__title}>Назначен:</p>
               <p>{`${task?.assign_user.name} ${task?.assign_user.lastname}`}</p>
             </li>
           </ol>
-          <div>
-            <h3>Обсуждение</h3>
-          </div>
+          <Comments comments={comments} user={userStore.user!} />
         </div>
       </div>
     </div>
