@@ -5,7 +5,16 @@ const nextConfig: NextConfig = {
     includePaths: ["./src/assets"],
     prependData: `@use "vars.scss" as *;`,
   },
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3001",
+        pathname: "/api/yandex-disk/file/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

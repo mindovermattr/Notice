@@ -14,15 +14,15 @@ model User {
   password String 
   name  String
   lastname String
+  avatarUrl String
 
   project_author_id Project[] @relation("project_author")
   project  Project[]
   
   tasks Task[]
-
   role ProjectUserRoles[]
-
   comments Comment[]
+  attachments Attachment[]
 }
 
 model Project {
@@ -94,11 +94,22 @@ model Task {
 
   assign_user User? @relation(fields: [assign_id], references: [id], onDelete: Cascade)
   assign_id Int?
-  subtasks SubTask[]
 
+  subtasks SubTask[]
   comments Comment[]
+  attachments Attachment[]
 
   status  String
+}
+
+model Attachment{
+  id Int @default(autoincrement()) @id
+  createdAt DateTime @default(now())
+  fileUrl String
+  task Task @relation(fields: [taskId], references: [id])
+  taskId Int @map("task_id")
+  user User @relation(fields: [userId], references: [id])
+  userId Int @map("user_id")
 }
 
 model Comment{
@@ -109,8 +120,8 @@ model Comment{
  task Task @relation(fields: [task_id], references: [id], onDelete: Cascade)
  task_id Int
 
-user User @relation(fields: [user_id], references: [id])
-user_id Int
+ user User @relation(fields: [user_id], references: [id])
+ user_id Int
  
  comment String
 

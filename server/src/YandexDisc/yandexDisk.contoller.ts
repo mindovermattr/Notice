@@ -2,12 +2,14 @@ import {
   Controller,
   Get,
   Param,
+  Post,
   Res,
   StreamableFile,
-  UseGuards,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { Response } from "express";
-import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 import { YandexDiskService } from "./yandexDisk.service";
 
 const MIME_TYPES = {
@@ -26,21 +28,19 @@ const MIME_TYPES = {
   txt: "text/plain",
   csv: "text/csv",
   json: "application/json",
-};
+} as const;
 
 @Controller("yandex-disk")
-@UseGuards(JwtAuthGuard)
 export class YandexDiskController {
   constructor(private readonly yandexDiskService: YandexDiskService) {}
 
   @Get("file/:path")
-  async getInfo(
+  async getFile(
     @Param("path") path: string,
     @Res({ passthrough: true }) res: Response,
   ) {
     const fileStream = await this.yandexDiskService.getFile(path);
 
-    // Безопасное получение расширения файла
     const lastDotIndex = path.lastIndexOf(".");
     const extension =
       lastDotIndex === -1 ? "bin" : path.slice(lastDotIndex + 1).toLowerCase();
@@ -53,5 +53,12 @@ export class YandexDiskController {
     });
 
     return new StreamableFile(fileStream);
+  }
+
+  @Post()
+  @UseInterceptors(FileInterceptor("file"))
+  async createFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file.mimetype);
+    return this.yandexDiskService.uploadFile(file, file.originalname);
   }
 }

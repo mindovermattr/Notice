@@ -9,4 +9,5 @@ export class UserEntity implements User {
   lastname: string;
 
   role: Role;
+  avatarUrl: string;
 }

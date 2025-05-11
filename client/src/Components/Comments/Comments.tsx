@@ -25,7 +25,18 @@ const Comments = ({ comments, user }: TCommentsProps) => {
           Добавить
         </Button>
       </form>
-      <div></div>
+      <div className={styles.history}>
+        <article className={styles.history__comment}>
+          <div className={styles.history__icon}>Logo</div>
+          <div>
+            <div>
+              <h3>Vade Waren</h3>
+              <p>created at</p>
+            </div>
+            <p>text</p>
+          </div>
+        </article>
+      </div>
     </section>
   );
 };

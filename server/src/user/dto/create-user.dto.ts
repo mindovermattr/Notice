@@ -1,5 +1,5 @@
-import { IsEmail, IsString } from 'class-validator';
-import { IsMatch } from 'src/decorators/IsMatch';
+import { IsEmail, IsString } from "class-validator";
+import { IsMatch } from "src/decorators/IsMatch";
 
 export class CreateUserDto {
   @IsEmail()
@@ -9,7 +9,7 @@ export class CreateUserDto {
   password: string;
 
   @IsString()
-  @IsMatch('password')
+  @IsMatch("password")
   confirmPassword: string;
 
   @IsString()
@@ -17,4 +17,7 @@ export class CreateUserDto {
 
   @IsString()
   lastname: string;
+
+  @IsString()
+  avatarUrl: string;
 }

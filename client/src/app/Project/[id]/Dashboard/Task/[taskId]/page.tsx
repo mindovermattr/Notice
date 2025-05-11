@@ -1,7 +1,6 @@
 "use client";
 import { TCommentFindAll } from "@/@types/TComments";
 import { TTaskGetApi } from "@/@types/TTask";
-import { instance } from "@/api/instance";
 import { getTask, getTaskComments } from "@/api/task.api";
 import Button from "@/Components/Button/Button";
 import Comments from "@/Components/Comments/Comments";
