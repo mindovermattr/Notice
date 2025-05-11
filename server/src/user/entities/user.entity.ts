@@ -7,7 +7,6 @@ export class UserEntity implements User {
   password: string;
   name: string;
   lastname: string;
-
   role: Role;
-  avatarUrl: string;
+ avatarUrl: string;
 }

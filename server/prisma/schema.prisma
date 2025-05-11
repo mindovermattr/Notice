@@ -14,7 +14,7 @@ model User {
   password String 
   name  String
   lastname String
-  avatarUrl String
+  avatarUrl String?
 
   project_author_id Project[] @relation("project_author")
   project  Project[]

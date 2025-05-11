@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from "class-validator";
+import { IsEmail, IsOptional, IsString } from "class-validator";
 import { IsMatch } from "src/decorators/IsMatch";
 
 export class CreateUserDto {
@@ -18,6 +18,7 @@ export class CreateUserDto {
   @IsString()
   lastname: string;
 
+  @IsOptional()
   @IsString()
-  avatarUrl: string;
+  avatarUrl?: string;
 }

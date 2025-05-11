@@ -3,5 +3,5 @@ type TUser = {
   email: string;
   name: string;
   lastname: string;
-  avatarUrl: string;
+  avatarUrl?: string;
 };

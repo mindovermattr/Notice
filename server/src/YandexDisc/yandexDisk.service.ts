@@ -1,10 +1,12 @@
 import { HttpService } from "@nestjs/axios";
-import { HttpException, Injectable } from "@nestjs/common";
+import { HttpException, Injectable, UseGuards } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
 import { firstValueFrom } from "rxjs";
+import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 
 @Injectable()
+
 export class YandexDiskService {
   private readonly apiUrl = "webdav.yandex.ru/imgs";
 

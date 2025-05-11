@@ -6,10 +6,12 @@ import {
   Res,
   StreamableFile,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Response } from "express";
+import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 import { YandexDiskService } from "./yandexDisk.service";
 
 const MIME_TYPES = {
@@ -31,6 +33,7 @@ const MIME_TYPES = {
 } as const;
 
 @Controller("yandex-disk")
+@UseGuards(JwtAuthGuard)
 export class YandexDiskController {
   constructor(private readonly yandexDiskService: YandexDiskService) {}
 
