@@ -26,7 +26,6 @@
   flex-direction: column;
   gap: 24px;
 
-  border-right: 1px solid $base-100;
   border-bottom: 1px solid $base-100;
   padding: 24px;
 
@@ -68,6 +67,7 @@
 .date {
   display: flex;
   border-bottom: 1px solid $base-100;
+  border-left: 1px solid $base-100;
   padding-bottom: 24px;
 
   &__item {
@@ -90,4 +90,3 @@
     color: $base-300;
   }
 }
-

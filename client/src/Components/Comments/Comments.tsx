@@ -1,4 +1,5 @@
 import { TCommentFindAll } from "@/@types/TComments";
+import Image from "next/image";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
 import styles from "./Comments.module.scss";
@@ -27,13 +28,87 @@ const Comments = ({ comments, user }: TCommentsProps) => {
       </form>
       <div className={styles.history}>
         <article className={styles.history__comment}>
-          <div className={styles.history__icon}>Logo</div>
-          <div>
-            <div>
-              <h3>Vade Waren</h3>
-              <p>created at</p>
+          <Image
+            width={42}
+            height={42}
+            alt="Icon"
+            src={"http://localhost:3001/api/yandex-disk/file/image.jpg"}
+            className={styles.history__icon}
+          />
+          <div className={styles.history__body}>
+            <div className={styles.history__wrapper}>
+              <h3 className={styles.history__name}>Vade Waren</h3>
+              <p className={styles.history__date}>created at</p>
             </div>
-            <p>text</p>
+            <p className={styles.history__text}>
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ea sunt
+              iste doloribus, inventore iusto quos exercitationem distinctio
+              asperiores possimus dicta fugit amet aut, ipsa accusamus
+              temporibus dolores saepe deleniti minus!
+            </p>
+          </div>
+        </article>
+        <article className={styles.history__comment}>
+          <Image
+            width={42}
+            height={42}
+            alt="Icon"
+            src={"http://localhost:3001/api/yandex-disk/file/image.jpg"}
+            className={styles.history__icon}
+          />
+          <div className={styles.history__body}>
+            <div className={styles.history__wrapper}>
+              <h3 className={styles.history__name}>Vade Waren</h3>
+              <p className={styles.history__date}>created at</p>
+            </div>
+            <p className={styles.history__text}>
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ea sunt
+              iste doloribus, inventore iusto quos exercitationem distinctio
+              asperiores possimus dicta fugit amet aut, ipsa accusamus
+              temporibus dolores saepe deleniti minus!
+            </p>
+          </div>
+        </article>
+        <article className={styles.history__comment}>
+          <Image
+            width={42}
+            height={42}
+            alt="Icon"
+            src={"http://localhost:3001/api/yandex-disk/file/image.jpg"}
+            className={styles.history__icon}
+          />
+          <div className={styles.history__body}>
+            <div className={styles.history__wrapper}>
+              <h3 className={styles.history__name}>Vade Waren</h3>
+              <p className={styles.history__date}>created at</p>
+            </div>
+            <p className={styles.history__text}>
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ea sunt
+              iste doloribus, inventore iusto quos exercitationem distinctio
+              asperiores possimus dicta fugit amet aut, ipsa accusamus
+              temporibus dolores saepe deleniti minus!
+            </p>
+          </div>
+        </article>
+        <article className={styles.history__comment}>
+          <Image
+            width={42}
+            height={42}
+            alt="Icon"
+            src={"http://localhost:3001/api/yandex-disk/file/image.jpg"}
+            className={styles.history__icon}
+          />
+          <div className={styles.history__body}>
+            <div className={styles.history__wrapper}>
+              <h3 className={styles.history__name}>Vade Waren</h3>
+              <p className={styles.history__date}>created at</p>
+            </div>
+            <p className={styles.history__text}>
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ea sunt
+              iste doloribus, inventore iusto quos exercitationem distinctio
+              asperiores possimus dicta fugit amet aut, ipsa accusamus
+              temporibus dolores saepe deleniti minus!
+            </p>
           </div>
         </article>
       </div>
