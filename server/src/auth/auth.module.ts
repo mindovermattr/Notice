@@ -5,6 +5,7 @@ import { PassportModule } from "@nestjs/passport";
 import { PrismaService } from "src/prisma.service";
 import { UserModule } from "src/user/user.module";
 import { UserService } from "src/user/user.service";
+import { YandexDiskModule } from "src/YandexDisc/yandexDisk.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { JwtStrategy } from "./strategies/jwt.strategies";
@@ -24,6 +25,7 @@ import { LocalStrategy } from "./strategies/local.strategies";
       inject: [ConfigService],
     }),
     PassportModule,
+    YandexDiskModule,
   ],
   controllers: [AuthController],
   providers: [

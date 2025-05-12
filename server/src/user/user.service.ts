@@ -1,11 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "src/prisma.service";
+import { YandexDiskService } from "src/YandexDisc/yandexDisk.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly yandexDiskService: YandexDiskService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.prismaService.user.findUnique({
@@ -38,6 +42,27 @@ export class UserService {
     const data = await this.prismaService.user.findFirst({
       where: {
         email,
+      },
+    });
+    return data;
+  }
+  async patchUser(id: number, file: Express.Multer.File) {
+    // if (file.mimetype !== "image/jpeg")
+    //   throw new HttpException(
+    //     "Поддерживаются только jpg картинки",
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+
+    const resp = await this.yandexDiskService.uploadFile(file);
+    if (resp.status >= 300)
+      throw new HttpException("Ошибка", HttpStatus.BAD_REQUEST);
+
+    const data = await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        avatarUrl: resp.imageSrc,
       },
     });
     return data;

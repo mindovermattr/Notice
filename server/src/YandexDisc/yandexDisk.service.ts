@@ -1,12 +1,10 @@
 import { HttpService } from "@nestjs/axios";
-import { HttpException, Injectable, UseGuards } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
 import { firstValueFrom } from "rxjs";
-import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 
 @Injectable()
-
 export class YandexDiskService {
   private readonly apiUrl = "webdav.yandex.ru/imgs";
 
@@ -32,11 +30,14 @@ export class YandexDiskService {
       }
     }
   }
-  async uploadFile(file: Express.Multer.File, name: string) {
+  async uploadFile(file: Express.Multer.File) {
+    file.originalname = Buffer.from(file.originalname, "latin1").toString(
+      "utf8",
+    );
     try {
       const response = await firstValueFrom(
         this.httpService.put(
-          `https://${this.apiUrl}/${name}`,
+          `https://${this.apiUrl}/${encodeURIComponent(file.originalname)}`,
           Buffer.from(file.buffer),
           {
             headers: {
@@ -47,14 +48,34 @@ export class YandexDiskService {
         ),
       );
       return {
-        imageSrc: `http://localhost:3001/api/yandex-disk/file/${name}`,
+        imageSrc: `http://localhost:3001/api/yandex-disk/file/${encodeURIComponent(file.originalname)}`,
         status: response.status,
       };
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         throw new HttpException(e.message, e.status);
       }
-      console.log(e);
     }
+  }
+
+  async uploadMultipleFiles(
+    files: Express.Multer.File[],
+  ): Promise<{ imageSrc: string; status: number }[]> {
+    const results = [];
+
+    for (const file of files) {
+      try {
+        const result = await this.uploadFile(file);
+        results.push(result);
+      } catch (error) {
+        results.push({
+          filename: file.originalname,
+          error: error.message,
+          status: error.status || 500,
+        });
+      }
+    }
+
+    return results;
   }
 }

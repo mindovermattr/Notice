@@ -1,4 +1,5 @@
 import { ETaskStatus } from "./Enums/ETaskStatus";
+import { TAtachment } from "./TAtachment";
 import { TTasklist } from "./TTasklist";
 
 export type TTask = {
@@ -15,7 +16,7 @@ export type TTask = {
 
 export type TTaskGetApi = TTask & {
   task_list: TTasklist;
+  attachments: TAtachment[];
   assign_user: TUser;
   createdAt: string;
 };
-

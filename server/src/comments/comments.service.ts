@@ -22,6 +22,9 @@ export class CommentsService {
           },
         },
       },
+      include: {
+        user: true,
+      },
     });
     return data;
   }
@@ -33,6 +36,9 @@ export class CommentsService {
       },
       include: {
         user: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 

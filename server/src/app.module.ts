@@ -13,6 +13,7 @@ import { YandexDiskModule } from "./YandexDisc/yandexDisk.module";
 @Module({
   imports: [
     AuthModule,
+    YandexDiskModule,
     UserModule,
     ConfigModule.forRoot(),
     TaskModule,
@@ -20,7 +21,6 @@ import { YandexDiskModule } from "./YandexDisc/yandexDisk.module";
     SubtaskModule,
     TasklistModule,
     CommentsModule,
-    YandexDiskModule,
   ],
   providers: [PrismaService],
 })

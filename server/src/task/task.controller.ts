@@ -7,8 +7,11 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 import { CommentsService } from "src/comments/comments.service";
 import { CreateCommentDto } from "src/comments/dto/create-comment.dto";
@@ -45,6 +48,15 @@ export class TaskController {
   @Patch("tasks/:id")
   update(@Param("id") id: string, @Body() updateTaskDto: UpdateTaskDto) {
     return this.taskService.update(+id, updateTaskDto);
+  }
+  @Patch("tasks/:id/files")
+  @UseInterceptors(FilesInterceptor("files"))
+  updateFiles(
+    @Param("id") id: string,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Req() req,
+  ) {
+    return this.taskService.addFiles(+id, files, req.user);
   }
 
   @Delete("tasks/:id")

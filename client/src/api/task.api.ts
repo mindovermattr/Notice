@@ -1,6 +1,7 @@
 import { TApiError } from "@/@types/TApi";
 import { TCommentFindAll } from "@/@types/TComments";
 import { TTask, TTaskGetApi } from "@/@types/TTask";
+import { AxiosProgressEvent } from "axios";
 import { protectedInstance } from "./instance";
 
 export const createTask = async (
@@ -40,6 +41,27 @@ export const getTaskComments = async (taskId: number) => {
       `/tasks/${taskId}/comments`
     );
     return resp;
+  } catch (error: unknown) {
+    return error as TApiError;
+  }
+};
+export const upploadTaskFiles = async (
+  taskId: number,
+  formData: FormData,
+  onProgress: (progressEvent: AxiosProgressEvent) => void
+) => {
+  try {
+    const resp = await protectedInstance.patch<TCommentFindAll[]>(
+      `/tasks/${taskId}/files`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => onProgress(progressEvent),
+      }
+    );
+    return resp.data;
   } catch (error: unknown) {
     return error as TApiError;
   }

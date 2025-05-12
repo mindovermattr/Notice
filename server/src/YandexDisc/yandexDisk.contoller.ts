@@ -6,10 +6,11 @@ import {
   Res,
   StreamableFile,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
+import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { Response } from "express";
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 import { YandexDiskService } from "./yandexDisk.service";
@@ -33,7 +34,6 @@ const MIME_TYPES = {
 } as const;
 
 @Controller("yandex-disk")
-@UseGuards(JwtAuthGuard)
 export class YandexDiskController {
   constructor(private readonly yandexDiskService: YandexDiskService) {}
 
@@ -59,9 +59,16 @@ export class YandexDiskController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor("file"))
   async createFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file.mimetype);
-    return this.yandexDiskService.uploadFile(file, file.originalname);
+   
+    return this.yandexDiskService.uploadFile(file);
+  }
+  @Post("upload-multiple")
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor("files"))
+  async createFileMultyple(@UploadedFiles() file: Express.Multer.File[]) {
+    return this.yandexDiskService.uploadMultipleFiles(file);
   }
 }

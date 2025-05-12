@@ -1,12 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { User } from "@prisma/client";
 import { EStatus } from "src/enums/status";
 import { PrismaService } from "src/prisma.service";
+import { YandexDiskService } from "src/YandexDisc/yandexDisk.service";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 
 @Injectable()
 export class TaskService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly yandexDiskService: YandexDiskService,
+  ) {}
 
   async create(createTaskDto: CreateTaskDto, listId: number) {
     const list = await this.prismaService.listTasks.findFirst({
@@ -85,6 +90,7 @@ export class TaskService {
         subtasks: true,
         task_list: true,
         assign_user: true,
+        attachments: true,
       },
     });
     return data;
@@ -109,6 +115,38 @@ export class TaskService {
       },
       include: {
         subtasks: true,
+      },
+    });
+    return data;
+  }
+
+  async addFiles(id: number, files: Express.Multer.File[], user: User) {
+    const task = await this.prismaService.task.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!task)
+      throw new HttpException(
+        "Такой задачи не существует",
+        HttpStatus.BAD_REQUEST,
+      );
+    const respFiles = await this.yandexDiskService.uploadMultipleFiles(files);
+    const data = await this.prismaService.task.update({
+      data: {
+        attachments: {
+          createMany: {
+            data: respFiles.map((el) => {
+              return {
+                fileUrl: el.imageSrc,
+                userId: user.id,
+              };
+            }),
+          },
+        },
+      },
+      where: {
+        id,
       },
     });
     return data;

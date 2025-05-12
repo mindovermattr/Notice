@@ -1,13 +1,15 @@
 "use client";
 import { TCommentFindAll } from "@/@types/TComments";
 import { TTaskGetApi } from "@/@types/TTask";
-import { getTask, getTaskComments } from "@/api/task.api";
+import { getTask, getTaskComments, upploadTaskFiles } from "@/api/task.api";
 import Button from "@/Components/Button/Button";
 import Comments from "@/Components/Comments/Comments";
+import FileUploader from "@/Components/FileUploader/FileUploader";
 import Input from "@/Components/Input/Input";
+import Modal from "@/Components/Modal/Modal";
 import { useAppSelector } from "@/store/hooks";
 import { formatDate } from "@/utils/date.utils";
-import axios from "axios";
+import axios, { AxiosProgressEvent } from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
@@ -20,14 +22,33 @@ const Page = ({
 }) => {
   const { id, taskId } = use(params);
   const userStore = useAppSelector((state) => state.user);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [task, setTask] = useState<TTaskGetApi | null>(null);
   const [comments, setComments] = useState<TCommentFindAll[]>([]);
   const [isRedacting, setIsRedacting] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileUpload = async (
+    formData: FormData,
+    onProgress: (progressEvent: AxiosProgressEvent) => void
+  ) => {
+    setIsUploading(true);
+    try {
+      const resp = await upploadTaskFiles(+taskId, formData, onProgress);
+
+      console.log(resp.data);
+    } catch (error) {
+      console.error("Ошибка загрузки:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchTask = async (taskId: number) => {
       const task = await getTask(taskId);
       if (axios.isAxiosError(task)) return;
+      console.log(task.data);
       setTask(task.data);
       const comments = await getTaskComments(taskId);
       if (axios.isAxiosError(comments)) return;
@@ -47,10 +68,12 @@ const Page = ({
     };
     fetchTask(+taskId);
   }, []);
+
+  const addComment = (comment: TCommentFindAll) => {
+    setComments([comment, ...comments]);
+  };
   return (
     <div>
-   
-    
       <div className={styles.breadcrumbs}>
         <Link href="#" className={styles.breadcrumbs__item}>
           proj
@@ -93,7 +116,9 @@ const Page = ({
                 disabled={isRedacting}
               />
             </div>
-            <Button type="button">Добавить подзадачу</Button>
+            <Button onClick={() => setIsModalOpen(true)} type="button">
+              Добавить файлы
+            </Button>
             <Button type="button">Добавить подзадачу</Button>
           </form>
         </div>
@@ -101,20 +126,34 @@ const Page = ({
           <ol className={styles.date}>
             <li className={styles.date__item}>
               <p className={styles.date__title}>Создана:</p>
-              <p>{formatDate(task?.createdAt)}</p>
+              <p>{task ? formatDate(task?.createdAt) : "Загрузка"}</p>
             </li>
             <li className={styles.date__item}>
               <p className={styles.date__title}>Выполнить до:</p>
-              <p>{formatDate(task?.due_date)}</p>
+              <p>{task ? formatDate(task?.due_date) : "Загрузка"}</p>
             </li>
             <li className={styles.date__item}>
               <p className={styles.date__title}>Назначен:</p>
               <p>{`${task?.assign_user.name} ${task?.assign_user.lastname}`}</p>
             </li>
           </ol>
-          <Comments comments={comments} user={userStore.user!} />
+          <Comments
+            taskId={+taskId}
+            comments={comments}
+            user={userStore?.user}
+            addComment={addComment}
+          />
         </div>
       </div>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <FileUploader
+          onFileUpload={handleFileUpload}
+          accept="image/*,.pdf,.doc,.docx"
+          multiple={true}
+          maxSize={5 * 1024 * 1024} // 5MB
+          disabled={isUploading}
+        />
+      </Modal>
     </div>
   );
 };

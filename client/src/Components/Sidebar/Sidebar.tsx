@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { createProjectThunk } from "@/store/slices/projects.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { ComponentProps, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -44,7 +45,13 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
   return (
     <aside className={`${styles.sidebar} ${className}`} {...props}>
       <div className={styles.profile}>
-        <div className={styles.profile__image}></div>
+        <Image
+          src={user.user?.avatarUrl || "/icons/profile.svg"}
+          width={40}
+          height={40}
+          alt="Icon"
+          className={styles.profile__image}
+        />
         <div className={styles.profile__information}>
           <h3
             className={styles.profile__name}
