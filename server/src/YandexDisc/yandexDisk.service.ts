@@ -34,6 +34,32 @@ export class YandexDiskService {
     file.originalname = Buffer.from(file.originalname, "latin1").toString(
       "utf8",
     );
+    let isAlreadyUpploaded = false;
+    try {
+      const checkResponse = await firstValueFrom(
+        this.httpService.head(
+          `https://${this.apiUrl}/${encodeURIComponent(file.originalname)}`,
+          {
+            headers: {
+              Authorization: `OAuth ${this.configService.get("OAUTH_TOKEN")}`,
+            },
+          },
+        ),
+      );
+
+      if (checkResponse.status === 200) {
+        isAlreadyUpploaded = true;
+        //throw new HttpException("File already exists", 409);
+      }
+    } catch (e) {
+      if (!axios.isAxiosError(e) || e.response?.status !== 404) {
+        if (axios.isAxiosError(e)) {
+          throw new HttpException(e.message, e.response?.status || 500);
+        }
+        throw e;
+      }
+    }
+
     try {
       const response = await firstValueFrom(
         this.httpService.put(
@@ -48,8 +74,10 @@ export class YandexDiskService {
         ),
       );
       return {
+        fileName: file.originalname,
         imageSrc: `http://localhost:3001/api/yandex-disk/file/${encodeURIComponent(file.originalname)}`,
         status: response.status,
+        isAlreadyUpploaded,
       };
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
@@ -60,7 +88,14 @@ export class YandexDiskService {
 
   async uploadMultipleFiles(
     files: Express.Multer.File[],
-  ): Promise<{ imageSrc: string; status: number }[]> {
+  ): Promise<
+    {
+      imageSrc: string;
+      status: number;
+      fileName: string;
+      isAlreadyUpploaded: boolean;
+    }[]
+  > {
     const results = [];
 
     for (const file of files) {

@@ -42,3 +42,6 @@ Thumbs.db
 dist/
 *.d.ts
 *.js.map
+
+# dbml
+dbml

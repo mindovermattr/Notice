@@ -16,7 +16,9 @@ export type TTask = {
 
 export type TTaskGetApi = TTask & {
   task_list: TTasklist;
-  attachments: TAtachment[];
+  attachments: (TAtachment & {
+    user: TUser;
+  })[];
   assign_user: TUser;
   createdAt: string;
 };

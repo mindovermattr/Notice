@@ -3,6 +3,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider   = "node node_modules/prisma-dbml-generator/dist/generator.js"
+  output     = "../dbml"
+  outputName = "awesome.dbml"
+}
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -105,7 +110,8 @@ model Task {
 model Attachment{
   id Int @default(autoincrement()) @id
   createdAt DateTime @default(now())
-  fileUrl String
+  fileUrl String @unique
+  fileName String
   task Task @relation(fields: [taskId], references: [id])
   taskId Int @map("task_id")
   user User @relation(fields: [userId], references: [id])

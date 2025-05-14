@@ -1,7 +1,9 @@
 "use client";
+import { TAtachment } from "@/@types/TAtachment";
 import { TCommentFindAll } from "@/@types/TComments";
 import { TTaskGetApi } from "@/@types/TTask";
 import { getTask, getTaskComments, upploadTaskFiles } from "@/api/task.api";
+import Avatar from "@/Components/Avatar/Avatar";
 import Button from "@/Components/Button/Button";
 import Comments from "@/Components/Comments/Comments";
 import FileUploader from "@/Components/FileUploader/FileUploader";
@@ -35,8 +37,9 @@ const Page = ({
     setIsUploading(true);
     try {
       const resp = await upploadTaskFiles(+taskId, formData, onProgress);
-
-      console.log(resp.data);
+      const task = await getTask(+taskId);
+      if (axios.isAxiosError(task)) return;
+      setTask(task.data);
     } catch (error) {
       console.error("Ошибка загрузки:", error);
     } finally {
@@ -45,32 +48,35 @@ const Page = ({
   };
 
   useEffect(() => {
+    if (!taskId) return;
     const fetchTask = async (taskId: number) => {
       const task = await getTask(taskId);
       if (axios.isAxiosError(task)) return;
-      console.log(task.data);
       setTask(task.data);
       const comments = await getTaskComments(taskId);
       if (axios.isAxiosError(comments)) return;
       setComments(comments.data);
-      // const r = await instance.get("/yandex-disk/file/Горы.jpg", {
-      //   responseType: "blob",
-      // });
-      // const url = window.URL.createObjectURL(new Blob([r.data]));
-      // const a = document.createElement("a");
-      // a.href = url;
-      // a.download = "image.jpg";
-      // document.body.appendChild(a);
-      // a.click();
-      // window.URL.revokeObjectURL(url);
-      // document.body.removeChild(a);
-      // console.log(r);
     };
     fetchTask(+taskId);
   }, []);
 
   const addComment = (comment: TCommentFindAll) => {
     setComments([comment, ...comments]);
+  };
+
+  const downloadHandler = async (file: TAtachment) => {
+    const r = await axios.get(file.fileUrl, {
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(new Blob([r.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file.fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    console.log(r);
   };
   return (
     <div>
@@ -95,6 +101,7 @@ const Page = ({
                 className={styles.form__input}
                 label="Имя"
                 placeholder="Название задачи"
+                defaultValue={task?.title}
                 disabled={isRedacting}
               />
               <Button
@@ -104,7 +111,7 @@ const Page = ({
                 className={styles.form__icon}
               >
                 <Image width={14} height={14} src={"/icons/pen.svg"} alt="" />
-                {isRedacting ? "Изменить" : "Отменить"}
+                {isRedacting ? "Изменить" : "Принять"}
               </Button>
             </div>
             <div className={styles.form__field}>
@@ -113,6 +120,7 @@ const Page = ({
                 label="Описание"
                 as="textarea"
                 placeholder="Описание задачи"
+                defaultValue={task?.description}
                 disabled={isRedacting}
               />
             </div>
@@ -121,6 +129,34 @@ const Page = ({
             </Button>
             <Button type="button">Добавить подзадачу</Button>
           </form>
+          <div className={styles.attachments}>
+            {task?.attachments.map((el) => (
+              <div className={styles["attachments-wrapper"]} key={el.id}>
+                <div
+                  onClick={() => downloadHandler(el)}
+                  className={styles.attachments__info}
+                >
+                  <Image
+                    className={styles.attachments__image}
+                    width={80}
+                    height={80}
+                    src={"/icons/file.svg"}
+                    alt="file"
+                  />
+                  <Avatar
+                    className={styles.attachments__avatar}
+                    width={48}
+                    height={48}
+                    imgSrc={el.user?.avatarUrl}
+                  />
+                </div>
+                <p className={styles.attachments__name}>{el.fileName}</p>
+                <p className={styles.attachments__date}>
+                  {formatDate(el.createdAt)}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
         <div className={styles.body__info}>
           <ol className={styles.date}>

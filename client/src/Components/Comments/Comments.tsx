@@ -15,11 +15,11 @@ type TCommentsProps = {
   taskId: number;
 };
 
-const Comments = ({ comments, user, addComment }: TCommentsProps) => {
+const Comments = ({ comments, user, addComment, taskId }: TCommentsProps) => {
   const [commentText, setCommentText] = useState("");
   const handleAddComment = async () => {
     if (!commentText.length) return;
-    const resp = await createComment(2, commentText);
+    const resp = await createComment(taskId, commentText);
     if (axios.isAxiosError(resp)) return;
     addComment(resp.data);
     setCommentText("");

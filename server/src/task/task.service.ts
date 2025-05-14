@@ -90,7 +90,11 @@ export class TaskService {
         subtasks: true,
         task_list: true,
         assign_user: true,
-        attachments: true,
+        attachments: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
     return data;
@@ -131,23 +135,19 @@ export class TaskService {
         "Такой задачи не существует",
         HttpStatus.BAD_REQUEST,
       );
+
     const respFiles = await this.yandexDiskService.uploadMultipleFiles(files);
-    const data = await this.prismaService.task.update({
-      data: {
-        attachments: {
-          createMany: {
-            data: respFiles.map((el) => {
-              return {
-                fileUrl: el.imageSrc,
-                userId: user.id,
-              };
-            }),
-          },
-        },
-      },
-      where: {
-        id,
-      },
+
+    const data = await this.prismaService.attachment.createMany({
+      data: respFiles.map((el) => {
+        return {
+          fileUrl: el.imageSrc,
+          userId: user.id,
+          fileName: el.fileName,
+          taskId: id,
+        };
+      }),
+      skipDuplicates: true,
     });
     return data;
   }
