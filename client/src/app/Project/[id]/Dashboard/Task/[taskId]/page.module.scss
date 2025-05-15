@@ -15,6 +15,7 @@
   display: flex;
   &__form {
     flex-basis: 850px;
+    border-right: 1px solid $base-100;
   }
   &__info {
     flex-grow: 1;
@@ -67,7 +68,6 @@
 .date {
   display: flex;
   border-bottom: 1px solid $base-100;
-  border-left: 1px solid $base-100;
   padding-bottom: 24px;
 
   &__item {
@@ -98,7 +98,7 @@
   justify-content: space-between;
   gap: 24px;
   padding: 24px;
-  border-right: 1px solid $base-100;
+  // border-right: 1px solid $base-100;
   &-wrapper {
     display: flex;
     flex-direction: column;

@@ -24,6 +24,9 @@ const Page = ({
 }) => {
   const { id, taskId } = use(params);
   const userStore = useAppSelector((state) => state.user);
+  const projectStore = useAppSelector(
+    (state) => state.projects.selectedProject
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [task, setTask] = useState<TTaskGetApi | null>(null);
   const [comments, setComments] = useState<TCommentFindAll[]>([]);
@@ -36,7 +39,7 @@ const Page = ({
   ) => {
     setIsUploading(true);
     try {
-      const resp = await upploadTaskFiles(+taskId, formData, onProgress);
+      await upploadTaskFiles(+taskId, formData, onProgress);
       const task = await getTask(+taskId);
       if (axios.isAxiosError(task)) return;
       setTask(task.data);
@@ -78,11 +81,12 @@ const Page = ({
     document.body.removeChild(a);
     console.log(r);
   };
+  
   return (
     <div>
       <div className={styles.breadcrumbs}>
-        <Link href="#" className={styles.breadcrumbs__item}>
-          proj
+        <Link href={`/Projects/${id}`} className={styles.breadcrumbs__item}>
+          {projectStore?.name}
         </Link>
         <span>&gt;</span>
         <Link href="#" className={styles.breadcrumbs__item}>

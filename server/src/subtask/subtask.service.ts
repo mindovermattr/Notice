@@ -21,12 +21,25 @@ export class SubtaskService {
     return data;
   }
 
-  async findAll() {
-    return `This action returns all subtask`;
+  async findAll(taskId: number) {
+    const data = await this.prismaService.subTask.findMany({
+      where: {
+        task: {
+          id: taskId,
+        },
+      },
+    });
+
+    return data;
   }
 
   async findOne(id: number) {
-    return `This action returns a #${id} subtask`;
+    const data = await this.prismaService.subTask.findMany({
+      where: {
+        id,
+      },
+    });
+    return data;
   }
 
   async update(id: number, updateSubtaskDto: UpdateSubtaskDto) {
