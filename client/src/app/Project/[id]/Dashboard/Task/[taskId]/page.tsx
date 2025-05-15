@@ -27,7 +27,8 @@ const Page = ({
   const projectStore = useAppSelector(
     (state) => state.projects.selectedProject
   );
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFileModalOpen, setIsFileModalOpen] = useState(false);
+  const [isSubtaskModalOpen, setIsSubtaskModalOpen] = useState(false);
   const [task, setTask] = useState<TTaskGetApi | null>(null);
   const [comments, setComments] = useState<TCommentFindAll[]>([]);
   const [isRedacting, setIsRedacting] = useState(true);
@@ -81,7 +82,7 @@ const Page = ({
     document.body.removeChild(a);
     console.log(r);
   };
-  
+
   return (
     <div>
       <div className={styles.breadcrumbs}>
@@ -89,12 +90,15 @@ const Page = ({
           {projectStore?.name}
         </Link>
         <span>&gt;</span>
-        <Link href="#" className={styles.breadcrumbs__item}>
-          tasklist
+        <Link
+          href={`/Projects/${id}/Tasklist`}
+          className={styles.breadcrumbs__item}
+        >
+          {task?.task_list.title}
         </Link>
         <span>&gt;</span>
         <Link href="#" className={styles.breadcrumbs__item}>
-          task
+          {task?.title}
         </Link>
       </div>
       <div className={styles.body}>
@@ -128,38 +132,43 @@ const Page = ({
                 disabled={isRedacting}
               />
             </div>
-            <Button onClick={() => setIsModalOpen(true)} type="button">
+            <Button onClick={() => setIsFileModalOpen(true)} type="button">
               Добавить файлы
             </Button>
-            <Button type="button">Добавить подзадачу</Button>
+            <Button onClick={() => setIsSubtaskModalOpen(true)} type="button">
+              Добавить подзадачу
+            </Button>
           </form>
           <div className={styles.attachments}>
-            {task?.attachments.map((el) => (
-              <div className={styles["attachments-wrapper"]} key={el.id}>
-                <div
-                  onClick={() => downloadHandler(el)}
-                  className={styles.attachments__info}
-                >
-                  <Image
-                    className={styles.attachments__image}
-                    width={80}
-                    height={80}
-                    src={"/icons/file.svg"}
-                    alt="file"
-                  />
-                  <Avatar
-                    className={styles.attachments__avatar}
-                    width={48}
-                    height={48}
-                    imgSrc={el.user?.avatarUrl}
-                  />
+            <h3 className={styles.attachments__title}>Файлы</h3>
+            <div className={styles.attachments__items}>
+              {task?.attachments.map((el) => (
+                <div className={styles["attachments-wrapper"]} key={el.id}>
+                  <div
+                    onClick={() => downloadHandler(el)}
+                    className={styles.attachments__info}
+                  >
+                    <Image
+                      className={styles.attachments__image}
+                      width={80}
+                      height={80}
+                      src={"/icons/file.svg"}
+                      alt="file"
+                    />
+                    <Avatar
+                      className={styles.attachments__avatar}
+                      width={48}
+                      height={48}
+                      imgSrc={el.user?.avatarUrl}
+                    />
+                  </div>
+                  <p className={styles.attachments__name}>{el.fileName}</p>
+                  <p className={styles.attachments__date}>
+                    {formatDate(el.createdAt)}
+                  </p>
                 </div>
-                <p className={styles.attachments__name}>{el.fileName}</p>
-                <p className={styles.attachments__date}>
-                  {formatDate(el.createdAt)}
-                </p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
         <div className={styles.body__info}>
@@ -185,7 +194,7 @@ const Page = ({
           />
         </div>
       </div>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal isOpen={isFileModalOpen} onClose={() => setIsFileModalOpen(false)}>
         <FileUploader
           onFileUpload={handleFileUpload}
           accept="image/*,.pdf,.doc,.docx"
@@ -193,6 +202,18 @@ const Page = ({
           maxSize={5 * 1024 * 1024} // 5MB
           disabled={isUploading}
         />
+      </Modal>
+      <Modal
+        isOpen={isSubtaskModalOpen}
+        onClose={() => setIsSubtaskModalOpen(false)}
+      >
+        <form action="">
+          <Input
+            label="Название подзадачи"
+            placeholder="Кратко сформулируйте, что нужно сделать"
+          />
+          <Button>Добавить</Button>
+        </form>
       </Modal>
     </div>
   );

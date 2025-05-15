@@ -10,7 +10,29 @@ const options = {
 export const formatDate = (date: Date | string | undefined) => {
   if (date === undefined) return "Неправильная дата";
   if (date instanceof Date) {
-    return date.toLocaleString("ru-RU", options);
+    return new Date(
+      Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        date.getSeconds()
+      )
+    ).toLocaleString("ru-RU", options);
   }
-  return new Date(date).toLocaleString("ru-RU", options);
+  const tempDate = new Date(date);
+
+  const UTCDate = new Date(
+    Date.UTC(
+      tempDate.getFullYear(),
+      tempDate.getMonth(),
+      tempDate.getDate(),
+      tempDate.getHours(),
+      tempDate.getMinutes(),
+      tempDate.getSeconds()
+    )
+  ).toLocaleString("ru-RU", options);
+
+  return UTCDate;
 };

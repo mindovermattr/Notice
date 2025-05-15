@@ -2,6 +2,8 @@ import { HttpService } from "@nestjs/axios";
 import { HttpException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
+import { createHash } from "crypto";
+import { extname } from "path";
 import { firstValueFrom } from "rxjs";
 
 @Injectable()
@@ -12,6 +14,12 @@ export class YandexDiskService {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {}
+
+  generateHashFilename = (buffer: Buffer, originalname: string): string => {
+    const hash = createHash("sha256").update(buffer).digest("hex");
+    const fileExt = extname(originalname);
+    return `${hash}${fileExt}`;
+  };
 
   async getFile(path: string) {
     try {
@@ -35,16 +43,14 @@ export class YandexDiskService {
       "utf8",
     );
     let isAlreadyUpploaded = false;
+    const newName = this.generateHashFilename(file.buffer, file.originalname);
     try {
       const checkResponse = await firstValueFrom(
-        this.httpService.head(
-          `https://${this.apiUrl}/${encodeURIComponent(file.originalname)}`,
-          {
-            headers: {
-              Authorization: `OAuth ${this.configService.get("OAUTH_TOKEN")}`,
-            },
+        this.httpService.head(`https://${this.apiUrl}/${newName}`, {
+          headers: {
+            Authorization: `OAuth ${this.configService.get("OAUTH_TOKEN")}`,
           },
-        ),
+        }),
       );
 
       if (checkResponse.status === 200) {
@@ -63,7 +69,7 @@ export class YandexDiskService {
     try {
       const response = await firstValueFrom(
         this.httpService.put(
-          `https://${this.apiUrl}/${encodeURIComponent(file.originalname)}`,
+          `https://${this.apiUrl}/${newName}`,
           Buffer.from(file.buffer),
           {
             headers: {
@@ -75,7 +81,7 @@ export class YandexDiskService {
       );
       return {
         fileName: file.originalname,
-        imageSrc: `http://localhost:3001/api/yandex-disk/file/${encodeURIComponent(file.originalname)}`,
+        imageSrc: `http://localhost:3001/api/yandex-disk/file/${newName}`,
         status: response.status,
         isAlreadyUpploaded,
       };
@@ -86,9 +92,7 @@ export class YandexDiskService {
     }
   }
 
-  async uploadMultipleFiles(
-    files: Express.Multer.File[],
-  ): Promise<
+  async uploadMultipleFiles(files: Express.Multer.File[]): Promise<
     {
       imageSrc: string;
       status: number;
