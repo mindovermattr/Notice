@@ -1,32 +1,44 @@
+import { TTaskGetApi } from "@/@types/TTask";
+import {
+  TColumnColorsValue,
+  TColumnStatusValue,
+} from "@/constants/kanban.constans";
 import Image from "next/image";
 import { HTMLProps } from "react";
 import KanbanItem from "../Item/KanbanItem";
 import styles from "./KanbanColumn.module.scss";
 
-const COLUMN_COLORS = {
+type TKanbanColumn = HTMLProps<HTMLDivElement> & {
+  columnColor: TColumnColorsValue;
+  title: TColumnStatusValue;
+  tasks: TTaskGetApi[] | undefined;
+  updateCard: (task: TTaskGetApi, title: TColumnStatusValue) => void;
+};
+
+const COLUMN_COLORS_STYLES = {
   cyan: "column__color--cyan",
   yellow: "column__color--yellow",
   indigo: "column__color--indigo",
   green: "column__color--green",
 } as const;
 
-type TKanbanColumn = HTMLProps<HTMLDivElement> & {
-  columnColor: keyof typeof COLUMN_COLORS;
-  title: string;
-};
-
-export const KanbanColumn = ({ columnColor, title }: TKanbanColumn) => {
-  function dragoverHandler(ev: DragEvent) {
+export const KanbanColumn = ({
+  columnColor,
+  title,
+  tasks,
+  updateCard,
+}: TKanbanColumn) => {
+  function dragOverHandler(ev: DragEvent) {
     ev.preventDefault();
-    if (ev.dataTransfer) {
-    }
   }
-  function dropHandler(ev: DragEvent) {
+
+  async function dropHandler(ev: DragEvent) {
     ev.preventDefault();
     if (ev.dataTransfer) {
-      const data = ev.dataTransfer.getData("text/plain");
-
-      console.log(data);
+      const task = JSON.parse(
+        ev.dataTransfer.getData("application/json")
+      ) as TTaskGetApi;
+      updateCard(task, title);
     }
   }
 
@@ -36,11 +48,11 @@ export const KanbanColumn = ({ columnColor, title }: TKanbanColumn) => {
         <div className={styles.column__info}>
           <div
             className={`${styles.column__color} ${
-              styles[COLUMN_COLORS[columnColor]]
+              styles[COLUMN_COLORS_STYLES[columnColor]]
             }`}
           />
           <h4 className={styles.column__title}>{title}</h4>
-          <div className={styles.column__counter}>5</div>
+          <div className={styles.column__counter}>{tasks?.length}</div>
         </div>
         <div>
           <button>
@@ -55,18 +67,14 @@ export const KanbanColumn = ({ columnColor, title }: TKanbanColumn) => {
       </header>
 
       <div
-        // onDragEnter={() => console.log(title)}
-        onDrop={(event) => dropHandler(event)}
-        onDragOver={(event) => dragoverHandler(event)}
+        onDrop={dropHandler}
+        onDragOver={(e) => dragOverHandler(e)}
         className={`${styles.column__tasks} ${styles["column__tasks--selected"]}`}
       >
-        <KanbanItem title="title 1" onDragEnter={() => ""} />
-        <KanbanItem title="title 2" onDragEnter={() => ""} />
-        <KanbanItem title="title 3" onDragEnter={() => ""} />
-        <KanbanItem title="title 3" onDragEnter={() => ""} />
-        <KanbanItem title="title 3" onDragEnter={() => ""} />
-        <KanbanItem title="title 3" onDragEnter={() => ""} />
-        <KanbanItem title="title 3" onDragEnter={() => ""} />
+        {!tasks?.length && <div className={`${styles.dropzone}`}>Drop</div>}
+        {tasks?.map((el) => (
+          <KanbanItem key={el.id} task={el} />
+        ))}
       </div>
     </section>
   );

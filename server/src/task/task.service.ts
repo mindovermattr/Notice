@@ -81,6 +81,28 @@ export class TaskService {
     return data;
   }
 
+  async findAllByProject(projectId: number) {
+    const data = await this.prismaService.listTasks.findMany({
+      where: {
+        project: {
+          id: projectId,
+        },
+      },
+      include: {
+        tasks: {
+          include: {
+            assign_user: true,
+            attachments: true,
+            subtasks: true,
+            task_list: true,
+          },
+        },
+      },
+    });
+    const tasks = data.map((el) => el.tasks).flat(1);
+    return { tasks };
+  }
+
   async findOne(id: number) {
     const data = await this.prismaService.task.findFirst({
       where: {

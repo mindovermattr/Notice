@@ -13,6 +13,7 @@ import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 import { Roles } from "src/decorators/roles";
 import { Role } from "src/enums/roles";
 import { RolesGuard } from "src/guards/role.guards";
+import { TaskService } from "src/task/task.service";
 import { CreateProjectDto } from "./dto/create-project.dto";
 import { UpdateProjectDto } from "./dto/update-project.dto";
 import { ProjectService } from "./project.service";
@@ -20,7 +21,10 @@ import { ProjectService } from "./project.service";
 @Controller("project")
 @UseGuards(JwtAuthGuard)
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly projectService: ProjectService,
+    private readonly taskService: TaskService,
+  ) {}
 
   @Post()
   @Roles(Role.USER, Role.ADMIN)
@@ -47,7 +51,10 @@ export class ProjectController {
     return this.projectService.update(+id, updateProjectDto);
   }
 
-  //@Patch(":id")
+  @Get(":id/tasks")
+  getAllTasks(@Param("id") id: string) {
+    return this.taskService.findAllByProject(+id);
+  }
 
   @Delete(":projId")
   @Roles(Role.ADMIN)

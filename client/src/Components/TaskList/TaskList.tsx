@@ -1,5 +1,5 @@
 "use client";
-import { taskSchema } from "@/@schemes/task.schema";
+import { taskCreateSchema } from "@/@schemes/task.schema";
 import { TTasklist } from "@/@types/TTasklist";
 import { createTask } from "@/api/task.api";
 import Button from "@/Components/Button/Button";
@@ -32,10 +32,10 @@ const TaskList = ({ list }: TTaskListProps) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(taskSchema),
+    resolver: zodResolver(taskCreateSchema),
   });
 
-  const submitHandler = async (data: z.infer<typeof taskSchema>) => {
+  const submitHandler = async (data: z.infer<typeof taskCreateSchema>) => {
     await createTask(list.id, data);
     await dispatch(getTasklistsThunk({ id: +id }));
     setIsModalOpen(false);

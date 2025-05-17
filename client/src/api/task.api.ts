@@ -35,6 +35,17 @@ export const getTask = async (taskId: number) => {
     return error as TApiError;
   }
 };
+
+export const getTasks = async (projectId: number) => {
+  try {
+    const resp = await protectedInstance.get<{
+      tasks: TTask[];
+    }>(`project/${projectId}/tasks`);
+    return resp;
+  } catch (error: unknown) {
+    return error as TApiError;
+  }
+};
 export const getTaskComments = async (taskId: number) => {
   try {
     const resp = await protectedInstance.get<TCommentFindAll[]>(

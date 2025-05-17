@@ -22,7 +22,7 @@ const schema = z
 
 const Tab = ({ className, ...props }: TTab) => {
   const selectedSegment = useSelectedLayoutSegment();
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id?: string }>();
   const dispatch = useAppDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -40,6 +40,7 @@ const Tab = ({ className, ...props }: TTab) => {
   });
 
   const submitHandler = async (data: z.infer<typeof schema>) => {
+    if (!id) return;
     await dispatch(createTasklistThunk({ id: +id, title: data.title }));
     setIsOpen(false);
   };
@@ -49,7 +50,7 @@ const Tab = ({ className, ...props }: TTab) => {
       <header className={`${styles.tab} ${className}`} {...props}>
         <div className={styles.tab__links}>
           <Link
-            href={"Tasklist"}
+            href={`/Project/${id}/Dashboard/Tasklist`}
             className={`${styles.tab__option} ${
               selectedSegment === "Tasklist"
                 ? styles["tab__option--selected"]
@@ -65,7 +66,7 @@ const Tab = ({ className, ...props }: TTab) => {
             <p className={styles.tab__text}>Task List</p>
           </Link>
           <Link
-            href={"Kanban"}
+            href={`/Project/${id}/Dashboard/Kanban`}
             className={`${styles.tab__option} ${
               selectedSegment === "Kanban"
                 ? styles["tab__option--selected"]
@@ -80,7 +81,10 @@ const Tab = ({ className, ...props }: TTab) => {
             />
             <p className={styles.tab__text}>Boards</p>
           </Link>
-          <Link href={"Gantt"} className={styles.tab__option}>
+          <Link
+            href={`/Project/${id}/Dashboard/Gantt`}
+            className={styles.tab__option}
+          >
             <Image
               width={24}
               height={24}

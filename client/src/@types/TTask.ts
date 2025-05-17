@@ -1,5 +1,6 @@
-import { ETaskStatus } from "./Enums/ETaskStatus";
+import { TColumnStatusValue } from "@/constants/kanban.constans";
 import { TAtachment } from "./TAtachment";
+import { TSubtask } from "./TSubtask";
 import { TTasklist } from "./TTasklist";
 
 export type TTask = {
@@ -8,8 +9,8 @@ export type TTask = {
   description: string;
   due_date: string;
   priority: boolean;
-  status: ETaskStatus;
-  subtasks: []; //todo
+  status: TColumnStatusValue;
+  subtasks: TSubtask[]; //todo
   assign_user?: TUser;
   isCompleted: boolean;
 };

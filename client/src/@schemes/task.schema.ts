@@ -43,21 +43,26 @@ const timeSchema = z
     }
   );
 
-export const taskSchema = z
-  .object({
-    title: z.string().nonempty("Название не должно быть пустым"),
-    description: z.string().min(8, "Минимум 8 символов"),
-    dateTime: dateSchema,
-    time: timeSchema,
-    userId: z.string().transform((value) => +value),
-  })
-  .transform((data) => {
-    const [day, month, year] = data.dateTime.split(".").map(Number);
-    const [hours, minutes] = data.time.split(":").map(Number);
-    const dueDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+export const taskSchema = z.object({
+  title: z.string().nonempty("Название не должно быть пустым"),
+  description: z.string().min(8, "Минимум 8 символов"),
+  dateTime: dateSchema,
+  time: timeSchema,
+  userId: z.string().transform((value) => +value),
+});
 
-    return {
-      ...data,
-      dueDate,
-    };
-  });
+export const taskCreateSchema = taskSchema.transform((data) => {
+  const [day, month, year] = data.dateTime.split(".").map(Number);
+  const [hours, minutes] = data.time.split(":").map(Number);
+  const dueDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+
+  return {
+    ...data,
+    dueDate,
+  };
+});
+
+export const editTaskSchema = taskSchema.pick({
+  title: true,
+  description: true,
+});

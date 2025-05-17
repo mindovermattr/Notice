@@ -1,14 +1,68 @@
 "use client";
+import { TTaskGetApi } from "@/@types/TTask";
+import { getTasks, patchTask } from "@/api/task.api";
+import {
+  COLUMN_COLORS,
+  COLUMN_STATUS,
+  TColumnStatusValue,
+} from "@/constants/kanban.constans";
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { KanbanColumn } from "./Column/KanbanColumn";
 import styles from "./Kanban.module.scss";
 
+type TTaskGroups = {
+  [key in TColumnStatusValue]: TTaskGetApi[];
+};
+
 const Kanban = () => {
+  const [grouppedTasks, setGrouppedTasks] = useState<TTaskGroups | null>(null);
+  const { id } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    const fetchTasks = async (id: number) => {
+      const response = await getTasks(id);
+      if (axios.isAxiosError(response)) return;
+      const columns = Object.values(COLUMN_STATUS).reduce((acc, status) => {
+        acc[status] = [];
+        return acc;
+      }, {} as TTaskGroups);
+    
+      const groups = response.data.tasks.reduce((acc, task) => {
+        acc[task.status].push(task);
+        return acc;
+      }, columns);
+      setGrouppedTasks(groups);
+    };
+    fetchTasks(+id);
+  }, []);
+
+  const updateCard = async (task: TTaskGetApi, title: TColumnStatusValue) => {
+    if (!grouppedTasks) return;
+    const response = await patchTask(task.id, { ...task, status: title });
+    if (axios.isAxiosError(response)) return;
+
+    const updatedTasks = { ...grouppedTasks };
+    updatedTasks[task.status] = updatedTasks[task.status].filter(
+      (t) => t.id !== task.id
+    );
+    updatedTasks[title] = [...updatedTasks[title], { ...task, status: title }];
+
+    setGrouppedTasks(updatedTasks);
+  };
+
   return (
     <div className={styles.kanban}>
-      <KanbanColumn title="To do" columnColor="cyan" />
-      <KanbanColumn title="In Work" columnColor="yellow" />
-      <KanbanColumn title="Review" columnColor="indigo" />
-      <KanbanColumn title="Done" columnColor="green" />
+      {Object.values(COLUMN_STATUS).map((el) => (
+        <KanbanColumn
+          updateCard={updateCard}
+          key={el}
+          tasks={grouppedTasks?.[el]}
+          columnColor={COLUMN_COLORS[el]}
+          title={el}
+        />
+      ))}
     </div>
   );
 };

@@ -1,6 +1,4 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { use, useEffect } from "react";
 
 const page = ({
   params,
@@ -9,12 +7,12 @@ const page = ({
     id: string;
   }>;
 }) => {
-  const router = useRouter();
-  const { id } = use(params);
-  useEffect(() => {
-    router.push(`${id}/Dashboard/Tasklist`);
-  }, []);
-  return <div></div>;
+  // const router = useRouter();
+  // const { id } = use(params);
+  // useEffect(() => {
+  //   router.push(`${id}/Dashboard/Tasklist`);
+  // }, []);
+  return <div>wqeqwe</div>;
 };
 
 export default page;

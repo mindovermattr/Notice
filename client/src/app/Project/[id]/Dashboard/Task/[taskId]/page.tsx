@@ -1,8 +1,14 @@
 "use client";
+import { editTaskSchema } from "@/@schemes/task.schema";
 import { TAtachment } from "@/@types/TAtachment";
 import { TCommentFindAll } from "@/@types/TComments";
 import { TTaskGetApi } from "@/@types/TTask";
-import { getTask, getTaskComments, upploadTaskFiles } from "@/api/task.api";
+import {
+  getTask,
+  getTaskComments,
+  patchTask,
+  upploadTaskFiles,
+} from "@/api/task.api";
 import Avatar from "@/Components/Avatar/Avatar";
 import Button from "@/Components/Button/Button";
 import Comments from "@/Components/Comments/Comments";
@@ -11,10 +17,13 @@ import Input from "@/Components/Input/Input";
 import Modal from "@/Components/Modal/Modal";
 import { useAppSelector } from "@/store/hooks";
 import { formatDate } from "@/utils/date.utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosProgressEvent } from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import styles from "./page.module.scss";
 
 const Page = ({
@@ -33,6 +42,15 @@ const Page = ({
   const [comments, setComments] = useState<TCommentFindAll[]>([]);
   const [isRedacting, setIsRedacting] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(editTaskSchema),
+  });
 
   const handleFileUpload = async (
     formData: FormData,
@@ -57,6 +75,10 @@ const Page = ({
       const task = await getTask(taskId);
       if (axios.isAxiosError(task)) return;
       setTask(task.data);
+      reset({
+        description: task.data.description,
+        title: task.data.title,
+      });
       const comments = await getTaskComments(taskId);
       if (axios.isAxiosError(comments)) return;
       setComments(comments.data);
@@ -83,15 +105,22 @@ const Page = ({
     console.log(r);
   };
 
+  const submitHandler = async (data: z.infer<typeof editTaskSchema>) => {
+    await patchTask(+taskId, data);
+  };
+
   return (
     <div>
       <div className={styles.breadcrumbs}>
-        <Link href={`/Projects/${id}`} className={styles.breadcrumbs__item}>
+        <Link
+          href={`/Project/${id}/Dashboard`}
+          className={styles.breadcrumbs__item}
+        >
           {projectStore?.name}
         </Link>
         <span>&gt;</span>
         <Link
-          href={`/Projects/${id}/Tasklist`}
+          href={`/Project/${id}/Dashboard/Tasklist`}
           className={styles.breadcrumbs__item}
         >
           {task?.task_list.title}
@@ -103,19 +132,21 @@ const Page = ({
       </div>
       <div className={styles.body}>
         <div className={styles.body__form}>
-          <form className={styles.form}>
+          <form onSubmit={handleSubmit(submitHandler)} className={styles.form}>
             <div className={styles.form__field}>
               <Input
+                {...register("title")}
                 className={styles.form__input}
                 label="Имя"
                 placeholder="Название задачи"
                 defaultValue={task?.title}
                 disabled={isRedacting}
+                error={errors.title?.message}
               />
               <Button
                 onClick={() => setIsRedacting((prev) => !prev)}
                 variant="text"
-                type="button"
+                type={isRedacting ? "submit" : "button"}
                 className={styles.form__icon}
               >
                 <Image width={14} height={14} src={"/icons/pen.svg"} alt="" />
@@ -124,12 +155,14 @@ const Page = ({
             </div>
             <div className={styles.form__field}>
               <Input
+                {...register("description")}
                 className={styles.form__textarea}
                 label="Описание"
                 as="textarea"
                 placeholder="Описание задачи"
                 defaultValue={task?.description}
                 disabled={isRedacting}
+                error={errors.description?.message}
               />
             </div>
             <Button onClick={() => setIsFileModalOpen(true)} type="button">
@@ -186,6 +219,16 @@ const Page = ({
               <p>{`${task?.assign_user.name} ${task?.assign_user.lastname}`}</p>
             </li>
           </ol>
+          <div className={styles.subtasks}>
+            <h3 className={styles.subtasks__title}>Список подзадач</h3>
+            <div className={styles.subtasks__items}>
+              {task?.subtasks.map((el) => (
+                <div key={el.id}>
+                  <h4>{el.title}</h4>
+                </div>
+              ))}
+            </div>
+          </div>
           <Comments
             taskId={+taskId}
             comments={comments}
