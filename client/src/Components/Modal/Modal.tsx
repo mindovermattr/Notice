@@ -1,4 +1,5 @@
 "use client";
+import clsx from "clsx";
 import { ComponentPropsWithoutRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import styles from "./Modal.module.scss";
@@ -14,6 +15,7 @@ const Modal = ({
   isOpen,
   closeOnOverlayClick = true,
   onClose,
+  className,
   ...props
 }: TModalProps) => {
   useEffect(() => {
@@ -39,7 +41,7 @@ const Modal = ({
       <>
         {isOpen && (
           <div className={styles["modal-wrapper"]} onClick={handleOverlayClick}>
-            <div className={styles.modal} {...props}>
+            <div className={clsx(styles.modal, className)} {...props}>
               <button onClick={onClose} className={styles.modal__close}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

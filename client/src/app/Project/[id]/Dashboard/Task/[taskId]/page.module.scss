@@ -1,5 +1,6 @@
 .breadcrumbs {
   display: flex;
+  align-items: center;
   gap: 12px;
   padding: 12px 24px;
   border-bottom: 1px solid $base-100;
@@ -157,7 +158,13 @@
     font-weight: 700;
     color: $base-600;
   }
-  &__items{
-    
+  &__items {
   }
+}
+
+.subtask-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 400px;
 }

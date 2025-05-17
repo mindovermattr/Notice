@@ -12,3 +12,7 @@ export const getUser = () => {
 export const setUser = (user: TRespAuth) => {
   localStorage.setItem(USER_LS_KEY, JSON.stringify(user));
 };
+
+export const logoutUser = () => {
+  localStorage.removeItem(USER_LS_KEY);
+};

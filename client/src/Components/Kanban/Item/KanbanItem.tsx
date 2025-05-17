@@ -1,6 +1,7 @@
 import { TTaskGetApi } from "@/@types/TTask";
 import Avatar from "@/Components/Avatar/Avatar";
 import { useAppSelector } from "@/store/hooks";
+import { formatDate } from "@/utils/date.utils";
 import Image from "next/image";
 import { DragEvent, HTMLProps, useState } from "react";
 import styles from "./KanbanItem.module.scss";
@@ -53,8 +54,16 @@ const KanbanItem = ({ task, onDragEnd, ...props }: TKanbanItemProps) => {
             <Image width={16} height={16} src="/icons/list.svg" alt="icon" />{" "}
             <span>{task.subtasks.length}</span>
           </p>
-          <p className={styles.task__attachments}>2</p>
-          <p className={styles.task__period}>6 days left</p>
+          <p className={styles.task__attachments}>
+            <Image
+              width={16}
+              height={16}
+              src="/icons/fileClip.svg"
+              alt="icon"
+            />
+            {task.attachments.length}
+          </p>
+          <p className={styles.task__period}>{formatDate(task.due_date)}</p>
         </footer>
       </article>
     </div>

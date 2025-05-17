@@ -1,8 +1,10 @@
 "use client";
+import { subtaskSchema } from "@/@schemes/subtask.schema";
 import { editTaskSchema } from "@/@schemes/task.schema";
 import { TAtachment } from "@/@types/TAtachment";
 import { TCommentFindAll } from "@/@types/TComments";
 import { TTaskGetApi } from "@/@types/TTask";
+import { createSubTask } from "@/api/subtask.api";
 import {
   getTask,
   getTaskComments,
@@ -50,6 +52,13 @@ const Page = ({
     formState: { errors },
   } = useForm({
     resolver: zodResolver(editTaskSchema),
+  });
+  const {
+    register: registerSubtask,
+    handleSubmit: handleSubmitSubtask,
+    formState: { errors: subtaskErrors },
+  } = useForm({
+    resolver: zodResolver(subtaskSchema),
   });
 
   const handleFileUpload = async (
@@ -109,6 +118,11 @@ const Page = ({
     await patchTask(+taskId, data);
   };
 
+  const subtaskSubmitHandler = async (data: z.infer<typeof subtaskSchema>) => {
+    await createSubTask(+taskId, data.title);
+    setIsSubtaskModalOpen(false);
+  };
+
   return (
     <div>
       <div className={styles.breadcrumbs}>
@@ -118,14 +132,14 @@ const Page = ({
         >
           {projectStore?.name}
         </Link>
-        <span>&gt;</span>
+        <Image width={16} height={16} src={"/icons/arrow.svg"} alt="arrow" />
         <Link
           href={`/Project/${id}/Dashboard/Tasklist`}
           className={styles.breadcrumbs__item}
         >
           {task?.task_list.title}
         </Link>
-        <span>&gt;</span>
+        <Image width={16} height={16} src={"/icons/arrow.svg"} alt="arrow" />
         <Link href="#" className={styles.breadcrumbs__item}>
           {task?.title}
         </Link>
@@ -250,10 +264,15 @@ const Page = ({
         isOpen={isSubtaskModalOpen}
         onClose={() => setIsSubtaskModalOpen(false)}
       >
-        <form action="">
+        <form
+          onSubmit={handleSubmitSubtask(subtaskSubmitHandler)}
+          className={styles["subtask-form"]}
+        >
           <Input
+            {...registerSubtask("title")}
             label="Название подзадачи"
             placeholder="Кратко сформулируйте, что нужно сделать"
+            error={subtaskErrors.title?.message}
           />
           <Button>Добавить</Button>
         </form>

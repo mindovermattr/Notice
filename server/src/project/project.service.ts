@@ -42,7 +42,7 @@ export class ProjectService {
     const data = await this.prismaService.project.findMany({
       where: {
         users: {
-          every: {
+          some: {
             id: user.id,
           },
         },
@@ -51,6 +51,14 @@ export class ProjectService {
         users: {
           omit: {
             password: true,
+          },
+        },
+        user_roles: {
+          where: {
+            user_id: user.id,
+          },
+          include: {
+            role_name: true,
           },
         },
       },

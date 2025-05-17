@@ -63,6 +63,8 @@ const userSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.user = null;
+      state.error = [];
+      state.role = null;
     },
     setUser: (state, action: PayloadAction<TRespAuth>) => {
       state.token = action.payload.token;
