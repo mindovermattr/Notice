@@ -1,14 +1,26 @@
 .gantt {
   display: flex;
   //   height: 100%;
-  &__list {
+  overflow: hidden;
+  &__date {
+    display: grid;
+    grid-template-columns: repeat(28, 1fr);
+    grid-template-rows: 70px 30px;
+    grid-auto-rows: 30px;
+    width: 100%;
+    overflow: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 
 .list {
   border-right: 1px solid $base-100;
   &__title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: $base-600;
     padding: 30px 32px;
@@ -21,5 +33,22 @@
     margin-left: 32px;
     margin-top: 24px;
   }
-  
+}
+
+.date {
+  &__weeks {
+    width: 100%;
+    font-size: 16px;
+    color: $base-600;
+    font-weight: 700;
+    grid-column: span 7;
+    border: 1px solid $base-100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__cell {
+    outline: 1px solid $base-100;
+    padding: 6px 12px;
+  }
 }

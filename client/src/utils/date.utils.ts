@@ -61,11 +61,11 @@ export const getMonthDate = (currentDate: Date) => {
     month: "short",
   });
 
-  while (itterationDate <= endDate) {
+  while (itterationDate < endDate) {
     const date = itterationDate.getDate();
     const dayOfTheWeek = itterationDate.getDay();
     // Понедельник
-    if (dayOfTheWeek === 1 && itterationDate < endDate) {
+    if (dayOfTheWeek === 1) {
       const tempDate = new Date(
         Date.UTC(
           itterationDate.getFullYear(),
