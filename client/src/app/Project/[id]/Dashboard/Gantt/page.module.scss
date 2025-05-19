@@ -1,10 +1,9 @@
 .gantt {
   display: flex;
-  //   height: 100%;
   overflow: hidden;
   &__date {
     display: grid;
-    grid-template-columns: repeat(28, 1fr);
+    grid-template-columns: repeat(28, minmax(40px, 1fr));
     grid-template-rows: 70px 30px;
     grid-auto-rows: 30px;
     width: 100%;
@@ -14,6 +13,9 @@
     &::-webkit-scrollbar {
       display: none;
     }
+  }
+  &__task {
+    padding: 6px;
   }
 }
 
@@ -26,12 +28,20 @@
     padding: 30px 32px;
     border-bottom: 1px solid $base-100;
   }
+  &__item {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
   &__items {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 26px;
     margin-left: 32px;
-    margin-top: 24px;
+    margin-top: 22px;
+    max-width: 120px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 
@@ -50,5 +60,33 @@
   &__cell {
     outline: 1px solid $base-100;
     padding: 6px 12px;
+  }
+}
+
+.task {
+  border-radius: 24px;
+  white-space: nowrap;
+  &-wrapper {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: span 28;
+    margin-top: 16px;
+    gap: 12px;
+  }
+  &--cyan {
+    background-color: $cyan-500;
+    border: 1px solid $cyan-600;
+  }
+  &--yellow {
+    background-color: $yellow-500;
+    border: 1px solid $yellow-600;
+  }
+  &--indigo {
+    background-color: $indigo-500;
+    border: 1px solid $indigo-600;
+  }
+  &--green {
+    background-color: $green-500;
+    border: 1px solid $green-600;
   }
 }

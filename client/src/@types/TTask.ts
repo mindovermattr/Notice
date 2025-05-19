@@ -5,6 +5,7 @@ import { TTasklist } from "./TTasklist";
 
 export type TTask = {
   id: number;
+  createdAt: string;
   title: string;
   description: string;
   due_date: string;
