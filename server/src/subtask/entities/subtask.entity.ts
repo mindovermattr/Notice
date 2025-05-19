@@ -6,4 +6,5 @@ export class Subtask implements SubTaskSchema {
   task_id: number;
   title: string;
   updatedAt: Date;
+  isCompleted: boolean;
 }

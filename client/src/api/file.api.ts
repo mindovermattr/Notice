@@ -30,7 +30,7 @@ export const uploadFile = async (formData: FormData) => {
 };
 export const uploadMultipleFile = async (
   formData: FormData,
-  onProgress: (progressEvent: AxiosProgressEvent) => void
+  onProgressCb: (progressEvent: AxiosProgressEvent) => void
 ) => {
   try {
     const response = await protectedInstance.post(
@@ -40,7 +40,7 @@ export const uploadMultipleFile = async (
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        onUploadProgress: (progressEvent) => onProgress(progressEvent),
+        onUploadProgress: (progressEvent) => onProgressCb(progressEvent),
       }
     );
     return response.data;

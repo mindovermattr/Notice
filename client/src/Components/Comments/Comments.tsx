@@ -2,8 +2,8 @@ import { TCommentFindAll } from "@/@types/TComments";
 import { createComment } from "@/api/comment.api";
 import { formatDate } from "@/utils/date.utils";
 import axios from "axios";
-import Image from "next/image";
 import { useState } from "react";
+import Avatar from "../Avatar/Avatar";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
 import styles from "./Comments.module.scss";
@@ -29,11 +29,10 @@ const Comments = ({ comments, user, addComment, taskId }: TCommentsProps) => {
       <h3 className={styles.comments__title}>Обсуждение</h3>
       <form className={styles.comments__form}>
         <div className={styles.comments__body}>
-          <Image
+          <Avatar
             width={42}
             height={42}
-            alt="Icon"
-            src={user?.avatarUrl || "/icons/profile.svg"}
+            imgSrc={user?.avatarUrl || "/icons/profile.svg"}
             className={styles.history__icon}
           />
           <Input
@@ -56,11 +55,10 @@ const Comments = ({ comments, user, addComment, taskId }: TCommentsProps) => {
       <div className={styles.history}>
         {comments.map((el) => (
           <article key={el.id} className={styles.history__comment}>
-            <Image
+            <Avatar
               width={42}
               height={42}
-              alt="Icon"
-              src={el.user.avatarUrl || "/icons/profile.svg"}
+              imgSrc={el.user?.avatarUrl || "/icons/profile.svg"}
               className={styles.history__icon}
             />
             <div className={styles.history__body}>

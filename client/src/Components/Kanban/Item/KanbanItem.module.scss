@@ -32,6 +32,10 @@
     gap: 8px;
     font-size: 12px;
   }
+  &__avatar {
+    border-radius: 12px;
+    object-fit: cover;
+  }
 
   &--dragged {
   }

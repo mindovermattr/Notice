@@ -81,7 +81,6 @@ model ListHistory{
  
 }
 
-
 model Task {
   id Int @default(autoincrement()) @id
 
@@ -141,6 +140,7 @@ model SubTask {
   updatedAt DateTime @updatedAt
 
   title String 
+  isCompleted Boolean @default(false)
 
   task Task @relation(fields: [task_id], references: [id], onDelete: Cascade)
   task_id Int

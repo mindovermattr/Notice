@@ -32,7 +32,7 @@ export const KanbanColumn = ({
     ev.preventDefault();
   }
 
-  async function dropHandler(ev: DragEvent) {
+  function dropHandler(ev: DragEvent) {
     ev.preventDefault();
     if (ev.dataTransfer) {
       const task = JSON.parse(

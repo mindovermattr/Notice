@@ -63,7 +63,7 @@ const Tab = ({ className, ...props }: TTab) => {
               src="/icons/list.svg"
               alt="board-icon"
             />
-            <p className={styles.tab__text}>Task List</p>
+            <p className={styles.tab__text}>Список</p>
           </Link>
           <Link
             href={`/Project/${id}/Dashboard/Kanban`}
@@ -79,11 +79,13 @@ const Tab = ({ className, ...props }: TTab) => {
               src="/icons/dashboard.svg"
               alt="board-icon"
             />
-            <p className={styles.tab__text}>Boards</p>
+            <p className={styles.tab__text}>Канбан</p>
           </Link>
           <Link
             href={`/Project/${id}/Dashboard/Gantt`}
-            className={styles.tab__option}
+            className={`${styles.tab__option} ${
+              selectedSegment === "Gantt" ? styles["tab__option--selected"] : ""
+            }`}
           >
             <Image
               width={24}
@@ -91,7 +93,7 @@ const Tab = ({ className, ...props }: TTab) => {
               src="/icons/gantt.svg"
               alt="board-icon"
             />
-            <p className={styles.tab__text}>Gantt</p>
+            <p className={styles.tab__text}>Гантт</p>
           </Link>
         </div>
         {selectedSegment === "Tasklist" && (

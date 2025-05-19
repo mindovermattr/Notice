@@ -1,12 +1,19 @@
+import { TUserSchema, userSchema } from "@/@schemes/user.schema";
+import { patchUserAvatar } from "@/api/user.api";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { createProjectThunk } from "@/store/slices/projects.slice";
+import { setUser } from "@/store/slices/user.slice";
+import { getUser, logoutUser, setUser as setUserLS } from "@/utils/user.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios, { AxiosProgressEvent } from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { ComponentProps, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Avatar from "../Avatar/Avatar";
 import Button from "../Button/Button";
+import FileUploader from "../FileUploader/FileUploader";
 import Input from "../Input/Input";
 import Modal from "../Modal/Modal";
 import styles from "./Sidebar.module.scss";
@@ -23,8 +30,33 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
   const projects = useAppSelector((state) => state.projects);
-
   const [isOpen, setIsOpen] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [isUplodaing, setIsUploading] = useState(false);
+
+  const handleFileUpload = async (
+    formData: FormData,
+    onProgress: (progressEvent: AxiosProgressEvent) => void
+  ) => {
+    setIsUploading(true);
+    try {
+      const response = await patchUserAvatar(formData, onProgress);
+      if (axios.isAxiosError(response)) return;
+      setValue("avatarUrl", response.data.avatarUrl!);
+      dispatch(setUser(response.data));
+      const user = getUser();
+      if (!user) return;
+      logoutUser();
+      setUserLS({
+        token: user.token,
+        user: response.data,
+      });
+    } catch (error) {
+      console.error("Ошибка загрузки:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const onClose = () => {
     setIsOpen(false);
@@ -38,26 +70,46 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
     resolver: zodResolver(schema),
   });
 
+  const {
+    register: registerUser,
+    handleSubmit: handleSubmitUser,
+    formState: { errors: userErrors },
+    setValue,
+  } = useForm({
+    resolver: zodResolver(userSchema),
+  });
+
   const submitHandler = async (data: z.infer<typeof schema>) => {
+    await dispatch(createProjectThunk(data.name));
+    setIsOpen(false);
+  };
+
+  const userSubmitHandler = async (data: TUserSchema) => {
     await dispatch(createProjectThunk(data.name));
     setIsOpen(false);
   };
   return (
     <aside className={`${styles.sidebar} ${className}`} {...props}>
       <div className={styles.profile}>
-        <Image
-          src={user.user?.avatarUrl || "/icons/profile.svg"}
-          width={40}
-          height={40}
-          alt="Icon"
+        <Avatar
+          imgSrc={user.user?.avatarUrl || "/icons/profile.svg"}
+          width={32}
+          height={32}
           className={styles.profile__image}
         />
         <div className={styles.profile__information}>
-          <h3
-            className={styles.profile__name}
-          >{`${user.user?.name} ${user.user?.lastname}`}</h3>
+          <h3 className={styles.profile__name}>
+            {`${user.user?.name} ${user.user?.lastname}`}
+          </h3>
           <p className={styles.profile__email}>{user.user?.email}</p>
         </div>
+        <Button
+          onClick={() => setIsUserModalOpen(true)}
+          variant="text"
+          className={styles.profile__edit}
+        >
+          <Image width={18} height={18} src={"/icons/pen.svg"} alt="qwe" />
+        </Button>
       </div>
       <div className={styles["list-wrapper"]}>
         <h3 className={styles.list__title}>Ваши проекты:</h3>
@@ -99,6 +151,37 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
             </div>
           </fieldset>
           <Button>Создать проект</Button>
+        </form>
+      </Modal>
+      <Modal isOpen={isUserModalOpen} onClose={() => setIsUserModalOpen(false)}>
+        <form
+          onSubmit={handleSubmitUser(userSubmitHandler)}
+          className={styles.form}
+        >
+          <fieldset className={styles.form__fieldset}>
+            <div className={styles.form__field}>
+              <Input
+                {...registerUser("name")}
+                label="Имя"
+                placeholder="Имя"
+                error={userErrors.name?.message}
+              />
+              <Input
+                {...registerUser("lastName")}
+                label="Фамилия"
+                placeholder="Фамилия"
+                error={userErrors.lastName?.message}
+              />
+              <FileUploader
+                onFileUpload={handleFileUpload}
+                maxSize={5 * 1024 * 1024}
+                accept=".jpg"
+                disabled={isUplodaing}
+              />
+              <Input {...registerUser("avatarUrl")} />
+            </div>
+          </fieldset>
+          <Button>Изменить</Button>
         </form>
       </Modal>
     </aside>

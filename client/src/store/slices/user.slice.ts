@@ -66,9 +66,12 @@ const userSlice = createSlice({
       state.error = [];
       state.role = null;
     },
-    setUser: (state, action: PayloadAction<TRespAuth>) => {
+    setUserWithToken: (state, action: PayloadAction<TRespAuth>) => {
       state.token = action.payload.token;
       state.user = action.payload.user;
+    },
+    setUser: (state, action: PayloadAction<TUser>) => {
+      state.user = action.payload;
     },
     setRole: (state, action) => {},
   },
@@ -91,6 +94,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, setUser } = userSlice.actions;
+export const { logout, setUser, setUserWithToken } = userSlice.actions;
 
 export default userSlice.reducer;

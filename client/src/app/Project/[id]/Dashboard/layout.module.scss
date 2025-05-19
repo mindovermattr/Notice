@@ -4,3 +4,9 @@
   border-bottom: 1px solid $base-100;
   padding: 12px;
 }
+
+.wrapper {
+  display: grid;
+  grid-template-rows: 70px 1fr;
+  height: 100%;
+}

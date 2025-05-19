@@ -36,3 +36,48 @@ export const formatDate = (date: Date | string | undefined) => {
 
   return UTCDate;
 };
+
+// Функция возвращает диапазон даты, начиная с предыдущей недели, заканчивая датой через 3 недели
+export const getMonthDate = (currentDate: Date) => {
+  const tempDate = new Date(currentDate);
+
+  const dayOfWeek = tempDate.getDay();
+  const daysToLastMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+  const startDate = new Date(currentDate);
+  startDate.setDate(tempDate.getDate() - daysToLastMonday - 7); // понедельник с прошлой недели
+  startDate.setHours(0, 0, 0, 0);
+
+  const endDate = new Date(tempDate);
+  endDate.setDate(tempDate.getDate() - daysToLastMonday + 21); // понедельник через 3 недели
+  endDate.setHours(0, 0, 0, 0);
+
+  const days: Number[] = [];
+  const weeks: String[] = [];
+
+  const itterationDate = new Date(startDate);
+  const formatter = new Intl.DateTimeFormat("ru-RU", {
+    day: "numeric",
+    month: "short",
+  });
+
+  while (itterationDate <= endDate) {
+    const date = itterationDate.getDate();
+    const dayOfTheWeek = itterationDate.getDay();
+    // Понедельник
+    if (dayOfTheWeek === 1 && itterationDate < endDate) {
+      const tempDate = new Date(
+        Date.UTC(
+          itterationDate.getFullYear(),
+          itterationDate.getMonth(),
+          itterationDate.getDate() + 6 // вс
+        )
+      );
+      weeks.push(formatter.formatRange(itterationDate, tempDate));
+    }
+    days.push(date);
+    itterationDate.setDate(date + 1);
+  }
+
+  return { startDate, endDate, days, weeks };
+};

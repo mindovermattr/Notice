@@ -1,0 +1,25 @@
+.gantt {
+  display: flex;
+  //   height: 100%;
+  &__list {
+  }
+}
+
+.list {
+  border-right: 1px solid $base-100;
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $base-600;
+    padding: 30px 32px;
+    border-bottom: 1px solid $base-100;
+  }
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-left: 32px;
+    margin-top: 24px;
+  }
+  
+}

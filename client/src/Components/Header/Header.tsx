@@ -5,6 +5,7 @@ import { logoutUser } from "@/utils/user.utils";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import Button from "../Button/Button";
+import Input from "../Input/Input";
 import Modal from "../Modal/Modal";
 import styles from "./Header.module.scss";
 
@@ -54,7 +55,10 @@ const Header = () => {
         onClose={() => setIsUserModalOpen(false)}
         className={styles["user-modal"]}
       >
-        qwe
+        <form className={styles.form}>
+          <Input label="email" placeholder="email" />
+          <Button>Добавить пользователя</Button>
+        </form>
       </Modal>
     </header>
   );

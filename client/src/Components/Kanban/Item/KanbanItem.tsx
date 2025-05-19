@@ -46,7 +46,12 @@ const KanbanItem = ({ task, onDragEnd, ...props }: TKanbanItemProps) => {
       >
         <header className={styles.task__header}>
           <p className={styles.task__text}>{task.task_list.title}</p>
-          <Avatar width={24} height={24} imgSrc={userStore?.avatarUrl} />
+          <Avatar
+            width={24}
+            height={24}
+            imgSrc={userStore?.avatarUrl}
+            className={styles.task__avatar}
+          />
         </header>
         <h4 className={styles.task__title}>{task.title}</h4>
         <footer className={styles.task__footer}>

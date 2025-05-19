@@ -1,5 +1,5 @@
+import { TApiError } from "@/@types/TApi";
 import { TTasklist } from "@/@types/TTasklist";
-import { AxiosError } from "axios";
 import { protectedInstance } from "./instance";
 
 export const getTaskLists = async (projectId: number) => {
@@ -9,10 +9,7 @@ export const getTaskLists = async (projectId: number) => {
     );
     return resp;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };
 
@@ -26,10 +23,7 @@ export const createTaskList = async (projectId: number, title: string) => {
     );
     return resp;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };
 
@@ -40,9 +34,6 @@ export const deleteTaskList = async (listId: number) => {
     );
     return resp;
   } catch (error: unknown) {
-    return error as AxiosError<{
-      message: string | string[];
-      statusCode: number;
-    }>;
+    return error as TApiError;
   }
 };

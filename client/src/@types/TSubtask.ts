@@ -3,4 +3,5 @@ export type TSubtask = {
   createdAt: string;
   title: string;
   task_id: number;
+  isCompleted: boolean;
 };
