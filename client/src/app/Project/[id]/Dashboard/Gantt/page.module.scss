@@ -66,15 +66,25 @@
 .task {
   border-radius: 24px;
   white-space: nowrap;
+  transition: all 0.2s ease-in;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+  }
+
   &-wrapper {
     display: grid;
     grid-template-columns: subgrid;
     grid-column: span 28;
     margin-top: 16px;
     gap: 12px;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in forwards;
   }
   &--cyan {
     background-color: $cyan-500;
+
     border: 1px solid $cyan-600;
   }
   &--yellow {
@@ -88,5 +98,16 @@
   &--green {
     background-color: $green-500;
     border: 1px solid $green-600;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%);
   }
 }

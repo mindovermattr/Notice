@@ -52,9 +52,7 @@ const Page = () => {
       startIndex,
     };
   });
-  console.log(display);
 
-  // console.log(days, weeks);
   return (
     <article className={styles.gantt}>
       <div className={styles.list}>
@@ -79,6 +77,7 @@ const Page = () => {
         <div className={styles["task-wrapper"]}>
           {display.map((el, idx) => (
             <div
+              key={el.id}
               className={clsx(
                 styles.gantt__task,
                 styles[COLUMN_COLORS_STYLES[el.status]],
