@@ -5,10 +5,12 @@ import { useAppSelector } from "@/store/hooks";
 const Tasklist = () => {
   const store = useAppSelector((state) => state.tasklists);
   return (
-    !!store.tasklists.length &&
-    store.tasklists.map((tasklist) => (
-      <TaskListComponent key={tasklist.id} list={tasklist} />
-    ))
+    <div>
+      {!!store.tasklists.length &&
+        store.tasklists.map((tasklist) => (
+          <TaskListComponent key={tasklist.id} list={tasklist} />
+        ))}
+    </div>
   );
 };
 

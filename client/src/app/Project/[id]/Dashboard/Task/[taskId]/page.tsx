@@ -15,6 +15,7 @@ import Avatar from "@/Components/Avatar/Avatar";
 import Button from "@/Components/Button/Button";
 import Comments from "@/Components/Comments/Comments";
 import FileUploader from "@/Components/FileUploader/FileUploader";
+import FlagIcon from "@/Components/Icons/FlagIcon/FlagIcon";
 import Input from "@/Components/Input/Input";
 import Modal from "@/Components/Modal/Modal";
 import { useAppSelector } from "@/store/hooks";
@@ -237,8 +238,33 @@ const Page = ({
             <h3 className={styles.subtasks__title}>Список подзадач</h3>
             <div className={styles.subtasks__items}>
               {task?.subtasks.map((el) => (
-                <div key={el.id}>
+                <div className={styles.subtasks__item} key={el.id}>
                   <h4>{el.title}</h4>
+                  <div className={styles.subtasks__controls}>
+                    <Button
+                      variant="outlined"
+                      className={styles.subtasks__button}
+                    >
+                      <FlagIcon width={16} height={16} />
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      className={styles.subtasks__button}
+                    >
+                      <Image
+                        width={14}
+                        height={14}
+                        src={"/icons/pen.svg"}
+                        alt=""
+                      />
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      className={styles.subtasks__button}
+                    >
+                      X
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
