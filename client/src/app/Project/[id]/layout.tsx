@@ -18,7 +18,7 @@ const layout = ({
     const getProject = async () => {
       await dispatch(getProjectsThunk());
       dispatch(selectProject({ id: +id }));
-      await dispatch(getTasklistsThunk({ id: +id }));
+      await dispatch(getTasklistsThunk({ id: +id })); 
     };
     getProject();
   }, []);
@@ -27,3 +27,6 @@ const layout = ({
 };
 
 export default layout;
+
+
+

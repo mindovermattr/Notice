@@ -93,7 +93,7 @@ const Tab = ({ className, ...props }: TTab) => {
               src="/icons/gantt.svg"
               alt="board-icon"
             />
-            <p className={styles.tab__text}>Гантт</p>
+            <p className={styles.tab__text}>Гант</p>
           </Link>
         </div>
         {selectedSegment === "Tasklist" && (

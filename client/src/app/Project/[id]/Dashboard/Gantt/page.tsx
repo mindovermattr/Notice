@@ -1,10 +1,12 @@
 "use client";
 import { TTask } from "@/@types/TTask";
 import { getTasks } from "@/api/task.api";
+import Avatar from "@/Components/Avatar/Avatar";
 import { COLUMN_STATUS } from "@/constants/kanban.constans";
 import { getMonthDate } from "@/utils/date.utils";
 import axios from "axios";
 import clsx from "clsx";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
@@ -59,7 +61,9 @@ const Page = () => {
         <h3 className={styles.list__title}>Задачи и списки</h3>
         <ul className={styles.list__items}>
           {tasks.map((el) => (
-            <li className={styles.list__item}>{el.title}</li>
+            <li key={el.id} className={styles.list__item}>
+              {el.title}
+            </li>
           ))}
         </ul>
       </div>
@@ -76,7 +80,8 @@ const Page = () => {
         ))}
         <div className={styles["task-wrapper"]}>
           {display.map((el, idx) => (
-            <div
+            <Link
+              href={`Task/${el.id}`}
               key={el.id}
               className={clsx(
                 styles.gantt__task,
@@ -88,8 +93,13 @@ const Page = () => {
                 gridColumn: `${el.startIndex} / span ${el.diffInDays}`,
               }}
             >
-              {el.createdAt}
-            </div>
+              <Avatar
+                imgSrc={el.assign_user?.avatarUrl}
+                width={16}
+                height={16}
+              />
+              {el.title}
+            </Link>
           ))}
         </div>
       </div>
