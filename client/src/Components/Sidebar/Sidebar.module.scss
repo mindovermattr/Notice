@@ -34,11 +34,13 @@
     gap: 6px;
   }
   &__name {
+    white-space: nowrap;
     font-size: 16px;
     font-weight: 700;
     color: $base-600;
   }
   &__email {
+    white-space: nowrap;
     font-weight: 700;
     color: $base-300;
   }
