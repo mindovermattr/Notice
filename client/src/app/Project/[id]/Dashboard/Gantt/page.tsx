@@ -49,7 +49,7 @@ const Page = () => {
 
     return {
       ...el,
-      diffInDays: diffInDays - 7,
+      diffInDays: diffInDays - 8,
       startDate: createdDateUTC,
       startIndex,
     };
@@ -90,7 +90,9 @@ const Page = () => {
               )}
               style={{
                 gridRow: idx + 1,
-                gridColumn: `${el.startIndex} / span ${el.diffInDays}`,
+                gridColumn: `${el.startIndex} / span ${Math.abs(
+                  el.diffInDays
+                )}`,
               }}
             >
               <Avatar
