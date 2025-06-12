@@ -2,10 +2,9 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-import { PrismaService } from "src/prisma.service";
-import { CreateUserDto } from "src/user/dto/create-user.dto";
-// import { CreateUserDto } from "src/user/dto/create-user.dto";
-import { UserService } from "src/user/user.service";
+import { PrismaService } from "../prisma.service";
+import { CreateUserDto } from "../user/dto/create-user.dto";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class AuthService {
@@ -17,12 +16,16 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.userService.findOne(email);
-    if (!user) throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+    if (!user)
+      throw new HttpException(
+        "Почта не зарегистрирована",
+        HttpStatus.NOT_FOUND,
+      );
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch)
-      throw new HttpException("Password incorrect", HttpStatus.BAD_REQUEST);
+      throw new HttpException("Пароль не верен", HttpStatus.BAD_REQUEST);
 
     return user;
   }

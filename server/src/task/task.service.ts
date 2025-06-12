@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { User } from "@prisma/client";
-import { EStatus } from "src/enums/status";
-import { PrismaService } from "src/prisma.service";
-import { YandexDiskService } from "src/YandexDisc/yandexDisk.service";
+import { EStatus } from "../enums/status";
+import { PrismaService } from "../prisma.service";
+import { ProjectService } from "../project/project.service";
+import { YandexDiskService } from "../YandexDisc/yandexDisk.service";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 
@@ -11,6 +12,7 @@ export class TaskService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly yandexDiskService: YandexDiskService,
+    private readonly projectService: ProjectService,
   ) {}
 
   async create(createTaskDto: CreateTaskDto, listId: number) {
@@ -122,7 +124,7 @@ export class TaskService {
     return data;
   }
 
-  async update(id: number, updateTaskDto: UpdateTaskDto) {
+  async update(id: number, updateTaskDto: UpdateTaskDto, user: User) {
     const task = await this.prismaService.task.findFirst({
       where: {
         id,
@@ -131,6 +133,12 @@ export class TaskService {
     if (!task)
       throw new HttpException(
         "Такой задачи не существует",
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (user.id !== task.assign_id || task.status !== "Review")
+      throw new HttpException(
+        "Задача назначена на другого пользователя",
         HttpStatus.BAD_REQUEST,
       );
 

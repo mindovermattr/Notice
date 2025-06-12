@@ -36,6 +36,7 @@ const TaskList = ({ list }: TTaskListProps) => {
   });
 
   const submitHandler = async (data: z.infer<typeof taskCreateSchema>) => {
+    console.log(data);
     await createTask(list.id, data);
     await dispatch(getTasklistsThunk({ id: +id }));
     setIsModalOpen(false);
@@ -124,12 +125,11 @@ const TaskList = ({ list }: TTaskListProps) => {
             <select
               {...register("userId")}
               className={styles.form__select}
-              name="users"
               id="users"
             >
               {projects.selectedProject?.users.map((el) => (
                 <option className={styles.form__item} key={el.id} value={el.id}>
-                  {el.name}
+                  {el.name} {el.id}
                 </option>
               ))}
             </select>

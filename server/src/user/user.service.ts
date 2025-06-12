@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
-import { PrismaService } from "src/prisma.service";
-import { YandexDiskService } from "src/YandexDisc/yandexDisk.service";
+import { YandexDiskService } from "../YandexDisc/yandexDisk.service";
+import { PrismaService } from "../prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 
@@ -19,7 +19,10 @@ export class UserService {
       },
     });
     if (user)
-      throw new HttpException("User already exist", HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        "Пользователь уже создан",
+        HttpStatus.BAD_REQUEST,
+      );
 
     const hashPassword = await bcrypt.hash(createUserDto.password, 12);
     const data = {

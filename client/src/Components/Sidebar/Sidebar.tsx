@@ -6,6 +6,7 @@ import { setUser } from "@/store/slices/user.slice";
 import { getUser, logoutUser, setUser as setUserLS } from "@/utils/user.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosProgressEvent } from "axios";
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { ComponentProps, useState } from "react";
@@ -115,17 +116,26 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
         <h3 className={styles.list__title}>Ваши проекты:</h3>
         <ul className={styles.list}>
           {projects.projects.map((el, idx) => (
-            <li key={el.id}>
+            <li className={styles.list__item} key={el.id}>
               <Link
-                className={`${styles.list__link} ${
-                  projects.selectedProject?.id === el.id
-                    ? styles["list__link--selected"]
-                    : ""
-                }`}
+                className={clsx(styles.list__link, {
+                  [styles["list__link--selected"]]:
+                    projects.selectedProject?.id === el.id,
+                })}
                 href={`/Project/${el.id}/Dashboard/Tasklist`}
               >
                 {`${idx + 1}. ${el.name}`}
               </Link>
+              <div className={styles.controls}>
+                {el.id === user.user?.id && (
+                  <Button className={styles.controls__button} variant="text">
+                    e
+                  </Button>
+                )}
+                <Button className={styles.controls__button} variant="text">
+                  x
+                </Button>
+              </div>
             </li>
           ))}
         </ul>

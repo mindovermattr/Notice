@@ -97,17 +97,20 @@ const Tab = ({ className, ...props }: TTab) => {
           </Link>
         </div>
         {selectedSegment === "Tasklist" && (
-          <Button onClick={() => setIsOpen(true)}>Создать</Button>
+          <Button data-testid="create-button" onClick={() => setIsOpen(true)}>
+            Создать
+          </Button>
         )}
       </header>
       <Modal isOpen={isOpen} onClose={closeModal}>
         <form onSubmit={handleSubmit(submitHandler)} className={styles.form}>
           <Input
+            id="list"
             label="Имя списка"
             {...register("title")}
             error={errors.title?.message}
           />
-          <Button>Создать</Button>
+          <Button data-testid="modal-button">Создать</Button>
         </form>
       </Modal>
     </>

@@ -1,13 +1,21 @@
 "use client";
+import { addUserToProject } from "@/api/project.api";
 import { useAppDispatch } from "@/store/hooks";
 import { logout } from "@/store/slices/user.slice";
 import { logoutUser } from "@/utils/user.utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
 import Modal from "../Modal/Modal";
 import styles from "./Header.module.scss";
+
+const schema = z.object({
+  email: z.string().email(),
+});
 
 const Header = () => {
   const { id } = useParams<{ id?: string }>();
@@ -19,6 +27,14 @@ const Header = () => {
     dispatch(logout());
     logoutUser();
     router.push("/auth/login");
+  };
+
+  const formHandler = useForm({
+    resolver: zodResolver(schema),
+  });
+  const addUser = async (data: z.infer<typeof schema>) => {
+    await addUserToProject(+id, data.email);
+    setIsUserModalOpen(false);
   };
   return (
     <header className={styles.header}>
@@ -55,8 +71,15 @@ const Header = () => {
         onClose={() => setIsUserModalOpen(false)}
         className={styles["user-modal"]}
       >
-        <form className={styles.form}>
-          <Input label="email" placeholder="email" />
+        <form
+          onSubmit={formHandler.handleSubmit(addUser)}
+          className={styles.form}
+        >
+          <Input
+            {...formHandler.register("email")}
+            label="Электронная почта"
+            placeholder="test@example.com"
+          />
           <Button>Добавить пользователя</Button>
         </form>
       </Modal>

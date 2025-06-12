@@ -40,7 +40,11 @@ const Modal = ({
     createPortal(
       <>
         {isOpen && (
-          <div className={styles["modal-wrapper"]} onClick={handleOverlayClick}>
+          <div
+            className={styles["modal-wrapper"]}
+            onClick={handleOverlayClick}
+            data-testid="modal-overlay"
+          >
             <div className={clsx(styles.modal, className)} {...props}>
               <button onClick={onClose} className={styles.modal__close}>
                 <svg

@@ -18,16 +18,25 @@ import FileUploader from "@/Components/FileUploader/FileUploader";
 import FlagIcon from "@/Components/Icons/FlagIcon/FlagIcon";
 import Input from "@/Components/Input/Input";
 import Modal from "@/Components/Modal/Modal";
+import { COLUMN_COLORS } from "@/constants/kanban.constans";
 import { useAppSelector } from "@/store/hooks";
 import { formatDate } from "@/utils/date.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosProgressEvent } from "axios";
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import styles from "./page.module.scss";
+
+const COLUMN_COLORS_STYLES = {
+  cyan: "body__status--cyan",
+  yellow: "body__status--yellow",
+  indigo: "body__status--indigo",
+  green: "body__status--green",
+} as const;
 
 const Page = ({
   params,
@@ -148,6 +157,12 @@ const Page = ({
       <div className={styles.body}>
         <div className={styles.body__form}>
           <form onSubmit={handleSubmit(submitHandler)} className={styles.form}>
+            <div
+              className={clsx(
+                styles[COLUMN_COLORS_STYLES[COLUMN_COLORS[task?.status]]],
+                styles.body__status
+              )}
+            ></div>
             <div className={styles.form__field}>
               <Input
                 {...register("title")}

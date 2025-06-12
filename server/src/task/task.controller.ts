@@ -46,8 +46,13 @@ export class TaskController {
   }
 
   @Patch("tasks/:id")
-  update(@Param("id") id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(+id, updateTaskDto);
+  update(
+    @Param("id") id: string,
+    @Body() updateTaskDto: UpdateTaskDto,
+    @Req() req,
+  ) {
+    
+    return this.taskService.update(+id, updateTaskDto, req.user);
   }
   @Patch("tasks/:id/files")
   @UseInterceptors(FilesInterceptor("files"))

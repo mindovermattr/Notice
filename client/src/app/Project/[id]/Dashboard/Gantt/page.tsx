@@ -24,7 +24,6 @@ const Page = () => {
   const { id } = useParams<{ id: string }>();
 
   const { days, weeks, endDate, startDate } = getMonthDate(date);
-
   useEffect(() => {
     const fetchTasks = async (id: number) => {
       const response = await getTasks(id);
@@ -35,23 +34,43 @@ const Page = () => {
   }, []);
   const display = tasks.map((el) => {
     const dueDate = new Date(el.due_date);
+    let isInRange = true;
 
-    let diffInDays = Math.ceil((dueDate - startDate) / (1000 * 60 * 60 * 24));
     const createdDate = new Date(el.createdAt);
+    let diffInDays = Math.ceil((dueDate - createdDate) / (1000 * 60 * 60 * 24));
     const createdDateUTC = new Date(
       createdDate.getFullYear(),
       createdDate.getMonth(),
       createdDate.getDate()
     );
-    const startIndex = days.findIndex((el) => el === createdDateUTC.getDate());
-    if (diffInDays > 28)
-      return { ...el, diffInDays: 28, startDate: startDate, startIndex }; // bad
+    let startIndex;
+    if (createdDate < startDate) {
+      startIndex = 1;
+      isInRange = false;
+    } else {
+      startIndex =
+        days.findIndex((el) => {
+          return (
+            el.getDate() === createdDateUTC.getDate() &&
+            el.getMonth() === createdDateUTC.getMonth()
+          );
+        }) + 1;
+    }
+    if (diffInDays >= 28)
+      return {
+        ...el,
+        diffInDays: 28,
+        startDate: startDate,
+        startIndex: startIndex,
+        isInRange,
+      };
 
     return {
       ...el,
-      diffInDays: diffInDays - 8,
+      diffInDays: diffInDays,
       startDate: createdDateUTC,
       startIndex,
+      isInRange,
     };
   });
 
@@ -74,8 +93,8 @@ const Page = () => {
           </p>
         ))}
         {days.map((el) => (
-          <p key={+el} className={styles.date__cell}>
-            {+el}
+          <p key={+el.getDate()} className={styles.date__cell}>
+            {+el.getDate()}
           </p>
         ))}
         <div className={styles["task-wrapper"]}>
@@ -86,7 +105,10 @@ const Page = () => {
               className={clsx(
                 styles.gantt__task,
                 styles[COLUMN_COLORS_STYLES[el.status]],
-                styles.task
+                styles.task,
+                {
+                  [styles.noB]: !el.isInRange,
+                }
               )}
               style={{
                 gridRow: idx + 1,

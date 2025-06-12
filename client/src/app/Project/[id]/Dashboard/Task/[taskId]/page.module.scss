@@ -13,6 +13,7 @@
 }
 
 .body {
+  position: relative;
   display: flex;
   @media (max-width: 1200px) {
     flex-wrap: wrap;
@@ -25,9 +26,44 @@
   &__info {
     flex-grow: 1;
   }
+  &__status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: pulse-anim 2s infinite ease-in-out;
+    transform-origin: center;
+    &--cyan {
+      filter: drop-shadow(0 0 8px $cyan-500);
+      background-color: $cyan-500;
+      border: 1px solid $cyan-600;
+      animation-delay: 0.5s;
+    }
+    &--yellow {
+      filter: drop-shadow(0 0 8px $yellow-500);
+      background-color: $yellow-500;
+      border: 1px solid $yellow-600;
+      animation-delay: 0.3s;
+    }
+    &--indigo {
+      filter: drop-shadow(0 0 8px $indigo-500);
+      background-color: $indigo-500;
+      border: 1px solid $indigo-600;
+      animation-delay: 0.2s;
+    }
+    &--green {
+      filter: drop-shadow(0 0 8px $green-500);
+      background-color: $green-500;
+      border: 1px solid $green-600;
+      animation-delay: 0.1s;
+    }
+  }
 }
 
 .form {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -188,4 +224,19 @@
   flex-direction: column;
   gap: 12px;
   width: 400px;
+}
+
+@keyframes pulse-anim {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+  }
+  70% {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
 }

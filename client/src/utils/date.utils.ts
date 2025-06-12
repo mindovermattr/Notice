@@ -52,7 +52,7 @@ export const getMonthDate = (currentDate: Date) => {
   endDate.setDate(tempDate.getDate() - daysToLastMonday + 21); // понедельник через 3 недели
   endDate.setHours(0, 0, 0, 0);
 
-  const days: Number[] = [];
+  const days: Date[] = [];
   const weeks: String[] = [];
 
   const itterationDate = new Date(startDate);
@@ -75,9 +75,8 @@ export const getMonthDate = (currentDate: Date) => {
       );
       weeks.push(formatter.formatRange(itterationDate, tempDate));
     }
-    days.push(date);
+    days.push(new Date(itterationDate));
     itterationDate.setDate(date + 1);
   }
-
   return { startDate, endDate, days, weeks };
 };

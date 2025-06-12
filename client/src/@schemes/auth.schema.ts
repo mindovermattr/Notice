@@ -4,7 +4,7 @@ export const loginSchema = z
   .object({
     email: z
       .string()
-      .email({ message: "Введенная почта не соответветствует формату" })
+      .email({ message: "Введенная почта не соответствует формату" })
       .nonempty({ message: "Необходимо ввести почту" }),
     password: z.string().min(5, "Пароль должен состоять минимум из 5 символов"),
   })

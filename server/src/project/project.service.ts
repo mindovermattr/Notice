@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { User } from "@prisma/client";
-import { Role } from "src/enums/roles";
-import { PrismaService } from "src/prisma.service";
+import { Role } from "../enums/roles";
+import { PrismaService } from "../prisma.service";
 import { CreateProjectDto } from "./dto/create-project.dto";
 import { UpdateProjectDto } from "./dto/update-project.dto";
 
@@ -240,6 +240,22 @@ export class ProjectService {
         id: user.id,
       },
     });
+    return data;
+  }
+
+  async getUserRole(projectId: number, user: User) {
+    const data = await this.prismaService.projectUserRoles.findFirst({
+      where: {
+        project_id: projectId,
+        user_id: user.id,
+      },
+    });
+    if (!data)
+      throw new HttpException(
+        "Пользователя не существует на этом проекте",
+        HttpStatus.BAD_REQUEST,
+      );
+
     return data;
   }
 }

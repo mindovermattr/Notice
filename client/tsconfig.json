@@ -1,4 +1,5 @@
 {
+  "types": ["node", "vite/client", "@testing-library/jest-dom/vitest"],
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],

@@ -1,0 +1,1725 @@
+// =============================================
+// СХЕМЫ ВАЛИДАЦИИ (@schemes)
+// =============================================
+
+// Схема аутентификации
+// Файл: @schemes/auth.schema.ts
+import { z } from "zod";
+
+export const loginSchema = z.object({
+  email: z.string().email("Неверный формат email"),
+  password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
+});
+
+export const registrationSchema = z.object({
+  email: z.string().email("Неверный формат email"),
+  password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
+  name: z.string().min(2, "Имя должно содержать минимум 2 символа"),
+});
+
+export type TLoginSchema = z.infer<typeof loginSchema>;
+export type TRegistrationSchema = z.infer<typeof registrationSchema>;
+
+// =============================================
+// API ФУНКЦИИ (api)
+// =============================================
+
+// API аутентификации
+// Файл: api/auth.api.ts
+import axios from "axios";
+import { TLoginSchema, TRegistrationSchema } from "@/@schemes/auth.schema";
+import { TRespAuth } from "@/@types/TApi";
+
+const api = axios.create({
+  baseURL: "http://localhost:3001/api",
+});
+
+export const login = async (data: TLoginSchema) => {
+  return api.post<TRespAuth>("/auth/login", data);
+};
+
+export const registration = async (data: TRegistrationSchema) => {
+  return api.post<TRespAuth>("/auth/registration", data);
+};
+
+// API проектов
+// Файл: api/project.api.ts
+import { TProject } from "@/@types/TProject";
+
+export const getAllProjects = async () => {
+  return api.get<TProject[]>("/projects");
+};
+
+export const createProject = async (data: { name: string }) => {
+  return api.post<TProject>("/projects", data);
+};
+
+// API списков задач
+// Файл: api/tasklist.api.ts
+import { TTasklist } from "@/@types/TTasklist";
+
+export const getTaskLists = async (projectId: number) => {
+  return api.get<TTasklist[]>(`/tasklists/${projectId}`);
+};
+
+export const createTaskList = async (projectId: number, title: string) => {
+  return api.post<TTasklist>(`/tasklists/${projectId}`, { title });
+};
+
+export const deleteTaskList = async (projectId: number, listId: number) => {
+  return api.delete(`/tasklists/${projectId}/${listId}`);
+};
+
+// =============================================
+// КОНСТАНТЫ (constants)
+// =============================================
+
+// Константы для API
+// Файл: constants/api.constants.ts
+export const API_URL = "http://localhost:3001/api";
+
+// =============================================
+// ТИПЫ (@types)
+// =============================================
+
+// Типы API
+// Файл: @types/TApi.ts
+export type TApiError = {
+  message: string | string[];
+  statusCode: number;
+};
+
+export type TRespAuth = {
+  token: string;
+  user: TUser;
+};
+
+// Типы пользователя
+// Файл: @types/TUser.ts
+export type TUser = {
+  id: number;
+  email: string;
+  name: string;
+};
+
+// Типы проекта
+// Файл: @types/TProject.ts
+export type TProject = {
+  id: number;
+  name: string;
+};
+
+// Типы списка задач
+// Файл: @types/TTasklist.ts
+export type TTask = {
+  id: number;
+  title: string;
+  priority: boolean;
+};
+
+export type TTasklist = {
+  id: number;
+  title: string;
+  tasks: TTask[];
+};
+
+// =============================================
+// КОМПОНЕНТЫ (Components)
+// =============================================
+
+// Компонент Board
+// Файл: Components/Board/Board.tsx
+import clsx from "clsx";
+import Sidebar from "../Sidebar/Sidebar";
+import styles from "./Board.module.scss";
+
+const Board = ({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) => {
+  return (
+    <section className={styles.board}>
+      <Sidebar className={clsx(styles.border, styles["border--sidebar"])} />
+      <div className={`${styles["board__tasks-wrapper"]} ${styles.border}`}>
+        {children}
+      </div>
+    </section>
+  );
+};
+
+export default Board;
+
+// Стили Board
+// Файл: Components/Board/Board.module.scss
+.board {
+  display: flex;
+  background-color: $background-100;
+  color: white;
+  min-height: calc(100vh - 91.8px);
+
+  &__tasks {
+    &-wrapper {
+      margin: 32px 32px 32px 32px;
+      flex-grow: 1;
+      border-radius: 12px;
+    }
+  }
+}
+
+.border {
+  border: 1px solid $base-100;
+
+  &--sidebar {
+    border-top: none;
+  }
+}
+
+// Компонент Header
+// Файл: Components/Header/Header.tsx
+"use client";
+import { useAppDispatch } from "@/store/hooks";
+import { logout } from "@/store/slices/user.slice";
+import { logoutUser } from "@/utils/user.utils";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import Button from "../Button/Button";
+import Input from "../Input/Input";
+import Modal from "../Modal/Modal";
+import styles from "./Header.module.scss";
+
+const Header = () => {
+  const { id } = useParams<{ id?: string }>();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+
+  const onLogout = () => {
+    dispatch(logout());
+    logoutUser();
+    router.push("/auth/login");
+  };
+
+  return (
+    <header className={styles.header}>
+      <h1 className={styles.header__title}>Notice</h1>
+      <div
+        className={styles.header__profile}
+        onClick={() => setIsLogoutModalOpen(true)}
+      >
+        Профиль
+      </div>
+      <Modal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+      >
+        <div className={styles["logout-modal"]}>
+          <h2 className={styles["logout-modal__title"]}>
+            Вы уверены, что хотите выйти?
+          </h2>
+          <div className={styles["logout-modal__controls"]}>
+            <Button onClick={() => setIsLogoutModalOpen(false)}>Отмена</Button>
+            <Button onClick={onLogout}>Выйти</Button>
+          </div>
+        </div>
+      </Modal>
+    </header>
+  );
+};
+
+export default Header;
+
+// Стили Header
+// Файл: Components/Header/Header.module.scss
+.header {
+  background-color: $background-100;
+  padding: 24px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid $base-100;
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &__profile {
+    background-color: $primary-alpha-10;
+    border-radius: 24px;
+    border: 1px solid $primary-alpha-20;
+    color: $primary-600;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+  }
+}
+
+.logout-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__title {
+    color: $base-600;
+    font-weight: 700;
+  }
+
+  &__controls {
+    display: flex;
+    gap: 18px;
+  }
+}
+
+// =============================================
+// СТРАНИЦЫ (app)
+// =============================================
+
+// Главная страница
+// Файл: app/page.tsx
+import Header from "@/Components/Header/Header";
+
+export default function Home() {
+  return (
+    <>
+      <Header />
+    </>
+  );
+}
+
+// Страница авторизации
+// Файл: app/auth/login/page.tsx
+"use client";
+import { loginSchema, TLoginSchema } from "@/@schemes/auth.schema";
+import Button from "@/Components/Button/Button";
+import Input from "@/Components/Input/Input";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { loginThunk } from "@/store/slices/user.slice";
+import { setUser } from "@/utils/user.utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import styles from "../page.module.scss";
+
+export default function LoginPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
+  const router = useRouter();
+
+  const submitHandler = async (data: TLoginSchema) => {
+    try {
+      const resp = await dispatch(loginThunk(data)).unwrap();
+      setUser(resp);
+      router.push("/Project");
+    } catch (error) {
+      return;
+    }
+  };
+
+  return (
+    <main className={styles.layout}>
+      <form onSubmit={handleSubmit(submitHandler)} className={styles.form}>
+        <h1>Вход</h1>
+        <Input
+          {...register("email")}
+          type="email"
+          placeholder="Email"
+          error={errors.email?.message}
+        />
+        <Input
+          {...register("password")}
+          type="password"
+          placeholder="Пароль"
+          error={errors.password?.message}
+        />
+        <Button type="submit">Войти</Button>
+        <Link href="/auth/registration">Регистрация</Link>
+      </form>
+    </main>
+  );
+}
+
+// Страница проекта
+// Файл: app/Project/page.tsx
+const page = () => {
+  return <div>Выберите проект</div>;
+};
+
+export default page;
+
+// Страница дашборда проекта
+// Файл: app/Project/[id]/Dashboard/page.tsx
+const page = () => {
+  return <div>page</div>;
+};
+
+export default page;
+
+// =============================================
+// REDUX STORE (store)
+// =============================================
+
+// Конфигурация store
+// Файл: store/store.ts
+import { configureStore } from "@reduxjs/toolkit";
+import projects from "./slices/projects.slice";
+import tasklists from "./slices/tasklists.slice";
+import user from "./slices/user.slice";
+
+export const makeStore = () => {
+  return configureStore({
+    reducer: {
+      user,
+      projects,
+      tasklists,
+    },
+  });
+};
+
+export type AppStore = ReturnType<typeof makeStore>;
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];
+
+// Слайс пользователя
+// Файл: store/slices/user.slice.ts
+import { TLoginSchema, TRegistrationSchema } from "@/@schemes/auth.schema";
+import { TApiError } from "@/@types/TApi";
+import {
+  login as loginApi,
+  registration as registrationApi,
+  TRespAuth,
+} from "@/api/auth.api";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AxiosError } from "axios";
+
+export const loginThunk = createAsyncThunk(
+  "users/login",
+  async (loginPayload: TLoginSchema, { rejectWithValue }) => {
+    const response = await loginApi(loginPayload);
+    if (response instanceof AxiosError) {
+      return rejectWithValue(response.response!.data);
+    }
+    return response.data;
+  }
+);
+
+export const registrationThunk = createAsyncThunk(
+  "users/registration",
+  async (registrationPayload: TRegistrationSchema, { rejectWithValue }) => {
+    const response = await registrationApi(registrationPayload);
+    if (response instanceof AxiosError) {
+      return rejectWithValue(response.response!.data);
+    }
+    return response.data;
+  }
+);
+
+type TInitialState = {
+  user: TUser | null;
+  token: string | null;
+  error: string[];
+};
+
+const initialState: TInitialState = {
+  user: null,
+  token: null,
+  error: [],
+};
+
+const handleRejected = (
+  state: TInitialState,
+  action: PayloadAction<TApiError>
+) => {
+  const error = action.payload;
+  if (Array.isArray(error.message)) state.error = error.message;
+  else if (!state.error.includes(error.message)) {
+    state.error.push(error.message);
+  }
+};
+
+const userSlice = createSlice({
+  name: "user",
+  initialState,
+  reducers: {
+    logout: (state) => {
+      state.token = null;
+      state.user = null;
+      state.error = [];
+    },
+    setUserWithToken: (state, action: PayloadAction<TRespAuth>) => {
+      state.token = action.payload.token;
+      state.user = action.payload.user;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginThunk.fulfilled, (state, action) => {
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.error = [];
+      })
+      .addCase(registrationThunk.fulfilled, (state, action) => {
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.error = [];
+      })
+      .addMatcher(
+        (action) => action.type.endsWith("/rejected"),
+        handleRejected
+      );
+  },
+});
+
+export const { logout, setUserWithToken } = userSlice.actions;
+
+export default userSlice.reducer;
+
+// =============================================
+// УТИЛИТЫ (utils)
+// =============================================
+
+// Утилиты для работы с пользователем
+// Файл: utils/user.utils.ts
+import { TRespAuth } from "@/@types/TApi";
+
+export const setUser = (data: TRespAuth) => {
+  localStorage.setItem("user", JSON.stringify(data));
+};
+
+export const getUser = () => {
+  const user = localStorage.getItem("user");
+  if (!user) return null;
+  return JSON.parse(user) as TRespAuth;
+};
+
+export const logoutUser = () => {
+  localStorage.removeItem("user");
+};
+
+// =============================================
+// СТИЛИ (assets)
+// =============================================
+
+// Глобальные стили
+// Файл: assets/global.scss
+* {
+  padding: 0px;
+  margin: 0px;
+  border: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+aside,
+nav,
+footer,
+header,
+section,
+main {
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+ul,
+ul li,
+ol,
+ol li {
+  list-style: none;
+}
+
+img {
+  vertical-align: top;
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+address {
+  font-style: normal;
+}
+
+label {
+  cursor: text;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background-color: transparent;
+}
+
+input::-ms-clear {
+  display: none;
+}
+
+button,
+input[type="submit"] {
+  display: inline-block;
+  box-shadow: none;
+  background-color: transparent;
+  background: none;
+  cursor: pointer;
+}
+
+input:-webkit-autofill {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: white !important;
+  -webkit-box-shadow: 0 0 0 30px $background-200 inset !important;
+}
+
+input:focus,
+input:active,
+button:focus,
+button:active {
+  outline: none;
+}
+
+input::placeholder {
+  font-family: inherit;
+}
+
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  display: block;
+}
+
+body {
+  font-family: "Inter";
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// =============================================
+// ДОПОЛНИТЕЛЬНЫЕ КОМПОНЕНТЫ
+// =============================================
+
+// Компонент Button
+// Файл: Components/Button/Button.tsx
+import clsx from "clsx";
+import styles from "./Button.module.scss";
+
+type TButtonProps = {
+  children: React.ReactNode;
+  onClick?: () => void;
+  type?: "button" | "submit" | "reset";
+  className?: string;
+  variant?: "primary" | "secondary" | "danger";
+};
+
+const Button = ({
+  children,
+  onClick,
+  type = "button",
+  className,
+  variant = "primary",
+}: TButtonProps) => {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      className={clsx(styles.button, styles[`button--${variant}`], className)}
+    >
+      {children}
+    </button>
+  );
+};
+
+export default Button;
+
+// Стили Button
+// Файл: Components/Button/Button.module.scss
+.button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s;
+
+  &--primary {
+    background-color: $primary-600;
+    color: white;
+
+    &:hover {
+      background-color: $primary-700;
+    }
+  }
+
+  &--secondary {
+    background-color: $base-200;
+    color: $base-600;
+
+    &:hover {
+      background-color: $base-300;
+    }
+  }
+
+  &--danger {
+    background-color: $danger-600;
+    color: white;
+
+    &:hover {
+      background-color: $danger-700;
+    }
+  }
+}
+
+// Компонент Input
+// Файл: Components/Input/Input.tsx
+import clsx from "clsx";
+import styles from "./Input.module.scss";
+
+type TInputProps = {
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  type?: string;
+  error?: string;
+  className?: string;
+} & React.InputHTMLAttributes<HTMLInputElement>;
+
+const Input = ({
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  error,
+  className,
+  ...props
+}: TInputProps) => {
+  return (
+    <div className={styles.input__wrapper}>
+      <input
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={clsx(styles.input, error && styles["input--error"], className)}
+        {...props}
+      />
+      {error && <span className={styles.input__error}>{error}</span>}
+    </div>
+  );
+};
+
+export default Input;
+
+// Стили Input
+// Файл: Components/Input/Input.module.scss
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: $base-200;
+  color: $base-600;
+  border: 1px solid transparent;
+
+  &:focus {
+    border-color: $primary-600;
+  }
+
+  &--error {
+    border-color: $danger-600;
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__error {
+    color: $danger-600;
+    font-size: 12px;
+  }
+}
+
+// Компонент Modal
+// Файл: Components/Modal/Modal.tsx
+import { createPortal } from "react-dom";
+import { useEffect } from "react";
+import clsx from "clsx";
+import styles from "./Modal.module.scss";
+
+type TModalProps = {
+  children: React.ReactNode;
+  isOpen: boolean;
+  onClose: () => void;
+  className?: string;
+  closeOnOverlayClick?: boolean;
+};
+
+const Modal = ({
+  children,
+  isOpen,
+  onClose,
+  className,
+  closeOnOverlayClick = true,
+}: TModalProps) => {
+  useEffect(() => {
+    if (isOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return createPortal(
+    <div
+      className={styles.modal__overlay}
+      onClick={(e) => {
+        if (closeOnOverlayClick && e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div className={clsx(styles.modal, className)}>
+        <button className={styles.modal__close} onClick={onClose}>
+          ×
+        </button>
+        {children}
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+export default Modal;
+
+// Стили Modal
+// Файл: Components/Modal/Modal.module.scss
+.modal {
+  position: relative;
+  background-color: $background-200;
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 300px;
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  &__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 24px;
+    color: $base-600;
+    cursor: pointer;
+  }
+}
+
+// Компонент Sidebar
+// Файл: Components/Sidebar/Sidebar.tsx
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getProjectsThunk } from "@/store/slices/projects.slice";
+import { useEffect } from "react";
+import styles from "./Sidebar.module.scss";
+
+type TSidebarProps = {
+  className?: string;
+};
+
+const Sidebar = ({ className }: TSidebarProps) => {
+  const dispatch = useAppDispatch();
+  const projects = useAppSelector((state) => state.projects.projects);
+
+  useEffect(() => {
+    dispatch(getProjectsThunk());
+  }, [dispatch]);
+
+  return (
+    <aside className={className}>
+      <div className={styles.sidebar}>
+        <h2 className={styles.sidebar__title}>Проекты</h2>
+        <ul className={styles.sidebar__list}>
+          {projects.map((project) => (
+            <li key={project.id} className={styles.sidebar__item}>
+              {project.name}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  );
+};
+
+export default Sidebar;
+
+// Стили Sidebar
+// Файл: Components/Sidebar/Sidebar.module.scss
+.sidebar {
+  width: 280px;
+  background-color: $background-200;
+  padding: 24px;
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__item {
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $base-200;
+    }
+  }
+}
+
+// Компонент TaskList
+// Файл: Components/TaskList/TaskList.tsx
+import { TTasklist } from "@/@types/TTasklist";
+import styles from "./TaskList.module.scss";
+
+type TTaskListProps = {
+  list: TTasklist;
+};
+
+const TaskList = ({ list }: TTaskListProps) => {
+  return (
+    <div className={styles.tasklist}>
+      <h3 className={styles.tasklist__title}>{list.title}</h3>
+      <ul className={styles.tasklist__tasks}>
+        {list.tasks.map((task) => (
+          <li key={task.id} className={styles.tasklist__task}>
+            <span className={styles.tasklist__taskTitle}>{task.title}</span>
+            {task.priority && (
+              <span className={styles.tasklist__priority}>Приоритет</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default TaskList;
+
+// Стили TaskList
+// Файл: Components/TaskList/TaskList.module.scss
+.tasklist {
+  background-color: $background-200;
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 280px;
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  &__tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__task {
+    background-color: $base-200;
+    padding: 12px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__taskTitle {
+    font-size: 14px;
+  }
+
+  &__priority {
+    font-size: 12px;
+    color: $danger-600;
+    font-weight: 600;
+  }
+}
+
+// =============================================
+// КОНФИГУРАЦИОННЫЕ ФАЙЛЫ
+// =============================================
+
+// Конфигурация Next.js
+// Файл: next.config.ts
+import { NextConfig } from "next";
+
+const config: NextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+  images: {
+    domains: ["localhost"],
+  },
+};
+
+export default config;
+
+// Конфигурация TypeScript
+// Файл: tsconfig.json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+// Конфигурация ESLint
+// Файл: eslint.config.mjs
+import nextPlugin from "@next/eslint-plugin-next";
+import reactPlugin from "eslint-plugin-react";
+import reactHooksPlugin from "eslint-plugin-react-hooks";
+
+export default [
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    plugins: {
+      react: reactPlugin,
+      "react-hooks": reactHooksPlugin,
+      "@next/next": nextPlugin,
+    },
+    rules: {
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "@next/next/no-html-link-for-pages": "off",
+    },
+  },
+];
+
+// Конфигурация Vitest
+// Файл: vitest.config.mts
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./vitest-setup.ts"],
+  },
+});
+
+// Настройка Vitest
+// Файл: vitest-setup.ts
+import "@testing-library/jest-dom";
+
+// =============================================
+// КОМПОНЕНТЫ KANBAN
+// =============================================
+
+// Компонент Kanban
+// Файл: Components/Kanban/Kanban.tsx
+import { useAppSelector } from "@/store/hooks";
+import Column from "./Column/Column";
+import styles from "./Kanban.module.scss";
+
+const Kanban = () => {
+  const tasklists = useAppSelector((state) => state.tasklists.tasklists);
+
+  return (
+    <div className={styles.kanban}>
+      {tasklists.map((list) => (
+        <Column key={list.id} list={list} />
+      ))}
+    </div>
+  );
+};
+
+export default Kanban;
+
+// Стили Kanban
+// Файл: Components/Kanban/Kanban.module.scss
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin: 24px;
+}
+
+// Компонент Column
+// Файл: Components/Kanban/Column/Column.tsx
+import { TTasklist } from "@/@types/TTasklist";
+import Item from "../Item/Item";
+import styles from "./Column.module.scss";
+
+type TColumnProps = {
+  list: TTasklist;
+};
+
+const Column = ({ list }: TColumnProps) => {
+  return (
+    <div className={styles.column}>
+      <h3 className={styles.column__title}>{list.title}</h3>
+      <div className={styles.column__items}>
+        {list.tasks.map((task) => (
+          <Item key={task.id} task={task} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Column;
+
+// Стили Column
+// Файл: Components/Kanban/Column/Column.module.scss
+.column {
+  background-color: $background-200;
+  border-radius: 8px;
+  padding: 16px;
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+// Компонент Item
+// Файл: Components/Kanban/Item/Item.tsx
+import { TTask } from "@/@types/TTasklist";
+import styles from "./Item.module.scss";
+
+type TItemProps = {
+  task: TTask;
+};
+
+const Item = ({ task }: TItemProps) => {
+  return (
+    <div className={styles.item}>
+      <span className={styles.item__title}>{task.title}</span>
+      {task.priority && (
+        <span className={styles.item__priority}>Приоритет</span>
+      )}
+    </div>
+  );
+};
+
+export default Item;
+
+// Стили Item
+// Файл: Components/Kanban/Item/Item.module.scss
+.item {
+  background-color: $base-200;
+  padding: 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__title {
+    font-size: 14px;
+  }
+
+  &__priority {
+    font-size: 12px;
+    color: $danger-600;
+    font-weight: 600;
+  }
+}
+
+// =============================================
+// КОМПОНЕНТ TAB
+// =============================================
+
+// Компонент Tab
+// Файл: Components/Tab/Tab.tsx
+import { useRouter, usePathname } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
+import styles from "./Tab.module.scss";
+
+const Tab = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const selectedProject = useAppSelector((state) => state.projects.selectedProject);
+
+  const tabs = [
+    {
+      title: "Канбан",
+      path: `/Project/${selectedProject?.id}/Dashboard/Kanban`,
+    },
+    {
+      title: "Список",
+      path: `/Project/${selectedProject?.id}/Dashboard/Tasklist`,
+    },
+  ];
+
+  return (
+    <div className={styles.tab}>
+      {tabs.map((tab) => (
+        <button
+          key={tab.path}
+          className={clsx(styles.tab__item, {
+            [styles["tab__item--active"]]: pathname === tab.path,
+          })}
+          onClick={() => router.push(tab.path)}
+        >
+          {tab.title}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+export default Tab;
+
+// Стили Tab
+// Файл: Components/Tab/Tab.module.scss
+.tab {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid $base-100;
+  padding: 12px;
+
+  &__item {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    color: $base-600;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: $base-200;
+    }
+
+    &--active {
+      background-color: $primary-600;
+      color: white;
+
+      &:hover {
+        background-color: $primary-700;
+      }
+    }
+  }
+}
+
+// Тесты Tab
+// Файл: Components/Tab/Tab.test.tsx
+import { render, screen } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import Tab from "./Tab";
+import { useRouter, usePathname } from "next/navigation";
+
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(),
+  usePathname: jest.fn(),
+}));
+
+const mockStore = configureStore({
+  reducer: {
+    projects: {
+      selectedProject: {
+        id: 1,
+        name: "Test Project",
+      },
+    },
+  },
+});
+
+describe("Tab", () => {
+  beforeEach(() => {
+    (useRouter as jest.Mock).mockReturnValue({
+      push: jest.fn(),
+    });
+    (usePathname as jest.Mock).mockReturnValue("/Project/1/Dashboard/Kanban");
+  });
+
+  it("renders tabs correctly", () => {
+    render(
+      <Provider store={mockStore}>
+        <Tab />
+      </Provider>
+    );
+
+    expect(screen.getByText("Канбан")).toBeInTheDocument();
+    expect(screen.getByText("Список")).toBeInTheDocument();
+  });
+
+  it("highlights active tab", () => {
+    render(
+      <Provider store={mockStore}>
+        <Tab />
+      </Provider>
+    );
+
+    const kanbanTab = screen.getByText("Канбан");
+    expect(kanbanTab).toHaveClass("tab__item--active");
+  });
+});
+
+// =============================================
+// КОМПОНЕНТ COMMENTS
+// =============================================
+
+// Компонент Comments
+// Файл: Components/Comments/Comments.tsx
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addComment } from "@/store/slices/tasklists.slice";
+import styles from "./Comments.module.scss";
+
+interface CommentsProps {
+  taskId: number;
+}
+
+const Comments = ({ taskId }: CommentsProps) => {
+  const dispatch = useAppDispatch();
+  const [newComment, setNewComment] = useState("");
+  const comments = useAppSelector((state) => 
+    state.tasklists.comments.filter((comment) => comment.taskId === taskId)
+  );
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newComment.trim()) {
+      dispatch(addComment({ taskId, text: newComment }));
+      setNewComment("");
+    }
+  };
+
+  return (
+    <div className={styles.comments}>
+      <h3 className={styles.comments__title}>Комментарии</h3>
+      <div className={styles.comments__list}>
+        {comments.map((comment) => (
+          <div key={comment.id} className={styles.comment}>
+            <div className={styles.comment__header}>
+              <span className={styles.comment__author}>{comment.author}</span>
+              <span className={styles.comment__date}>
+                {new Date(comment.date).toLocaleDateString()}
+              </span>
+            </div>
+            <p className={styles.comment__text}>{comment.text}</p>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit} className={styles.comments__form}>
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Добавить комментарий..."
+          className={styles.comments__input}
+        />
+        <button type="submit" className={styles.comments__submit}>
+          Отправить
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default Comments;
+
+// Стили Comments
+// Файл: Components/Comments/Comments.module.scss
+.comments {
+  padding: 16px;
+  background-color: $base-50;
+  border-radius: 8px;
+
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: $base-900;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__input {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border: 1px solid $base-200;
+    border-radius: 6px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 14px;
+    color: $base-900;
+    background-color: white;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-500;
+    }
+  }
+
+  &__submit {
+    align-self: flex-end;
+    padding: 8px 16px;
+    background-color: $primary-600;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $primary-700;
+    }
+  }
+}
+
+.comment {
+  padding: 12px;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  &__author {
+    font-weight: 600;
+    color: $base-900;
+  }
+
+  &__date {
+    font-size: 12px;
+    color: $base-500;
+  }
+
+  &__text {
+    color: $base-700;
+    line-height: 1.5;
+  }
+}
+
+// =============================================
+// КОМПОНЕНТ FILE UPLOADER
+// =============================================
+
+// Компонент FileUploader
+// Файл: Components/FileUploader/FileUploader.tsx
+import { useState, useRef } from "react";
+import { useAppDispatch } from "@/store/hooks";
+import { uploadFile } from "@/store/slices/tasklists.slice";
+import styles from "./FileUploader.module.scss";
+
+interface FileUploaderProps {
+  taskId: number;
+}
+
+const FileUploader = ({ taskId }: FileUploaderProps) => {
+  const dispatch = useAppDispatch();
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    await uploadFiles(files);
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    await uploadFiles(files);
+  };
+
+  const uploadFiles = async (files: File[]) => {
+    for (const file of files) {
+      try {
+        setUploadProgress(0);
+        await dispatch(uploadFile({ taskId, file, onProgress: setUploadProgress }));
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    }
+  };
+
+  return (
+    <div className={styles.uploader}>
+      <div
+        className={clsx(styles.uploader__dropzone, {
+          [styles["uploader__dropzone--dragging"]]: isDragging,
+        })}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          onChange={handleFileSelect}
+          className={styles.uploader__input}
+        />
+        <div className={styles.uploader__content}>
+          <svg
+            className={styles.uploader__icon}
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 16L12 8M12 8L15 11M12 8L9 11"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M3 15V16C3 18.2091 4.79086 20 7 20H17C19.2091 20 21 18.2091 21 16V15"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <p className={styles.uploader__text}>
+            Перетащите файлы сюда или кликните для выбора
+          </p>
+        </div>
+      </div>
+      {uploadProgress > 0 && uploadProgress < 100 && (
+        <div className={styles.uploader__progress}>
+          <div
+            className={styles.uploader__progressBar}
+            style={{ width: `${uploadProgress}%` }}
+          />
+          <span className={styles.uploader__progressText}>
+            {Math.round(uploadProgress)}%
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default FileUploader;
+
+// Стили FileUploader
+// Файл: Components/FileUploader/FileUploader.module.scss
+.uploader {
+  width: 100%;
+
+  &__dropzone {
+    border: 2px dashed $base-300;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: $primary-500;
+      background-color: $base-50;
+    }
+
+    &--dragging {
+      border-color: $primary-600;
+      background-color: $primary-50;
+    }
+  }
+
+  &__input {
+    display: none;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__icon {
+    color: $base-500;
+  }
+
+  &__text {
+    color: $base-600;
+    font-size: 14px;
+  }
+
+  &__progress {
+    margin-top: 16px;
+    background-color: $base-100;
+    border-radius: 4px;
+    height: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__progressBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: $primary-600;
+    transition: width 0.3s ease;
+  }
+
+  &__progressText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    color: $base-900;
+    font-weight: 600;
+  }
+}
+
+// =============================================
+// КОМПОНЕНТ FLAG ICON
+// =============================================
+
+// Компонент FlagIcon
+// Файл: Components/Icons/FlagIcon/FlagIcon.tsx
+import styles from "./FlagIcon.module.scss";
+
+interface FlagIconProps {
+  color?: string;
+  size?: number;
+}
+
+const FlagIcon = ({ color = "#F59E42", size = 20 }: FlagIconProps) => (
+  <svg
+    className={styles.flag}
+    width={size}
+    height={size}
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M4 17V3.5C4 3.22386 4.22386 3 4.5 3H15.5C15.7761 3 16 3.22386 16 3.5V13.5C16 13.7761 15.7761 14 15.5 14H5.5C5.22386 14 5 14.2239 5 14.5V17"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export default FlagIcon;
+
+// Стили FlagIcon
+// Файл: Components/Icons/FlagIcon/FlagIcon.module.scss
+.flag {
+  display: inline-block;
+  vertical-align: middle;
+} 

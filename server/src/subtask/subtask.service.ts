@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma.service";
+import { PrismaService } from "../prisma.service";
 import { CreateSubtaskDto } from "./dto/create-subtask.dto";
 import { UpdateSubtaskDto } from "./dto/update-subtask.dto";
 
