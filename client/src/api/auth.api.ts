@@ -1,10 +1,13 @@
 import { TLoginSchema, TRegistrationSchema } from "@/@schemes/auth.schema";
+import { ERoles } from "@/@types/Enums/ERoles";
 import { TApiError } from "@/@types/TApi";
+import { TUser } from "@/@types/TUser";
 import { instance } from "./instance";
 
 export type TRespAuth = {
   user: TUser;
   token: string;
+  role?: ERoles;
 };
 
 export const registration = async ({

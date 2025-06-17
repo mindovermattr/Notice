@@ -1,4 +1,6 @@
+import { ERolesBack } from "@/@types/Enums/ERoles";
 import { TApiError } from "@/@types/TApi";
+import { TRole, TUser } from "@/@types/TUser";
 import { AxiosProgressEvent } from "axios";
 import { protectedInstance } from "./instance";
 
@@ -32,3 +34,18 @@ export const patchUser = async (user: Partial<TUser>) => {
     return error as TApiError;
   }
 };
+
+export const getUserRole = async (projectId: number) => {
+  try {
+    const resp = await protectedInstance.get<TUser>(
+      `project/${projectId}/users`
+    );
+    return resp;
+  } catch (error: unknown) {
+    return error as TApiError;
+  }
+};
+
+
+
+

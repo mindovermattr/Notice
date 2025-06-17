@@ -98,33 +98,35 @@ const Page = () => {
           </p>
         ))}
         <div className={styles["task-wrapper"]}>
-          {display.map((el, idx) => (
-            <Link
-              href={`Task/${el.id}`}
-              key={el.id}
-              className={clsx(
-                styles.gantt__task,
-                styles[COLUMN_COLORS_STYLES[el.status]],
-                styles.task,
-                {
-                  [styles.noB]: !el.isInRange,
-                }
-              )}
-              style={{
-                gridRow: idx + 1,
-                gridColumn: `${el.startIndex} / span ${Math.abs(
-                  el.diffInDays
-                )}`,
-              }}
-            >
-              <Avatar
-                imgSrc={el.assign_user?.avatarUrl}
-                width={16}
-                height={16}
-              />
-              {el.title}
-            </Link>
-          ))}
+          {display.map((el, idx) => {
+            return (
+              <Link
+                href={`Task/${el.id}`}
+                key={el.id}
+                className={clsx(
+                  styles.gantt__task,
+                  styles[COLUMN_COLORS_STYLES[el.status]],
+                  styles.task,
+                  {
+                    [styles.noB]: !el.isInRange,
+                  }
+                )}
+                style={{
+                  gridRow: idx + 1,
+                  gridColumn: `${el.startIndex} / span ${Math.abs(
+                    el.diffInDays
+                  )}`,
+                }}
+              >
+                <Avatar
+                  imgSrc={el.assign_user?.avatarUrl}
+                  width={16}
+                  height={16}
+                />
+                {el.title}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </article>

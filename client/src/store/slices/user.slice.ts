@@ -1,6 +1,7 @@
 import { TLoginSchema, TRegistrationSchema } from "@/@schemes/auth.schema";
 import { ERoles } from "@/@types/Enums/ERoles";
 import { TApiError } from "@/@types/TApi";
+import { TUser } from "@/@types/TUser";
 import {
   login as loginApi,
   registration as registrationApi,

@@ -38,8 +38,8 @@ export class ProjectController {
   }
 
   @Get(":projId")
-  findOne(@Param("projId") id: string, @Req() req) {
-    return this.projectService.findOne(+id, req.user);
+  getUsers(@Param("projId") id: string) {
+    return this.projectService.findAllUsers(+id);
   }
 
   @Patch(":projId")

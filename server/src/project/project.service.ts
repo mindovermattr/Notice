@@ -47,21 +47,6 @@ export class ProjectService {
           },
         },
       },
-      include: {
-        users: {
-          omit: {
-            password: true,
-          },
-        },
-        user_roles: {
-          where: {
-            user_id: user.id,
-          },
-          include: {
-            role_name: true,
-          },
-        },
-      },
     });
 
     if (!data)
@@ -70,7 +55,14 @@ export class ProjectService {
         HttpStatus.NOT_FOUND,
       );
 
-    return data;
+    const projects = await Promise.all(
+      data.map(async (el) => {
+        const users = await this.findAllUsers(el.id);
+        return { ...el, users };
+      }),
+    );
+
+    return projects;
   }
 
   async findAllByUserId(id: number) {
@@ -86,6 +78,34 @@ export class ProjectService {
       },
     });
     return data;
+  }
+
+  async findAllUsers(projectId: number) {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        project: {
+          some: {
+            id: projectId,
+          },
+        },
+      },
+    });
+
+    const data = await Promise.all(
+      users.map(async (el) => {
+        const role = await this.prismaService.projectUserRoles.findFirst({
+          where: {
+            project_id: projectId,
+            user_id: el.id,
+          },
+        });
+        if (!role) return;
+        return { ...el, role };
+      }),
+    );
+    const filtredData = data.filter((el) => el !== undefined);
+
+    return filtredData;
   }
 
   async findOne(id: number, user: User) {
@@ -222,32 +242,48 @@ export class ProjectService {
   }
 
   async removeUser(id: number, userId: number) {
-    const user = await this.prismaService.projectUserRoles.findFirst({
+    const role = await this.prismaService.projectUserRoles.findFirst({
       where: {
         project_id: id,
         user_id: userId,
       },
     });
 
-    if (!user)
+    if (!role)
       throw new HttpException(
         "User doesn't exist in project",
         HttpStatus.BAD_REQUEST,
       );
 
+    await this.prismaService.project.update({
+      where: {
+        id: id,
+      },
+      data: {
+        users: {
+          disconnect: {
+            id: userId,
+          },
+        },
+      },
+    });
+
     const data = await this.prismaService.projectUserRoles.delete({
       where: {
-        id: user.id,
+        id: role.id,
       },
     });
     return data;
   }
 
-  async getUserRole(projectId: number, user: User) {
+  async getUserRole(projectId: number, userId: number) {
     const data = await this.prismaService.projectUserRoles.findFirst({
       where: {
         project_id: projectId,
-        user_id: user.id,
+        user_id: userId,
+      },
+      include: {
+        role_name: true,
       },
     });
     if (!data)
@@ -255,6 +291,32 @@ export class ProjectService {
         "Пользователя не существует на этом проекте",
         HttpStatus.BAD_REQUEST,
       );
+
+    return data.role_name;
+  }
+
+  async changeRole(projectId: number, userId: number, role: Role) {
+    const userRole = await this.prismaService.projectUserRoles.findFirst({
+      where: {
+        user_id: userId,
+        project_id: projectId,
+      },
+    });
+
+    if (!userRole)
+      throw new HttpException(
+        "Пользователя не существует",
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const data = await this.prismaService.projectUserRoles.update({
+      where: {
+        id: userRole.id,
+      },
+      data: {
+        role_id: role,
+      },
+    });
 
     return data;
   }

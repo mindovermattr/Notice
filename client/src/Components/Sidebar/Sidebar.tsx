@@ -1,7 +1,12 @@
 import { TUserSchema, userSchema } from "@/@schemes/user.schema";
+import { deleteProject, deleteUserFromProject } from "@/api/project.api";
 import { patchUserAvatar } from "@/api/user.api";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { createProjectThunk } from "@/store/slices/projects.slice";
+import {
+  createProjectThunk,
+  deleteUser,
+  removeProject,
+} from "@/store/slices/projects.slice";
 import { setUser } from "@/store/slices/user.slice";
 import { getUser, logoutUser, setUser as setUserLS } from "@/utils/user.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +14,7 @@ import axios, { AxiosProgressEvent } from "axios";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ComponentProps, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -31,6 +37,7 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
   const projects = useAppSelector((state) => state.projects);
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isUplodaing, setIsUploading] = useState(false);
@@ -89,6 +96,19 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
     await dispatch(createProjectThunk(data.name));
     setIsOpen(false);
   };
+
+  const deleteProjectHandler = async (id: number) => {
+    const resp = await deleteProject({ id });
+    if (axios.isAxiosError(resp)) return;
+    dispatch(removeProject({ id }));
+    router.push("/Project");
+  };
+  const leaveProjectHandler = async (projectId: number, userId: number) => {
+    const resp = await deleteUserFromProject({ projectId, userId });
+    if (axios.isAxiosError(resp)) return;
+    dispatch(deleteUser({ id: projectId, userId }));
+    router.push("/Project");
+  };
   return (
     <aside className={`${styles.sidebar} ${className}`} {...props}>
       <div className={styles.profile}>
@@ -132,7 +152,19 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
                     e
                   </Button>
                 )}
-                <Button className={styles.controls__button} variant="text">
+                <Button
+                  onClick={
+                    el.author_id === user.user?.id
+                      ? () => {
+                          deleteProjectHandler(el.id);
+                        }
+                      : () => {
+                          leaveProjectHandler(el.id, user!.user!.id);
+                        }
+                  }
+                  className={styles.controls__button}
+                  variant="text"
+                >
                   x
                 </Button>
               </div>

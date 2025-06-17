@@ -60,6 +60,46 @@ const projectsSlice = createSlice({
       if (!selectedProject) return;
       state.selectedProject = selectedProject;
     },
+    changeUserProjectRole: (
+      state,
+      action: PayloadAction<{ id: number; roleId: number; userId: number }>
+    ) => {
+      const selectedProjectIndex = state.projects.findIndex(
+        (el) => el.id === action.payload.id
+      );
+      const userIndex = state.projects[selectedProjectIndex]?.users.findIndex(
+        (el) => el.id === action.payload.userId
+      );
+      const user = state.projects[selectedProjectIndex].users[userIndex];
+      const newUser = {
+        ...user,
+        role: {
+          ...user?.role,
+          role_id: action.payload.roleId,
+        },
+      };
+      state.projects[selectedProjectIndex].users[userIndex] = newUser;
+      state.selectedProject = state.projects[selectedProjectIndex];
+    },
+    deleteUser: (
+      state,
+      action: PayloadAction<{ id: number; userId: number }>
+    ) => {
+      const selectedProjectIndex = state.projects.findIndex(
+        (el) => el.id === action.payload.id
+      );
+      const userIndex = state.projects[selectedProjectIndex]?.users.findIndex(
+        (el) => el.id === action.payload.userId
+      );
+      state.projects[selectedProjectIndex].users.splice(userIndex, 1);
+      state.selectedProject = state.projects[selectedProjectIndex];
+    },
+    removeProject: (state, action: PayloadAction<{ id: number }>) => {
+      const projectIndex = state.projects.findIndex(
+        (el) => el.id === action.payload.id
+      );
+      state.projects.splice(projectIndex, 1);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -78,6 +118,11 @@ const projectsSlice = createSlice({
   },
 });
 
-export const { selectProject } = projectsSlice.actions;
+export const {
+  selectProject,
+  changeUserProjectRole,
+  deleteUser,
+  removeProject,
+} = projectsSlice.actions;
 
 export default projectsSlice.reducer;
