@@ -9,7 +9,7 @@ const geistMono = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Create Next App",
+  title: "Track",
   description: "Generated b create next app",
 };
 

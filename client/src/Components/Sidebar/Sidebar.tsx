@@ -152,10 +152,10 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
                 {`${idx + 1}. ${el.name}`}
               </Link>
               <div className={styles.controls}>
-                {el.id === user.user?.id && (
+                {el.author_id === user.user?.id && (
                   <>
                     <Link
-                      href={`/Project/${projects.selectedProject?.id}`}
+                      href={`/Project/${el.id}`}
                       className={styles.controls__button}
                     >
                       <Image
