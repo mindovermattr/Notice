@@ -37,7 +37,6 @@ export const formatDate = (date: Date | string | undefined) => {
   return UTCDate;
 };
 
-// Функция возвращает диапазон даты, начиная с предыдущей недели, заканчивая датой через 3 недели
 export const getMonthDate = (currentDate: Date) => {
   const tempDate = new Date(currentDate);
 
@@ -79,4 +78,19 @@ export const getMonthDate = (currentDate: Date) => {
     itterationDate.setDate(date + 1);
   }
   return { startDate, endDate, days, weeks };
+};
+
+export const serverFormatDate = (input: string | undefined) => {
+  if (!input) return;
+  const date = new Date(input);
+  date.setTime(date.getTime() + 3 * 60 * 60 * 1000);
+
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Месяцы с 0
+  const year = date.getUTCFullYear();
+
+  const hours = String(date.getUTCHours()).padStart(2, "0");
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
 };

@@ -43,7 +43,15 @@ export class SubtaskService {
   }
 
   async update(id: number, updateSubtaskDto: UpdateSubtaskDto) {
-    return `This action updates a #${id} subtask`;
+    const data = await this.prismaService.subTask.update({
+      where: {
+        id,
+      },
+      data: {
+        ...updateSubtaskDto,
+      },
+    });
+    return data;
   }
 
   async remove(id: number) {

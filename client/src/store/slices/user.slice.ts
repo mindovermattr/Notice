@@ -1,5 +1,5 @@
 import { TLoginSchema, TRegistrationSchema } from "@/@schemes/auth.schema";
-import { ERoles } from "@/@types/Enums/ERoles";
+import { ERolesBack } from "@/@types/Enums/ERoles";
 import { TApiError } from "@/@types/TApi";
 import { TUser } from "@/@types/TUser";
 import {
@@ -35,7 +35,7 @@ export const registrationThunk = createAsyncThunk(
 type TInitialState = {
   user: TUser | null;
   token: string | null;
-  role: ERoles | null;
+  role: ERolesBack | null;
   error: string[];
 };
 
@@ -74,7 +74,9 @@ const userSlice = createSlice({
     setUser: (state, action: PayloadAction<TUser>) => {
       state.user = action.payload;
     },
-    setRole: (state, action) => {},
+    setRole: (state, action: PayloadAction<ERolesBack>) => {
+      state.role = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -95,6 +97,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, setUser, setUserWithToken } = userSlice.actions;
+export const { logout, setUser, setUserWithToken, setRole } = userSlice.actions;
 
 export default userSlice.reducer;

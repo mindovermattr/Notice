@@ -77,3 +77,12 @@ export const upploadTaskFiles = async (
     return error as TApiError;
   }
 };
+
+export const deleteTask = async (taskId: number) => {
+  try {
+    const resp = await protectedInstance.delete<TTaskGetApi>(`/tasks/${taskId}`);
+    return resp;
+  } catch (error: unknown) {
+    return error as TApiError;
+  }
+};

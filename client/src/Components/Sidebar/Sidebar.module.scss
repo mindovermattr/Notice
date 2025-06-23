@@ -114,10 +114,18 @@
   position: absolute;
   top: 50%;
   right: 4px;
+
   display: flex;
   gap: 4px;
+  align-items: center;
   &__button {
+    width: 20px;
+    height: 20px;
     padding: 2px 4px;
     transform: translate(-50%, -50%);
   }
+}
+
+.hidden {
+  display: none;
 }

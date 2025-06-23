@@ -1,4 +1,6 @@
 import { TApiError } from "@/@types/TApi";
+import { TSubtask } from "@/@types/TSubtask";
+import { TTask } from "@/@types/TTask";
 import { TTasklist } from "@/@types/TTasklist";
 import {
   createTaskList,
@@ -84,6 +86,104 @@ const tasklistSlice = createSlice({
       state.tasklists[listIndex].tasks[taskIndex].priority =
         action.payload.priority;
     },
+    patchTaskStore: (
+      state,
+      action: PayloadAction<{ listId: number; task: Partial<TTask> }>
+    ) => {
+      const listIndex = state.tasklists.findIndex(
+        (el) => el.id === action.payload.listId
+      );
+      const taskIndex = state.tasklists[listIndex].tasks.findIndex(
+        (el) => el.id === action.payload.task.id
+      );
+
+      const prevTask = state.tasklists[listIndex].tasks[taskIndex];
+
+      state.tasklists[listIndex].tasks[taskIndex] = {
+        ...prevTask,
+        ...action.payload.task,
+      };
+    },
+    addSubTask: (
+      state,
+      action: PayloadAction<{
+        listId: number;
+        taskId: number;
+        subtask: TSubtask;
+      }>
+    ) => {
+      const listIndex = state.tasklists.findIndex(
+        (el) => el.id === action.payload.listId
+      );
+      const taskIndex = state.tasklists[listIndex].tasks.findIndex(
+        (el) => el.id === action.payload.taskId
+      );
+
+      state.tasklists[listIndex].tasks[taskIndex].subtasks.push(
+        action.payload.subtask
+      );
+    },
+    deleteSubtask: (
+      state,
+      action: PayloadAction<{
+        listId: number;
+        taskId: number;
+        subtask: TSubtask;
+      }>
+    ) => {
+      const listIndex = state.tasklists.findIndex(
+        (el) => el.id === action.payload.listId
+      );
+      const taskIndex = state.tasklists[listIndex].tasks.findIndex(
+        (el) => el.id === action.payload.taskId
+      );
+      const subtaskIndex = state.tasklists[listIndex].tasks[
+        taskIndex
+      ].subtasks.findIndex((el) => el.id === action.payload.subtask.id);
+
+      state.tasklists[listIndex].tasks[taskIndex].subtasks.splice(
+        subtaskIndex,
+        1
+      );
+    },
+    patchSubtask: (
+      state,
+      action: PayloadAction<{
+        listId: number;
+        taskId: number;
+        subtask: TSubtask;
+      }>
+    ) => {
+      const listIndex = state.tasklists.findIndex(
+        (el) => el.id === action.payload.listId
+      );
+      const taskIndex = state.tasklists[listIndex].tasks.findIndex(
+        (el) => el.id === action.payload.taskId
+      );
+      const subtaskIndex = state.tasklists[listIndex].tasks[
+        taskIndex
+      ].subtasks.findIndex((el) => el.id === action.payload.subtask.id);
+
+      const prevSubtask =
+        state.tasklists[listIndex].tasks[taskIndex].subtasks[subtaskIndex];
+
+      state.tasklists[listIndex].tasks[taskIndex].subtasks[subtaskIndex] = {
+        ...prevSubtask,
+        ...action.payload.subtask,
+      };
+    },
+    removeTask: (
+      state,
+      action: PayloadAction<{ listId: number; taskId: number }>
+    ) => {
+      const listIndex = state.tasklists.findIndex(
+        (el) => el.id === action.payload.listId
+      );
+      const taskIndex = state.tasklists[listIndex].tasks.findIndex(
+        (el) => el.id === action.payload.taskId
+      );
+      state.tasklists[listIndex].tasks.splice(taskIndex, 1);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -109,6 +209,13 @@ const tasklistSlice = createSlice({
   },
 });
 
-export const { patchPriority } = tasklistSlice.actions;
+export const {
+  patchPriority,
+  patchTaskStore,
+  addSubTask,
+  deleteSubtask,
+  patchSubtask,
+  removeTask,
+} = tasklistSlice.actions;
 
 export default tasklistSlice.reducer;

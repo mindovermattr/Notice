@@ -1,0 +1,42 @@
+.date {
+  display: flex;
+  border-bottom: 1px solid $base-100;
+  padding-bottom: 24px;
+  &--redacting {
+    outline: 1px solid $primary-600;
+    cursor: pointer;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-basis: 33%;
+
+    margin: 24px 0 0 24px;
+    padding-right: 24px;
+
+    &:not(:last-child) {
+      border-right: 1px solid $base-100;
+      margin-right: 24px;
+    }
+  }
+  &__title {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 14px;
+    color: $base-300;
+  }
+}
+
+.form {
+  &__fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  &__select {
+    border: 1px solid $base-400;
+    padding: 4px;
+  }
+}

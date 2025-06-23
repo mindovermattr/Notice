@@ -1,0 +1,22 @@
+.subtask {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: $base-100;
+  border: 1px solid $base-300;
+  border-radius: 8px;
+
+  &__controls {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.subtask-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 400px;
+}

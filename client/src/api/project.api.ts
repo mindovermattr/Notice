@@ -90,3 +90,13 @@ export const deleteProject = async ({ id }: { id: number }) => {
     return error as TApiError;
   }
 };
+export const getProjectRole = async ({ id, userId }: { id: number, userId:number }) => {
+  try {
+    const resp = await protectedInstance.get<TProjectApi>(
+      `project/${id}/users/${userId}`
+    );
+    return resp;
+  } catch (error: unknown) {
+    return error as TApiError;
+  }
+};

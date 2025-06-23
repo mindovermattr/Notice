@@ -5,3 +5,5 @@ export type TSubtask = {
   task_id: number;
   isCompleted: boolean;
 };
+
+export type TUpdateSubtask = Pick<TSubtask, "isCompleted" | "title">;

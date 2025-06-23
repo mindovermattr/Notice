@@ -51,7 +51,6 @@ export class TaskController {
     @Body() updateTaskDto: UpdateTaskDto,
     @Req() req,
   ) {
-    
     return this.taskService.update(+id, updateTaskDto, req.user);
   }
   @Patch("tasks/:id/files")
@@ -65,7 +64,7 @@ export class TaskController {
   }
 
   @Delete("tasks/:id")
-  remove(@Param("projectId") projectId: string, @Param("id") id: string) {
-    return this.taskService.remove(+projectId, +id);
+  remove(@Param("id") id: string) {
+    return this.taskService.remove(+id);
   }
 }

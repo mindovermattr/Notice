@@ -66,3 +66,76 @@ export const editTaskSchema = taskSchema.pick({
   title: true,
   description: true,
 });
+
+const dateTimeSchema = z
+  .string()
+  .nonempty("Поле не должно быть пустым")
+  .regex(/^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}$/, {
+    message: "Дата и время должны быть в формате ДД.ММ.ГГГГ ЧЧ:ММ",
+  })
+  .refine(
+    (value) => {
+      if (typeof value !== "string") return false;
+
+      const parts = value.split(" ");
+      if (parts.length !== 2) return false;
+
+      const [datePart, timePart] = parts;
+      const dateParts = datePart.split(".");
+      if (dateParts.length !== 3) return false;
+      const [day, month, year] = dateParts.map(Number);
+
+      const timeParts = timePart.split(":");
+      if (timeParts.length !== 2) return false;
+      const [hours, minutes] = timeParts.map(Number);
+
+      if (
+        !Number.isInteger(day) ||
+        !Number.isInteger(month) ||
+        !Number.isInteger(year) ||
+        !Number.isInteger(hours) ||
+        !Number.isInteger(minutes)
+      ) {
+        return false;
+      }
+
+      if (month < 1 || month > 12) return false;
+      if (hours < 0 || hours > 23) return false;
+      if (minutes < 0 || minutes > 59) return false;
+
+      const inputDate = new Date(
+        Date.UTC(year, month - 1, day, hours, minutes)
+      );
+
+      const isValidDate =
+        inputDate.getUTCFullYear() === year &&
+        inputDate.getUTCMonth() === month - 1 &&
+        inputDate.getUTCDate() === day &&
+        inputDate.getUTCHours() === hours &&
+        inputDate.getUTCMinutes() === minutes;
+
+      if (!isValidDate) return false;
+
+      const nowUTC = new Date();
+
+      return inputDate.getTime() >= nowUTC.getTime();
+    },
+    {
+      message: "Дата и время должны быть не раньше текущего момента (UTC)",
+    }
+  )
+  .transform((data) => {
+    const parts = data.split(" ");
+    const [datePart, timePart] = parts;
+    const [day, month, year] = datePart.split(".").map(Number);
+    const [hours, minutes] = timePart.split(":").map(Number);
+    const dueDate = new Date(year, month - 1, day, hours, minutes);
+
+    return dueDate;
+  });
+
+export const updateTaskSchema = z.object({
+  due_date: dateTimeSchema,
+  createdAt: dateTimeSchema,
+  assign_id: z.string(),
+});

@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { User } from "@prisma/client";
+import { Role } from "src/enums/roles";
 import { EStatus } from "../enums/status";
 import { PrismaService } from "../prisma.service";
 import { ProjectService } from "../project/project.service";
@@ -95,7 +96,11 @@ export class TaskService {
           include: {
             assign_user: true,
             attachments: true,
-            subtasks: true,
+            subtasks: {
+              orderBy: {
+                id: "desc",
+              },
+            },
             task_list: true,
           },
         },
@@ -111,7 +116,11 @@ export class TaskService {
         id,
       },
       include: {
-        subtasks: true,
+        subtasks: {
+          orderBy: {
+            id: "asc",
+          },
+        },
         task_list: true,
         assign_user: true,
         attachments: {
@@ -136,14 +145,16 @@ export class TaskService {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (user.id !== task.assign_id || task.status !== "Review")
+    if (user.id !== task.assign_id && updateTaskDto.role !== Role.ADMIN)
       throw new HttpException(
         "Задача назначена на другого пользователя",
         HttpStatus.BAD_REQUEST,
       );
 
     const data = await this.prismaService.task.update({
-      data: { ...updateTaskDto },
+      data: {
+        ...updateTaskDto,
+      },
       where: {
         id,
       },
@@ -182,20 +193,12 @@ export class TaskService {
     return data;
   }
 
-  async remove(projectId: number, id: number) {
-    // const project = await this.prismaService.task.findFirst({
-    //   where: {
-    //     project_id: projectId,
-    //   },
-    // });
-    // if (!project)
-    //   throw new HttpException("Project doesn't exist", HttpStatus.BAD_REQUEST);
-    // const data = await this.prismaService.task.delete({
-    //   where: {
-    //     project_id: projectId,
-    //     id,
-    //   },
-    // });
-    // return data;
+  async remove(id: number) {
+    const data = await this.prismaService.task.delete({
+      where: {
+        id,
+      },
+    });
+    return data;
   }
 }

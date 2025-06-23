@@ -1,6 +1,6 @@
 import { TUserSchema, userSchema } from "@/@schemes/user.schema";
 import { deleteProject, deleteUserFromProject } from "@/api/project.api";
-import { patchUserAvatar } from "@/api/user.api";
+import { patchUser, patchUserAvatar } from "@/api/user.api";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   createProjectThunk,
@@ -50,7 +50,6 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
     try {
       const response = await patchUserAvatar(formData, onProgress);
       if (axios.isAxiosError(response)) return;
-      setValue("avatarUrl", response.data.avatarUrl!);
       dispatch(setUser(response.data));
       const user = getUser();
       if (!user) return;
@@ -82,7 +81,6 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
     register: registerUser,
     handleSubmit: handleSubmitUser,
     formState: { errors: userErrors },
-    setValue,
   } = useForm({
     resolver: zodResolver(userSchema),
   });
@@ -93,7 +91,14 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
   };
 
   const userSubmitHandler = async (data: TUserSchema) => {
-    await dispatch(createProjectThunk(data.name));
+    const resp = await patchUser(data);
+    if (axios.isAxiosError(resp)) return;
+    const prevUser = getUser();
+    setUserLS({
+      user: resp.data,
+      token: prevUser!.token,
+    });
+    dispatch(setUser(resp.data));
     setIsOpen(false);
   };
 
@@ -148,9 +153,27 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
               </Link>
               <div className={styles.controls}>
                 {el.id === user.user?.id && (
-                  <Button className={styles.controls__button} variant="text">
-                    e
-                  </Button>
+                  <>
+                    <Link
+                      href={`/Project/${projects.selectedProject?.id}`}
+                      className={styles.controls__button}
+                    >
+                      <Image
+                        width={12}
+                        height={12}
+                        src="/icons/user.svg"
+                        alt="1"
+                      />
+                    </Link>
+                    <Button className={styles.controls__button} variant="text">
+                      <Image
+                        width={12}
+                        height={12}
+                        src="/icons/pen.svg"
+                        alt="1"
+                      />
+                    </Button>
+                  </>
                 )}
                 <Button
                   onClick={
@@ -209,10 +232,10 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
                 error={userErrors.name?.message}
               />
               <Input
-                {...registerUser("lastName")}
+                {...registerUser("lastname")}
                 label="Фамилия"
                 placeholder="Фамилия"
-                error={userErrors.lastName?.message}
+                error={userErrors.lastname?.message}
               />
               <FileUploader
                 onFileUpload={handleFileUpload}
@@ -220,7 +243,6 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
                 accept=".jpg"
                 disabled={isUplodaing}
               />
-              <Input {...registerUser("avatarUrl")} />
             </div>
           </fieldset>
           <Button>Изменить</Button>

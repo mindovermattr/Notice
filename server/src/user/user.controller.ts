@@ -25,8 +25,8 @@ export class UserController {
 
   @Patch()
   @UseGuards(JwtAuthGuard)
-  patch(@Req() req, updateUserDto: UpdateUserDto) {
-    this.userService.patchUser(+req.user.id, updateUserDto);
+  patch(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.patchUser(+req.user.id, updateUserDto);
   }
 
   @Patch("avatar")

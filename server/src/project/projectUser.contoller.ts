@@ -19,9 +19,9 @@ import { ProjectService } from "./project.service";
 export class ProjectUserController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @Get()
-  getRole(@Param("projId") projectId: string, @Body() body: { id: number }) {
-    return this.projectService.getUserRole(+projectId, body.id);
+  @Get(":userId")
+  getRole(@Param("projId") projectId: string, @Param("userId") userId: string) {
+    return this.projectService.getUserRole(+projectId, +userId);
   }
 
   @Post()

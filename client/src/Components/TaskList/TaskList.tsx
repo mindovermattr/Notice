@@ -36,7 +36,6 @@ const TaskList = ({ list }: TTaskListProps) => {
   });
 
   const submitHandler = async (data: z.infer<typeof taskCreateSchema>) => {
-    console.log(data);
     await createTask(list.id, data);
     await dispatch(getTasklistsThunk({ id: +id }));
     setIsModalOpen(false);

@@ -106,32 +106,7 @@
   }
 }
 
-.date {
-  display: flex;
-  border-bottom: 1px solid $base-100;
-  padding-bottom: 24px;
 
-  &__item {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    flex-basis: 33%;
-
-    margin: 24px 0 0 24px;
-    padding-right: 24px;
-
-    &:not(:last-child) {
-      border-right: 1px solid $base-100;
-      margin-right: 24px;
-    }
-  }
-  &__title {
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 14px;
-    color: $base-300;
-  }
-}
 
 .attachments {
   padding: 24px;
@@ -195,27 +170,12 @@
   padding: 24px;
   border-bottom: 1px solid $base-100;
   &__title {
-    font-weight: 700;
-    color: $base-600;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
   &__items {
     display: flex;
     flex-direction: column;
     gap: 12px;
-  }
-  &__item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    background-color: $base-100;
-    border: 1px solid $base-300;
-    border-radius: 8px;
-  }
-  &__controls {
-    display: flex;
-    align-items: center;
   }
 }
 
@@ -224,6 +184,20 @@
   flex-direction: column;
   gap: 12px;
   width: 400px;
+}
+
+.delete-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  &__controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  &__button {
+    background-color: $red-error;
+  }
 }
 
 @keyframes pulse-anim {

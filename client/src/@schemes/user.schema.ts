@@ -2,8 +2,7 @@ import { z } from "zod";
 
 export const userSchema = z.object({
   name: z.string().nonempty("Поле должно быть заполнено"),
-  lastName: z.string().nonempty("Поле должно быть заполнено"),
-  avatarUrl: z.string(),
+  lastname: z.string().nonempty("Поле должно быть заполнено"),
 });
 
 export type TUserSchema = z.infer<typeof userSchema>;

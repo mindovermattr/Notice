@@ -1,3 +1,4 @@
+import { ERolesBack } from "@/@types/Enums/ERoles";
 import { TTaskGetApi } from "@/@types/TTask";
 import Avatar from "@/Components/Avatar/Avatar";
 import { useAppSelector } from "@/store/hooks";
@@ -12,7 +13,7 @@ type TKanbanItemProps = HTMLProps<HTMLDivElement> & {
 
 const KanbanItem = ({ task, onDragEnd, ...props }: TKanbanItemProps) => {
   const [isDragged, setIsDragged] = useState(false);
-  const userStore = useAppSelector((state) => state.user.user);
+  const { user, role } = useAppSelector((state) => state.user);
 
   const onDragStart = (e: DragEvent<HTMLElement>) => {
     if (e.dataTransfer) {
@@ -32,9 +33,15 @@ const KanbanItem = ({ task, onDragEnd, ...props }: TKanbanItemProps) => {
     setIsDragged(false);
   };
 
+  const isDraggble =
+    role === ERolesBack.ADMIN ||
+    (user?.id === task.assign_user.id &&
+      task.status !== "Review" &&
+      task.status !== "Done");
+
   return (
     <div
-      draggable={userStore?.id === task.assign_user.id}
+      draggable={isDraggble}
       onDrop={onDragEndHandler}
       onDragStart={(e) => onDragStart(e)}
       onDragLeave={(e) => onDragLeave(e)}
@@ -49,7 +56,7 @@ const KanbanItem = ({ task, onDragEnd, ...props }: TKanbanItemProps) => {
           <Avatar
             width={24}
             height={24}
-            imgSrc={userStore?.avatarUrl}
+            imgSrc={user?.avatarUrl}
             className={styles.task__avatar}
           />
         </header>

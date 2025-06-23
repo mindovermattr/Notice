@@ -1,11 +1,13 @@
 "use client";
 import { subtaskSchema } from "@/@schemes/subtask.schema";
-import { editTaskSchema } from "@/@schemes/task.schema";
+import { editTaskSchema, updateTaskSchema } from "@/@schemes/task.schema";
+import { ERolesBack } from "@/@types/Enums/ERoles";
 import { TAtachment } from "@/@types/TAtachment";
 import { TCommentFindAll } from "@/@types/TComments";
 import { TTaskGetApi } from "@/@types/TTask";
 import { createSubTask } from "@/api/subtask.api";
 import {
+  deleteTask,
   getTask,
   getTaskComments,
   patchTask,
@@ -14,18 +16,25 @@ import {
 import Avatar from "@/Components/Avatar/Avatar";
 import Button from "@/Components/Button/Button";
 import Comments from "@/Components/Comments/Comments";
+import Date from "@/Components/Date/Date";
 import FileUploader from "@/Components/FileUploader/FileUploader";
-import FlagIcon from "@/Components/Icons/FlagIcon/FlagIcon";
 import Input from "@/Components/Input/Input";
 import Modal from "@/Components/Modal/Modal";
+import Subtask from "@/Components/Subtask/Subtask";
 import { COLUMN_COLORS } from "@/constants/kanban.constans";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  addSubTask,
+  patchTaskStore,
+  removeTask,
+} from "@/store/slices/tasklists.slice";
 import { formatDate } from "@/utils/date.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosProgressEvent } from "axios";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -44,16 +53,23 @@ const Page = ({
   params: Promise<{ id: string; taskId: string }>;
 }) => {
   const { id, taskId } = use(params);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const userStore = useAppSelector((state) => state.user);
   const projectStore = useAppSelector(
     (state) => state.projects.selectedProject
   );
+
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [isSubtaskModalOpen, setIsSubtaskModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   const [task, setTask] = useState<TTaskGetApi | null>(null);
   const [comments, setComments] = useState<TCommentFindAll[]>([]);
   const [isRedacting, setIsRedacting] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+
+  const taskList = useAppSelector((state) => state.tasklists.tasklists);
 
   const {
     register,
@@ -63,13 +79,12 @@ const Page = ({
   } = useForm({
     resolver: zodResolver(editTaskSchema),
   });
-  const {
-    register: registerSubtask,
-    handleSubmit: handleSubmitSubtask,
-    formState: { errors: subtaskErrors },
-  } = useForm({
+
+  const subtaskForm = useForm({
     resolver: zodResolver(subtaskSchema),
   });
+
+ 
 
   const handleFileUpload = async (
     formData: FormData,
@@ -125,12 +140,56 @@ const Page = ({
   };
 
   const submitHandler = async (data: z.infer<typeof editTaskSchema>) => {
-    await patchTask(+taskId, data);
+    const resp = await patchTask(+taskId, data);
+    if (axios.isAxiosError(resp)) return;
+    dispatch(patchTaskStore({ listId: task!.task_list.id, task: resp.data }));
   };
 
   const subtaskSubmitHandler = async (data: z.infer<typeof subtaskSchema>) => {
-    await createSubTask(+taskId, data.title);
+    const resp = await createSubTask(+taskId, data.title);
+    if (axios.isAxiosError(resp)) return;
+    dispatch(
+      addSubTask({
+        listId: task!.task_list.id,
+        taskId: task!.id,
+        subtask: resp.data,
+      })
+    );
     setIsSubtaskModalOpen(false);
+  };
+
+  const renderSubtasks = () => {
+    const listId = task?.task_list.id;
+    const taskId = task?.id;
+    if (!listId || !taskId) return;
+    const listIndex = taskList.findIndex((el) => el.id === listId);
+    if (listIndex === -1) return;
+    const taskIndex = taskList[listIndex].tasks.findIndex(
+      (el) => el.id === taskId
+    );
+    if (taskIndex === -1) return;
+    return taskList[listIndex].tasks[taskIndex].subtasks.map((el) => (
+      <Subtask
+        taskId={+taskId}
+        subtask={el}
+        key={el.id}
+        listId={taskList[listIndex].id}
+      />
+    ));
+  };
+
+  const deleteHandler = async () => {
+    const listId = task!.task_list.id;
+
+    const resp = await deleteTask(+taskId);
+    if (axios.isAxiosError(resp)) return;
+    dispatch(
+      removeTask({
+        listId,
+        taskId: +taskId,
+      })
+    );
+    router.push(`/Project/${id}/Dashboard/Tasklist`);
   };
 
   return (
@@ -173,15 +232,17 @@ const Page = ({
                 disabled={isRedacting}
                 error={errors.title?.message}
               />
-              <Button
-                onClick={() => setIsRedacting((prev) => !prev)}
-                variant="text"
-                type={isRedacting ? "submit" : "button"}
-                className={styles.form__icon}
-              >
-                <Image width={14} height={14} src={"/icons/pen.svg"} alt="" />
-                {isRedacting ? "Изменить" : "Принять"}
-              </Button>
+              {userStore.role === ERolesBack.ADMIN && (
+                <Button
+                  onClick={() => setIsRedacting((prev) => !prev)}
+                  variant="text"
+                  type={isRedacting ? "submit" : "button"}
+                  className={styles.form__icon}
+                >
+                  <Image width={14} height={14} src={"/icons/pen.svg"} alt="" />
+                  {isRedacting ? "Изменить" : "Принять"}
+                </Button>
+              )}
             </div>
             <div className={styles.form__field}>
               <Input
@@ -201,6 +262,15 @@ const Page = ({
             <Button onClick={() => setIsSubtaskModalOpen(true)} type="button">
               Добавить подзадачу
             </Button>
+            {!isRedacting && (
+              <Button
+                className={styles["delete-modal__button"]}
+                onClick={() => setIsDeleteModalOpen(true)}
+                type="button"
+              >
+                Удалить задачу
+              </Button>
+            )}
           </form>
           <div className={styles.attachments}>
             <h3 className={styles.attachments__title}>Файлы</h3>
@@ -235,54 +305,10 @@ const Page = ({
           </div>
         </div>
         <div className={styles.body__info}>
-          <ol className={styles.date}>
-            <li className={styles.date__item}>
-              <p className={styles.date__title}>Создана:</p>
-              <p>{task ? formatDate(task?.createdAt) : "Загрузка"}</p>
-            </li>
-            <li className={styles.date__item}>
-              <p className={styles.date__title}>Выполнить до:</p>
-              <p>{task ? formatDate(task?.due_date) : "Загрузка"}</p>
-            </li>
-            <li className={styles.date__item}>
-              <p className={styles.date__title}>Назначен:</p>
-              <p>{`${task?.assign_user.name} ${task?.assign_user.lastname}`}</p>
-            </li>
-          </ol>
+          <Date isRedacting={isRedacting} task={task} setTask={setTask} />
           <div className={styles.subtasks}>
             <h3 className={styles.subtasks__title}>Список подзадач</h3>
-            <div className={styles.subtasks__items}>
-              {task?.subtasks.map((el) => (
-                <div className={styles.subtasks__item} key={el.id}>
-                  <h4>{el.title}</h4>
-                  <div className={styles.subtasks__controls}>
-                    <Button
-                      variant="outlined"
-                      className={styles.subtasks__button}
-                    >
-                      <FlagIcon width={16} height={16} />
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      className={styles.subtasks__button}
-                    >
-                      <Image
-                        width={14}
-                        height={14}
-                        src={"/icons/pen.svg"}
-                        alt=""
-                      />
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      className={styles.subtasks__button}
-                    >
-                      X
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <div className={styles.subtasks__items}>{renderSubtasks()}</div>
           </div>
           <Comments
             taskId={+taskId}
@@ -306,17 +332,45 @@ const Page = ({
         onClose={() => setIsSubtaskModalOpen(false)}
       >
         <form
-          onSubmit={handleSubmitSubtask(subtaskSubmitHandler)}
+          onSubmit={subtaskForm.handleSubmit(subtaskSubmitHandler)}
           className={styles["subtask-form"]}
         >
           <Input
-            {...registerSubtask("title")}
+            {...subtaskForm.register("title")}
             label="Название подзадачи"
             placeholder="Кратко сформулируйте, что нужно сделать"
-            error={subtaskErrors.title?.message}
+            error={subtaskForm.formState.errors.title?.message}
           />
           <Button>Добавить</Button>
         </form>
+      </Modal>
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+      >
+        <div className={styles["delete-modal"]}>
+          <h3>
+            Вы уверены, что хотите удалить задачу? <br />
+            (это действие нельзя будет отменить)
+          </h3>
+          <div className={styles["delete-modal__controls"]}>
+            <Button
+              onClick={() => {
+                deleteHandler();
+                setIsDeleteModalOpen(false);
+              }}
+              className={styles["delete-modal__button"]}
+            >
+              Да, удалить задачу
+            </Button>
+            <Button
+              onClick={() => setIsDeleteModalOpen(false)}
+              variant="outlined"
+            >
+              Нет
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
