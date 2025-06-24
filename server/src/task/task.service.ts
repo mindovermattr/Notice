@@ -151,20 +151,40 @@ export class TaskService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const { role, ...dto } = updateTaskDto;
+    const { role, assign_id, ...dto } = updateTaskDto;
 
-    const data = await this.prismaService.task.update({
-      data: {
-        ...dto,
-      },
-      where: {
-        id,
-      },
-      include: {
-        subtasks: true,
-      },
-    });
-    return data;
+    if (assign_id) {
+      const data = await this.prismaService.task.update({
+        data: {
+          ...dto,
+          assign_user: {
+            connect: {
+              id: +assign_id,
+            },
+          },
+        },
+        where: {
+          id,
+        },
+        include: {
+          subtasks: true,
+        },
+      });
+      return data;
+    } else {
+      const data = await this.prismaService.task.update({
+        data: {
+          ...dto,
+        },
+        where: {
+          id,
+        },
+        include: {
+          subtasks: true,
+        },
+      });
+      return data;
+    }
   }
 
   async addFiles(id: number, files: Express.Multer.File[], user: User) {

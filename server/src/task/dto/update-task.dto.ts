@@ -19,6 +19,9 @@ export class UpdateTaskDto extends PartialType(CreateTaskDto) {
   due_date?: Date;
 
   @IsOptional()
+  assign_id?: number;
+
+  @IsOptional()
   @IsDate()
   @Type(() => Date)
   @MinDate(new Date())

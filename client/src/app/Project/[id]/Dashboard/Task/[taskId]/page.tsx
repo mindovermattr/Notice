@@ -138,7 +138,10 @@ const Page = ({
   };
 
   const submitHandler = async (data: z.infer<typeof editTaskSchema>) => {
-    const resp = await patchTask(+taskId, data);
+    const resp = await patchTask(+taskId, {
+      ...data,
+      role: ERolesBack.ADMIN,
+    });
     if (axios.isAxiosError(resp)) return;
     dispatch(patchTaskStore({ listId: task!.task_list.id, task: resp.data }));
   };
