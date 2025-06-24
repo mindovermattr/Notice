@@ -19,9 +19,10 @@ type TProps = {
   subtask: TSubtask;
   taskId: number;
   listId: number;
+  isRedacting: boolean;
 };
 
-const Subtask = ({ subtask, taskId, listId }: TProps) => {
+const Subtask = ({ subtask, taskId, listId, isRedacting }: TProps) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const subtaskForm = useForm({
@@ -30,6 +31,7 @@ const Subtask = ({ subtask, taskId, listId }: TProps) => {
       title: subtask.title,
     },
   });
+  console.log(isRedacting);
   const subtaskSubmitHandler = async (data: z.infer<typeof subtaskSchema>) => {
     const resp = await updateSubTask(subtask.id, data);
     if (axios.isAxiosError(resp)) return;
@@ -52,29 +54,31 @@ const Subtask = ({ subtask, taskId, listId }: TProps) => {
   return (
     <div className={styles.subtask} key={subtask.id}>
       <h4>{subtask.title}</h4>
-      <div className={styles.subtask__controls}>
-        <Button
-          onClick={() => completeSubtask(subtask)}
-          variant="outlined"
-          className={styles.subtask__button}
-        >
-          <FlagIcon selected={subtask.isCompleted} width={16} height={16} />
-        </Button>
-        <Button
-          onClick={() => setIsOpen(true)}
-          variant="outlined"
-          className={styles.subtask__button}
-        >
-          <Image width={14} height={14} src={"/icons/pen.svg"} alt="" />
-        </Button>
-        <Button
-          onClick={deleteHandler}
-          variant="outlined"
-          className={styles.subtask__button}
-        >
-          X
-        </Button>
-      </div>
+      {!isRedacting && (
+        <div className={styles.subtask__controls}>
+          <Button
+            onClick={() => completeSubtask(subtask)}
+            variant="outlined"
+            className={styles.subtask__button}
+          >
+            <FlagIcon selected={subtask.isCompleted} width={16} height={16} />
+          </Button>
+          <Button
+            onClick={() => setIsOpen(true)}
+            variant="outlined"
+            className={styles.subtask__button}
+          >
+            <Image width={14} height={14} src={"/icons/pen.svg"} alt="" />
+          </Button>
+          <Button
+            onClick={deleteHandler}
+            variant="outlined"
+            className={styles.subtask__button}
+          >
+            X
+          </Button>
+        </div>
+      )}
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <form
           onSubmit={subtaskForm.handleSubmit(subtaskSubmitHandler)}

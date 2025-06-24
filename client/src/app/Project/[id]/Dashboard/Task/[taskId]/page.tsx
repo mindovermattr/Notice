@@ -1,6 +1,6 @@
 "use client";
 import { subtaskSchema } from "@/@schemes/subtask.schema";
-import { editTaskSchema, updateTaskSchema } from "@/@schemes/task.schema";
+import { editTaskSchema } from "@/@schemes/task.schema";
 import { ERolesBack } from "@/@types/Enums/ERoles";
 import { TAtachment } from "@/@types/TAtachment";
 import { TCommentFindAll } from "@/@types/TComments";
@@ -84,8 +84,6 @@ const Page = ({
     resolver: zodResolver(subtaskSchema),
   });
 
- 
-
   const handleFileUpload = async (
     formData: FormData,
     onProgress: (progressEvent: AxiosProgressEvent) => void
@@ -158,7 +156,7 @@ const Page = ({
     setIsSubtaskModalOpen(false);
   };
 
-  const renderSubtasks = () => {
+  const renderSubtasks = (isRedacting: boolean) => {
     const listId = task?.task_list.id;
     const taskId = task?.id;
     if (!listId || !taskId) return;
@@ -174,6 +172,7 @@ const Page = ({
         subtask={el}
         key={el.id}
         listId={taskList[listIndex].id}
+        isRedacting={isRedacting}
       />
     ));
   };
@@ -308,7 +307,9 @@ const Page = ({
           <Date isRedacting={isRedacting} task={task} setTask={setTask} />
           <div className={styles.subtasks}>
             <h3 className={styles.subtasks__title}>Список подзадач</h3>
-            <div className={styles.subtasks__items}>{renderSubtasks()}</div>
+            <div className={styles.subtasks__items}>
+              {renderSubtasks(isRedacting)}
+            </div>
           </div>
           <Comments
             taskId={+taskId}

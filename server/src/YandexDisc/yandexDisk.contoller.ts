@@ -65,6 +65,7 @@ export class YandexDiskController {
    
     return this.yandexDiskService.uploadFile(file);
   }
+  
   @Post("upload-multiple")
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor("files"))
