@@ -63,7 +63,7 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
-      {!!user.error.length && user.error.map((el) => <p>{el}</p>)}
+      {!!user.error.length && user.error.map((el) => <p key={el}>{el}</p>)}
     </form>
   );
 }

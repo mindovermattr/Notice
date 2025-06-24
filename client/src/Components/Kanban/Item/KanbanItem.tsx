@@ -3,6 +3,7 @@ import { TTaskGetApi } from "@/@types/TTask";
 import Avatar from "@/Components/Avatar/Avatar";
 import { useAppSelector } from "@/store/hooks";
 import { formatDate } from "@/utils/date.utils";
+import clsx from "clsx";
 import Image from "next/image";
 import { DragEvent, HTMLProps, useState } from "react";
 import styles from "./KanbanItem.module.scss";
@@ -38,6 +39,27 @@ const KanbanItem = ({ task, onDragEnd, ...props }: TKanbanItemProps) => {
     (user?.id === task.assign_user.id &&
       task.status !== "Review" &&
       task.status !== "Done");
+
+  const dateCheck = (date: string) => {
+    const dateToCheck = new Date(date);
+
+    const today = new Date();
+
+    const dateAfterWeek = new Date();
+    dateAfterWeek.setDate(today.getDate() + 7);
+
+    const checkDateOnly = new Date(
+      dateToCheck.getFullYear(),
+      dateToCheck.getMonth(),
+      dateToCheck.getDate()
+    );
+    const afterWeekDateOnly = new Date(
+      dateAfterWeek.getFullYear(),
+      dateAfterWeek.getMonth(),
+      dateAfterWeek.getDate()
+    );
+    return checkDateOnly < afterWeekDateOnly;
+  };
 
   return (
     <div
@@ -75,7 +97,13 @@ const KanbanItem = ({ task, onDragEnd, ...props }: TKanbanItemProps) => {
             />
             {task.attachments.length}
           </p>
-          <p className={styles.task__period}>{formatDate(task.due_date)}</p>
+          <p
+            className={clsx(styles.task__period, {
+              [styles.red]: dateCheck(task.due_date),
+            })}
+          >
+            {formatDate(task.due_date)}
+          </p>
         </footer>
       </article>
     </div>

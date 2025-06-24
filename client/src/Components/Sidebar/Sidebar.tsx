@@ -165,14 +165,6 @@ const Sidebar = ({ className, ...props }: ISidebar) => {
                         alt="1"
                       />
                     </Link>
-                    <Button className={styles.controls__button} variant="text">
-                      <Image
-                        width={12}
-                        height={12}
-                        src="/icons/pen.svg"
-                        alt="1"
-                      />
-                    </Button>
                   </>
                 )}
                 <Button

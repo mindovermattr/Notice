@@ -15,6 +15,7 @@
 .body {
   position: relative;
   display: flex;
+  height: calc(100% - 42px);
   @media (max-width: 1200px) {
     flex-wrap: wrap;
   }
@@ -105,8 +106,6 @@
     background-color: $base-0;
   }
 }
-
-
 
 .attachments {
   padding: 24px;

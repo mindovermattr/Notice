@@ -151,9 +151,11 @@ export class TaskService {
         HttpStatus.BAD_REQUEST,
       );
 
+    const { role, ...dto } = updateTaskDto;
+
     const data = await this.prismaService.task.update({
       data: {
-        ...updateTaskDto,
+        ...dto,
       },
       where: {
         id,

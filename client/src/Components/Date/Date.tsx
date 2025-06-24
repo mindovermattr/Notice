@@ -25,6 +25,7 @@ const Date = ({ isRedacting, task, setTask }: TProps) => {
   const { projects, selectedProject } = useAppSelector(
     (state) => state.projects
   );
+  const role = useAppSelector(state=>state.user.role)
   const dispatch = useAppDispatch();
   const {
     register,
@@ -44,7 +45,10 @@ const Date = ({ isRedacting, task, setTask }: TProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const submitHandler = async (data: z.infer<typeof updateTaskSchema>) => {
-    const resp = await patchTask(task!.id, data);
+    const resp = await patchTask(task!.id, {
+        ...data,
+        role: role
+    });
     if (axios.isAxiosError(resp)) return;
     dispatch(patchTaskStore({ task: resp.data, listId: task!.task_list.id }));
     setIsOpen(false);
