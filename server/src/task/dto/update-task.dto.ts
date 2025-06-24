@@ -24,6 +24,5 @@ export class UpdateTaskDto extends PartialType(CreateTaskDto) {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  @MinDate(new Date())
   createdAt?: Date;
 }
