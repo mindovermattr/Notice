@@ -78,7 +78,7 @@ const KanbanItem = ({ task, onDragEnd, ...props }: TKanbanItemProps) => {
           <Avatar
             width={24}
             height={24}
-            imgSrc={user?.avatarUrl}
+            imgSrc={task.assign_user?.avatarUrl}
             className={styles.task__avatar}
           />
         </header>
