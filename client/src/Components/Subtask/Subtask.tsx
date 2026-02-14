@@ -31,7 +31,6 @@ const Subtask = ({ subtask, taskId, listId, isRedacting }: TProps) => {
       title: subtask.title,
     },
   });
-  console.log(isRedacting);
   const subtaskSubmitHandler = async (data: z.infer<typeof subtaskSchema>) => {
     const resp = await updateSubTask(subtask.id, data);
     if (axios.isAxiosError(resp)) return;
